@@ -115,6 +115,8 @@ http://scgctvshow.sctv.com/hdlive/sctv9/index.m3u8
 http://scgctvshow.sctv.com/hdlive/sctv7/index.m3u8
 #EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 四平新闻综合 [Geo-blocked]",[国内综合频道] 四平新闻综合 [Geo-blocked]
 https://stream2.jlntv.cn/sptv/sd/live.m3u8
+#EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 奇妙電視 (720p)",[国内综合频道] 奇妙電視 (720p)
+http://media.fantv.hk/m3u8/archive/channel2_stream1.m3u8
 #EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 孟州电视台 (1080p) [Not 24/7]",[国内综合频道] 孟州电视台 (1080p) [Not 24/7]
 http://live.dxhmt.cn:9081/tv/10883-1.m3u8
 #EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 宿州公共 (1080p) [Not 24/7]",[国内综合频道] 宿州公共 (1080p) [Not 24/7]
