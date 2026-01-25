@@ -81,6 +81,10 @@ https://ali-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8
 http://33809.hlsplay.aodianyun.com/guangdianyun_33809/tv_channel_170.m3u8
 #EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 乐清生活 [Geo-blocked]",[国内综合频道] 乐清生活 [Geo-blocked]
 http://33809.hlsplay.aodianyun.com/guangdianyun_33809/tv_channel_171.m3u8
+#EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 余姚姚江文化 (576p)",[国内综合频道] 余姚姚江文化 (576p)
+https://l.cztvcloud.com/channels/lantian/SXyuyao3/720p.m3u8
+#EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 余姚新闻综合 (576p)",[国内综合频道] 余姚新闻综合 (576p)
+https://l.cztvcloud.com/channels/lantian/SXyuyao1/720p.m3u8
 #EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 兴隆综合",[国内综合频道] 兴隆综合
 https://jwcdnqx.hebyun.com.cn/live/xlzh/1500k/tzwj_video.m3u8
 #EXTINF:-1 group-title="国内综合频道" tvg-name="[国内综合频道] 农安新闻综合 [Geo-blocked]",[国内综合频道] 农安新闻综合 [Geo-blocked]
