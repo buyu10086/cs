@@ -1,52 +1,55 @@
-# 工作流名称（自定义，显示在Actions面板）
-name: 定时爬取并更新IPTV地址
+name: 每6小时自动更新IPTV地址
 
-# 触发条件：定时执行 + 手动触发
 on:
-  # 定时触发（cron表达式，UTC时间，需转换为北京时间：UTC+8）
+  # 1. 定时触发：每6小时执行一次（核心修改）
   schedule:
-    # 示例：每天北京时间 01:00 执行（UTC时间 17:00）
-    # cron格式：分 时 日 月 周（空格分隔）
-    - cron: '0 22 * * *'  
-  # 手动触发开关（在Actions面板可点击「运行工作流」手动执行）
+    - cron: '0 */6 * * *'  # cron表达式：分 时 日 月 周 → 每6小时的0分执行（0点、6点、12点、18点）
+  # 2. 手动触发（保留，方便随时测试）
   workflow_dispatch:
 
-# 要执行的任务
 jobs:
   crawl-and-update:
-    # 运行环境：使用Ubuntu最新版虚拟机
     runs-on: ubuntu-latest
-    # 任务步骤
     steps:
-      # 步骤1：拉取仓库代码到虚拟机
+      # 步骤1：拉取仓库代码
       - name: 拉取仓库代码
-        uses: actions/checkout@v4  # 使用官方的拉取代码动作
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # 避免权限冲突
 
-      # 步骤2：配置Python环境（匹配你的爬虫运行环境）
-      - name: 安装Python 3.10
+      # 步骤2：设置Python环境（匹配脚本的Python版本）
+      - name: 设置Python 3.10
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'  # 建议和本地测试的Python版本一致
+          python-version: '3.10'
 
-      # 步骤3：安装爬虫依赖
-      - name: 安装依赖包
+      # 步骤3：安装系统依赖（解决lxml等包安装失败）
+      - name: 安装系统依赖
+        run: sudo apt-get update && sudo apt-get install -y libxml2-dev libxslt1-dev
+
+      # 步骤4：安装Python依赖（国内镜像加速）
+      - name: 安装Python依赖包
         run: |
-          python -m pip install --upgrade pip  # 升级pip
-          pip install -r requirements.txt     # 安装requirements.txt中的依赖
+          python -m pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+          pip install requests beautifulsoup4 lxml -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-      # 步骤4：执行爬虫脚本，生成更新后的m3u8文件
-      - name: 运行IPTV爬虫
-        run: python iptv_crawler.py  # 执行你的爬虫脚本（文件名要和仓库中的一致）
+      # 步骤5：运行IPTV爬虫脚本
+      - name: 运行IPTV爬虫生成m3u8文件
+        run: python iptv_crawler.py
 
-      # 步骤5：将更新后的文件提交并推回仓库
+      # 步骤6：提交并推送更新（带权限和容错）
       - name: 提交更新到仓库
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}  # 需提前配置仓库密钥
         run: |
-          # 配置git用户信息（Actions需要身份才能提交代码）
           git config --global user.name "Gitee Actions"
           git config --global user.email "actions@gitee.com"
-          # 添加更新的文件（只提交m3u8文件，避免其他文件误提交）
-          git add iptv_list.m3u8
-          # 提交（如果文件无变化，则跳过，避免报错）
-          git commit -m "自动更新IPTV地址: $(date +'%Y-%m-%d %H:%M:%S')" || echo "IPTV地址无更新，无需提交"
-          # 推回仓库（Gitee Actions默认有仓库的读写权限）
-          git push
+          # 检查文件是否存在，避免空提交
+          if [ -f "iptv_list.m3u8" ]; then
+            git add iptv_list.m3u8
+            git commit -m "自动更新IPTV地址（每6小时）: $(date +'%Y-%m-%d %H:%M:%S')" || echo "无更新内容，跳过提交"
+            # 使用令牌推送，解决权限问题
+            git push https://${GITEE_TOKEN}@gitee.com/你的用户名/你的仓库名.git
+          else
+            echo "⚠️ 未找到iptv_list.m3u8文件，跳过提交"
+          fi
