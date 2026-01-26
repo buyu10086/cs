@@ -7,15 +7,15 @@ import re
 # 已验证的稳定IPTV源（优先央视/卫视，避免404）
 IPTV_SOURCE_URLS = [
     # 核心源1：国内综合源（央视+卫视+地方台，稳定性最高）
-    "https://raw.githubusercontent.com/liuhuanshuo/IPTV/main/m3u/iptv.m3u",
+    "https://live.fanmingming.com/tv/m3u/global.m3u",
     # 核心源2：央视高清专用源
-    "https://raw.githubusercontent.com/wanglindl/TVBox/main/iptv/m3u/iptv.m3u",
+    "https://live.fanmingming.com/radio/m3u/index.m3u",
     # 备用源1：国内优质合集（代理访问，避免地域限制）
-    "https://ghproxy.com/https://raw.githubusercontent.com/zuoJunChen/IPTV/main/iptv.m3u",
+    "https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
     # 备用源2：国际开源中国区（基础兜底）
-    "https://raw.githubusercontent.com/iptv-org/iptv/master/countries/cn.m3u",
+    "https://gitee.com/lugw27/myIPTV/raw/main/ipv4.m3u",
     # 备用源3：国内综合补充源
-    "https://raw.githubusercontent.com/ocgnet/IPTV/master/IPTV.m3u"
+    "https://raw.githubusercontent.com/hujingguang/ChinaIPTV/main/cnTV_AutoUpdate.m3u8"
 ]
 # 超时时间（检测源是否可用的超时时间，单位：秒）
 TIMEOUT = 10  # 延长超时，适配部分慢源
