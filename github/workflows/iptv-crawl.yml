@@ -1,33 +1,43 @@
-name: 自动爬取IPTV地址
+name: 自动抓取IPTV源并生成m3u8
+
+# 定时触发：每6小时运行一次（cron表达式：0 */6 * * *）
+# 也可以手动触发（workflow_dispatch）
 on:
   schedule:
-    - cron: '0 1 * * *'  # 每天UTC时间1点（北京时间9点）执行
-  workflow_dispatch:  # 手动触发开关
+    - cron: '0 */6 * * *'
+  workflow_dispatch:  # 手动触发按钮
 
+# 运行环境和步骤
 jobs:
   crawl-iptv:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 使用Ubuntu系统运行
+    
     steps:
-      - name: 拉取代码
+      # 1. 拉取仓库代码到运行环境
+      - name: 拉取仓库代码
         uses: actions/checkout@v4
-
-      - name: 安装Python环境
+      
+      # 2. 设置Python环境
+      - name: 设置Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-
-      - name: 安装依赖
+          python-version: '3.10'  # Python版本
+      
+      # 3. 安装依赖（requests库）
+      - name: 安装依赖包
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: 执行爬虫
+          pip install requests
+      
+      # 4. 运行抓取脚本
+      - name: 执行IPTV抓取脚本
         run: python iptv_crawler.py
-
+      
+      # 5. 自动提交生成的m3u8文件到仓库
       - name: 提交更新后的m3u8文件
         run: |
-          git config --global user.name "Gitee Actions"
-          git config --global user.email "actions@gitee.com"
-          git add iptv_list.m3u8
-          git commit -m "自动更新IPTV地址 $(date +'%Y-%m-%d %H:%M:%S')" || echo "无更新内容"
-          git push
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add iptv_playlist.m3u8
+          # 只有文件变化时才提交
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update IPTV m3u8 file $(date +'%Y-%m-%d %H:%M:%S')" && git push)
