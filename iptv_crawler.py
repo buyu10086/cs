@@ -5,10 +5,8 @@ import re
 
 # -------------------------- 2026年最新可用源配置 --------------------------
 IPTV_SOURCE_URLS = [
-    "https://ghproxy.cc/https://raw.githubusercontent.com/Guovin/iptv-api/gd/output/result.m3u",
-    "https://raw.githubusercontent.com/kakaxi-1/IPTV/refs/heads/main/ipv4.txt",
-    "https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
+    "https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
     "https://raw.githubusercontent.com/hujingguang/ChinaIPTV/main/cnTV_AutoUpdate.m3u8"
 ]
 TIMEOUT = 10
@@ -72,6 +70,42 @@ def extract_channel_name(line):
             return match.group(1).strip()
     return None
 
+def get_channel_group(channel_name):
+    """
+    根据频道名称判断所属分组
+    分组规则：
+    1. 央视频道：包含CCTV、央视、中央、央视频等关键词
+    2. 卫视频道：包含卫视关键词（如湖南卫视、浙江卫视等）
+    3. 地方频道：各省市地方台（非卫视）
+    4. 其他频道：影视、体育、数字频道等
+    """
+    if not channel_name:
+        return "🎬 其他频道"
+    
+    # 1. 匹配央视频道
+    cctv_keywords = ["CCTV", "央视", "中央", "央视频", "CCTV-", "中视"]
+    if any(keyword in channel_name for keyword in cctv_keywords):
+        return "📺 央视频道"
+    
+    # 2. 匹配卫视频道
+    if "卫视" in channel_name:
+        return "📡 卫视频道"
+    
+    # 3. 匹配地方频道（各省市名称+台/频道）
+    province_city = [
+        "北京", "上海", "天津", "重庆", "河北", "山西", "辽宁", "吉林", "黑龙江",
+        "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南",
+        "广东", "广西", "海南", "四川", "贵州", "云南", "陕西", "甘肃", "青海",
+        "内蒙古", "宁夏", "新疆", "西藏", "香港", "澳门", "台湾",
+        "广州", "深圳", "杭州", "南京", "成都", "武汉", "西安", "郑州", "青岛"
+    ]
+    for area in province_city:
+        if area in channel_name and "卫视" not in channel_name:
+            return "🏙️ 地方频道"
+    
+    # 4. 其他频道
+    return "🎬 其他频道"
+
 def is_source_available(url):
     """验证直播源是否可用（放宽条件，确保多源都能被检测）"""
     if not url.startswith(("http://", "https://")):
@@ -101,6 +135,7 @@ def generate_m3u8(raw_lines):
     m3u8_header = f"""#EXTM3U x-tvg-url="https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml"
 # 更新时间：{update_time}
 # 支持多源切换：同一个频道可选择不同播放源
+# 频道分组：央视频道、卫视频道、地方频道、其他频道
 """
     valid_lines = [m3u8_header]
     
@@ -136,18 +171,38 @@ def generate_m3u8(raw_lines):
                     print(f"✅ 为 [{temp_channel}] 新增源 [{len(channel_sources_map[temp_channel])}]：{line[:50]}...")
             temp_channel = None
     
-    # -------------------------- 核心修改2：生成多源格式 --------------------------
-    # 第二步：遍历收集的频道-源列表，生成多源格式的m3u8
+    # -------------------------- 核心修改2：生成多源格式（新增分组） --------------------------
+    # 第二步：遍历收集的频道-源列表，生成带分组的m3u8
+    # 按分组归类频道，让同组频道集中展示
+    grouped_channels = {
+        "📺 央视频道": [],
+        "📡 卫视频道": [],
+        "🏙️ 地方频道": [],
+        "🎬 其他频道": []
+    }
+    
+    # 先按分组归类所有频道
     for channel_name, sources in channel_sources_map.items():
-        if not sources:
+        if sources:
+            group = get_channel_group(channel_name)
+            grouped_channels[group].append((channel_name, sources))
+    
+    # 按分组顺序生成m3u8内容
+    for group_name, channels in grouped_channels.items():
+        if not channels:
             continue
         
-        # 写入频道名称行（只写一次）
-        valid_lines.append(f"#EXTINF:-1 group-title='{'' if 'CCTV' in channel_name else '卫视/地方台'}',{channel_name}（{len(sources)}个源）")
-        # 写入该频道的所有有效源（播放端会识别为多源）
-        for idx, source_url in enumerate(sources):
-            valid_lines.append(source_url)
-            print(f"📺 频道 [{channel_name}] - 源 {idx+1}：{source_url[:50]}...")
+        # 写入分组标识（可选，部分播放器支持）
+        valid_lines.append(f"\n# {group_name}")
+        
+        # 写入该分组下的所有频道
+        for channel_name, sources in channels:
+            # 核心修改：使用动态计算的分组名称
+            valid_lines.append(f"#EXTINF:-1 group-title='{group_name}',{channel_name}（{len(sources)}个源）")
+            # 写入该频道的所有有效源（播放端会识别为多源）
+            for idx, source_url in enumerate(sources):
+                valid_lines.append(source_url)
+                print(f"📺 [{group_name}] [{channel_name}] - 源 {idx+1}：{source_url[:50]}...")
     
     # 容错逻辑
     if total_valid < MIN_VALID_SOURCES:
@@ -168,12 +223,15 @@ def generate_m3u8(raw_lines):
         f.write("\n".join(valid_lines))
     
     print(f"\n📊 最终统计：共检测 {total_checked} 个源，有效源 {total_valid} 个，有效频道 {len(channel_sources_map)} 个")
+    # 输出分组统计
+    for group_name, channels in grouped_channels.items():
+        print(f"   📋 {group_name}：{len(channels)} 个频道")
     print(f"✅ 多源版文件生成完成：{OUTPUT_FILE}")
     print(f"🕒 更新时间：{update_time}")
     return True
 
 if __name__ == "__main__":
-    print("========== 开始抓取IPTV源（支持多源切换） ==========")
+    print("========== 开始抓取IPTV源（支持多源切换+频道分组） ==========")
     raw_data = fetch_raw_iptv_data(IPTV_SOURCE_URLS)
     
     if not raw_data:
@@ -181,4 +239,4 @@ if __name__ == "__main__":
         exit(0)
     
     generate_m3u8(raw_data)
-    print("========== 抓取完成，播放端支持多源切换 ==========")
+    print("========== 抓取完成，播放端支持多源切换和频道分组 ==========")
