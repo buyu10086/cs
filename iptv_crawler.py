@@ -11,8 +11,8 @@ import threading
 IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/TianmuTNT/iptv/refs/heads/main/iptv.m3u",
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
-    "https://live.hacks.tools/tv/iptv4.m3u",
-    "https://live.hacks.tools/radio/m3u/index.m3u"
+    "https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
+    "https://raw.githubusercontent.com/mytv-android/China-TV-Live-M3U8/refs/heads/main/webview.m3u"
 ]
 # 核心优化：缩短验证超时时间
 TIMEOUT = 3
