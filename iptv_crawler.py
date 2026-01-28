@@ -9,11 +9,10 @@ import threading
 
 # -------------------------- 配置优化（新增缓存+反爬配置） --------------------------
 IPTV_SOURCE_URLS = [
-    "https://ghproxy.cc/https://raw.githubusercontent.com/Guovin/iptv-api/gd/output/result.m3u",
-    "https://raw.githubusercontent.com/kakaxi-1/IPTV/refs/heads/main/ipv4.txt",
-    "https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
+    "https://raw.githubusercontent.com/TianmuTNT/iptv/refs/heads/main/iptv.m3u",
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
-    "https://raw.githubusercontent.com/hujingguang/ChinaIPTV/main/cnTV_AutoUpdate.m3u8"
+    "https://live.hacks.tools/tv/iptv4.m3u,
+    "https://live.hacks.tools/radio/m3u/index.m3u"
 ]
 # 核心优化：缩短验证超时时间
 TIMEOUT = 3
