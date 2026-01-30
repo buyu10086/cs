@@ -2,7 +2,7 @@ import requests
 import time
 import random
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
@@ -74,11 +74,8 @@ def load_verified_cache():
 def save_verified_cache():
     """保存当前已验证源到本地缓存"""
     try:
-        # 缓存时间也使用北京时区
-        tz_beijing = timezone(timedelta(hours=8))
-        cache_time = datetime.now(tz_beijing).strftime('%Y-%m-%d %H:%M:%S')
         cache_data = {
-            "cache_time": cache_time,
+            "cache_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             "verified_urls": list(verified_urls)
         }
         
@@ -197,17 +194,13 @@ def get_channel_group(channel_name):
 
 def generate_m3u8_parallel(raw_lines):
     """并行验证源+生成m3u8文件"""
-    # 关键修改：使用北京时区（UTC+8）生成时间
-    tz_beijing = timezone(timedelta(hours=8))
-    update_time = datetime.now(tz_beijing).strftime('%Y-%m-%d %H:%M:%S')
-    
-    # 首行直接显示北京时刻（EXTM3U为m3u8标准首行，添加北京时间注释）
-    m3u8_header = f"""#EXTM3U x-tvg-url="https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml"  # 生成时间（北京时区）：{update_time}
-# 更新时间（北京时刻）：{update_time}
+    update_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    m3u8_header = f"""#EXTM3U x-tvg-url="https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml"
+# 更新时间：{update_time}
 # 支持多源切换+频道分组+本地缓存优化
 """
     valid_lines = [m3u8_header]
-    valid_lines.append(f"#EXTINF:-1 group-title='📢 系统信息',📅 直播源更新时间（北京时刻）：{update_time}")
+    valid_lines.append(f"#EXTINF:-1 group-title='📢 系统信息',📅 直播源更新时间：{update_time}")
     valid_lines.append("#")
 
     # 第一步：提取所有待验证的(频道名, url)对
@@ -244,58 +237,55 @@ def generate_m3u8_parallel(raw_lines):
     for channel_name, sources in channel_sources_map.items():
         if sources:
             group = get_channel_group(channel_name)
-            # 去重（如果开启去重配置）
-            if REMOVE_DUPLICATE_CHANNELS:
-                sources = list(dict.fromkeys(sources))
-            # 只保留最少有效源数量
-            if len(sources) >= MIN_VALID_SOURCES:
-                sources = sources[:MIN_VALID_SOURCES]
             grouped_channels[group].append((channel_name, sources))
 
-    # 第四步：写入文件
-    for group, channels in grouped_channels.items():
-        if channels:
-            valid_lines.append(f"\n# {group}")
-            for channel_name, sources in sorted(channels):
-                for idx, url in enumerate(sources):
-                    # 生成带分组的EXTINF行
-                    extinf_line = f"#EXTINF:-1 group-title='{group}',{channel_name}（源{idx+1}）"
-                    valid_lines.append(extinf_line)
-                    valid_lines.append(url)
+    for group_name, channels in grouped_channels.items():
+        if not channels:
+            continue
+        valid_lines.append(f"\n# {group_name}")
+        for channel_name, sources in channels:
+            valid_lines.append(f"#EXTINF:-1 group-title='{group_name}',{channel_name}（{len(sources)}个源）")
+            for url in sources:
+                valid_lines.append(url)
+                print(f"📺 [{group_name}] [{channel_name}] - 有效源：{url[:50]}...")
 
-    # 最终写入文件
-    try:
+    # 容错逻辑
+    if total_valid < MIN_VALID_SOURCES:
+        print(f"\n⚠️  有效源({total_valid})低于阈值({MIN_VALID_SOURCES})，生成基础文件")
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-            f.write("\n".join(valid_lines))
-        print(f"\n✅ M3U8文件生成完成！保存路径：{OUTPUT_FILE}")
-        print(f"📌 生成时刻（北京时区）：{update_time}")
-    except Exception as e:
-        print(f"\n❌ 写入M3U8文件失败：{str(e)}")
+            f.write(f"""#EXTM3U
+# 更新时间：{update_time}
+#EXTINF:-1 group-title='📢 系统信息',📅 直播源更新时间：{update_time}
+#
+#EXTINF:-1 group-title='📢 系统信息',⚠️  有效源较少，建议稍后重试
+#""")
+        return False
 
-# -------------------------- 主函数 --------------------------
-def main():
-    """主执行流程"""
-    print("🚀 开始IPTV源爬取与验证流程...")
-    start_time = time.time()
-    
-    # 1. 加载缓存
-    load_verified_cache()
-    
-    # 2. 并行抓取原始数据
-    raw_lines = fetch_raw_iptv_data_parallel(IPTV_SOURCE_URLS)
-    if not raw_lines:
-        print("❌ 未抓取到任何IPTV源数据，程序退出")
-        return
-    
-    # 3. 并行验证+生成m3u8
-    generate_m3u8_parallel(raw_lines)
-    
-    # 4. 保存缓存
-    save_verified_cache()
-    
-    # 统计耗时
-    total_time = round(time.time() - start_time, 2)
-    print(f"\n🎉 全部流程完成！总耗时：{total_time} 秒")
+    # 写入最终文件
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(valid_lines))
+
+    print(f"\n📊 最终统计：验证 {len(task_list)} 源，有效 {total_valid} 源，有效频道 {len(channel_sources_map)} 个")
+    for group_name, channels in grouped_channels.items():
+        print(f"   📋 {group_name}：{len(channels)} 频道")
+    print(f"✅ 生成完成：{OUTPUT_FILE}")
+    return True
 
 if __name__ == "__main__":
-    main()
+    start_time = time.time()
+    print("========== 并行化IPTV源抓取（缓存+反爬优化） ==========")
+    
+    # 新增：程序启动时加载本地缓存
+    load_verified_cache()
+    
+    raw_data = fetch_raw_iptv_data_parallel(IPTV_SOURCE_URLS)
+    if raw_data:
+        generate_m3u8_parallel(raw_data)
+    
+    # 新增：程序结束时保存缓存到本地
+    save_verified_cache()
+    
+    # 计算总耗时
+    total_time = time.time() - start_time
+    print(f"\n⏱️  总运行时间：{total_time:.2f} 秒（约 {total_time/60:.1f} 分钟）")
+    print("========== 抓取完成，缓存已保存，下次运行将更快 ==========")
