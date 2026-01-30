@@ -1,6 +1,6 @@
 #EXTM3U x-tvg-url="https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml"
 # ================================= IPTV直播源信息 =================================
-# 生成时间    ：2026-01-30 16:03:23
+# 生成时间    ：2026-01-30 18:02:34
 # 缓存状态    ：未加载缓存（首次运行/缓存过期）
 # 生效配置    ：频道去重=True | 本地URL过滤=True | 频道排序=True
 # 验证规则    ：超时3秒 | 仅保留HTTP/HTTPS有效链接
@@ -10,7 +10,7 @@
 
 # 📢 系统信息（共1项）
 #EXTINF:-1 group-title='📢 系统信息',直播源生成统计
-# 有效频道数：605 个 | 总有效源数：614 个
+# 有效频道数：580 个 | 总有效源数：588 个
 #
 
 ########################################
@@ -82,8 +82,8 @@ http://58.57.40.22:9901/tsfile/live/1005_1.m3u8
 http://58.57.40.22:9901/tsfile/live/1006_1.m3u8
 
 #EXTINF:-1 group-title='📺 央视频道',CCTV7（1个有效源）
-# 源1：http://58.57.40.22:9901/tsfile/live/1007_1.m3u8
-http://58.57.40.22:9901/tsfile/live/1007_1.m3u8
+# 源1：http://23.237.228.134/live5/CCTV7.m3u8
+http://23.237.228.134/live5/CCTV7.m3u8
 
 #EXTINF:-1 group-title='📺 央视频道',CCTV8（1个有效源）
 # 源1：http://58.57.40.22:9901/tsfile/live/1008_1.m3u8
@@ -130,7 +130,7 @@ https://gcalic.v.myalicdn.com/gc/ztd_1/index.m3u8
 https://gcalic.v.myalicdn.com/gc/ztn_1/index.m3u8
 
 ########################################
-# 📡 卫视频道（共42个频道）
+# 📡 卫视频道（共41个频道）
 ########################################
 
 #EXTINF:-1 group-title='📡 卫视频道',三沙卫视（1个有效源）
@@ -142,8 +142,8 @@ https://srs.ssws.tv/video/sstv-10/index.m3u8
 http://58.57.40.22:9901/tsfile/live/1037_1.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',东方卫视（1个有效源）
-# 源1：https://txmov2.a.kwimgs.com/bs3/video-hls/521995353563109082...
-https://txmov2.a.kwimgs.com/bs3/video-hls/5219953535631090825_hlsb.m3u8
+# 源1：http://223.105.252.8/PLTV/4/224/3221228150/index.m3u8
+http://223.105.252.8/PLTV/4/224/3221228150/index.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',东方卫视4K（1个有效源）
 # 源1：https://bp-resource-dfl.bestv.cn/148/3/video.m3u8
@@ -170,8 +170,8 @@ http://23.237.228.134/live8/neimenggu.m3u8
 http://120.76.248.139/live/bfgd/4200000122.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',北京卫视（1个有效源）
-# 源1：http://58.57.40.22:9901/tsfile/live/1032_1.m3u8
-http://58.57.40.22:9901/tsfile/live/1032_1.m3u8
+# 源1：http://223.105.252.8/PLTV/4/224/3221228115/index.m3u8
+http://223.105.252.8/PLTV/4/224/3221228115/index.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',厦门卫视（2个有效源）
 # 源1：http://183.11.239.36:808/hls/17/index.m3u8
@@ -180,17 +180,15 @@ http://183.11.239.36:808/hls/17/index.m3u8
 https://epg.pw/stream/aa65dd411565991ace44f9e5934bd018fdd52122e052d471a363b6ee839e1079.ctv
 
 #EXTINF:-1 group-title='📡 卫视频道',吉林卫视（1个有效源）
-# 源1：http://58.57.40.22:9901/tsfile/live/1050_1.m3u8
-http://58.57.40.22:9901/tsfile/live/1050_1.m3u8
+# 源1：http://23.237.228.134/live8/jilin.m3u8
+http://23.237.228.134/live8/jilin.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',四川卫视（1个有效源）
 # 源1：http://58.57.40.22:9901/tsfile/live/1046_1.m3u8
 http://58.57.40.22:9901/tsfile/live/1046_1.m3u8
 
-#EXTINF:-1 group-title='📡 卫视频道',大湾区卫视（2个有效源）
-# 源1：http://43.251.226.89:8080/play/39.m3u8
-http://43.251.226.89:8080/play/39.m3u8
-# 源2：http://222.128.55.152:9080/live/dwq.m3u8
+#EXTINF:-1 group-title='📡 卫视频道',大湾区卫视（1个有效源）
+# 源1：http://222.128.55.152:9080/live/dwq.m3u8
 http://222.128.55.152:9080/live/dwq.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',天津卫视（2个有效源）
@@ -208,16 +206,16 @@ http://58.57.40.22:9901/tsfile/live/1054_1.m3u8
 https://liveout.xntv.tv/a65jur/96iln2.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',安徽卫视（1个有效源）
-# 源1：http://23.237.228.134/live8/anhui.m3u8
-http://23.237.228.134/live8/anhui.m3u8
+# 源1：http://58.57.40.22:9901/tsfile/live/1033_1.m3u8
+http://58.57.40.22:9901/tsfile/live/1033_1.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',山东卫视（1个有效源）
 # 源1：http://182.150.23.74:808/hls/23/index.m3u8
 http://182.150.23.74:808/hls/23/index.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',山西卫视（1个有效源）
-# 源1：http://23.237.228.134/live8/shanxi.m3u8
-http://23.237.228.134/live8/shanxi.m3u8
+# 源1：http://119.39.9.8:9901/tsfile/live/0118_1.m3u8
+http://119.39.9.8:9901/tsfile/live/0118_1.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',广东卫视（2个有效源）
 # 源1：http://58.57.40.22:9901/tsfile/live/1039_1.m3u8
@@ -238,10 +236,6 @@ http://l.cztvcloud.com/channels/lantian/SXxinchang2/720p.m3u8#
 #EXTINF:-1 group-title='📡 卫视频道',新疆卫视（1个有效源）
 # 源1：http://58.57.40.22:9901/tsfile/live/1055_1.m3u8
 http://58.57.40.22:9901/tsfile/live/1055_1.m3u8
-
-#EXTINF:-1 group-title='📡 卫视频道',江苏卫视（1个有效源）
-# 源1：http://58.57.40.22:9901/tsfile/live/1031_1.m3u8
-http://58.57.40.22:9901/tsfile/live/1031_1.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',江西卫视（1个有效源）
 # 源1：http://58.57.40.22:9901/tsfile/live/1043_1.m3u8
@@ -302,8 +296,8 @@ http://58.57.40.22:9901/tsfile/live/1035_1.m3u8
 http://23.237.228.134/live6/chongqing.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',陕西卫视（1个有效源）
-# 源1：http://23.237.228.134/live6/sichuan.m3u8
-http://23.237.228.134/live6/sichuan.m3u8
+# 源1：http://120.238.94.10:9901/tsfile/live/1070_1.m3u8
+http://120.238.94.10:9901/tsfile/live/1070_1.m3u8
 
 #EXTINF:-1 group-title='📡 卫视频道',青海卫视（1个有效源）
 # 源1：http://58.57.40.22:9901/tsfile/live/1057_1.m3u8
@@ -314,7 +308,7 @@ http://58.57.40.22:9901/tsfile/live/1057_1.m3u8
 http://58.57.40.22:9901/tsfile/live/1040_1.m3u8
 
 ########################################
-# 🏙️ 地方频道（共109个频道）
+# 🏙️ 地方频道（共110个频道）
 ########################################
 
 #EXTINF:-1 group-title='🏙️ 地方频道',上海第一财经（1个有效源）
@@ -473,10 +467,6 @@ http://58.57.40.22:9901/tsfile/live/1018_1.m3u8
 # 源1：http://58.57.40.22:9901/tsfile/live/1021_1.m3u8
 http://58.57.40.22:9901/tsfile/live/1021_1.m3u8
 
-#EXTINF:-1 group-title='🏙️ 地方频道',山东齐鲁（1个有效源）
-# 源1：http://123.130.84.106:8154/tsfile/live/1001_1.m3u8
-http://123.130.84.106:8154/tsfile/live/1001_1.m3u8
-
 #EXTINF:-1 group-title='🏙️ 地方频道',广东体育（1个有效源）
 # 源1：http://cdn2.132.us.kg/live/gdty/stream.m3u8
 http://cdn2.132.us.kg/live/gdty/stream.m3u8
@@ -488,6 +478,10 @@ http://gmxw.7766.org:808/hls/175/index.m3u8
 #EXTINF:-1 group-title='🏙️ 地方频道',广东民生（1个有效源）
 # 源1：http://183.11.239.36:808/hls/18/index.m3u8
 http://183.11.239.36:808/hls/18/index.m3u8
+
+#EXTINF:-1 group-title='🏙️ 地方频道',广东珠江（1个有效源）
+# 源1：http://cdn2.163189.xyz/live/gdzj/stream.m3u8
+http://cdn2.163189.xyz/live/gdzj/stream.m3u8
 
 #EXTINF:-1 group-title='🏙️ 地方频道',广州新闻（1个有效源）
 # 源1：http://tencentplay.gztv.com/live/xinwen.m3u8?txSecret=d2c2db...
@@ -753,8 +747,12 @@ https://gcalic.v.myalicdn.com/gc/qdls03_1/index.m3u8
 # 源1：https://ls.qingting.fm/live/4972/64k.m3u8
 https://ls.qingting.fm/live/4972/64k.m3u8
 
+#EXTINF:-1 group-title='🏙️ 地方频道',黑龙江新闻法治（1个有效源）
+# 源1：https://ls.qingting.fm/live/4974/64k.m3u8
+https://ls.qingting.fm/live/4974/64k.m3u8
+
 ########################################
-# 🎬 其他频道（共427个频道）
+# 🎬 其他频道（共402个频道）
 ########################################
 
 #EXTINF:-1 group-title='🎬 其他频道',1987年春晚（1个有效源）
@@ -841,10 +839,6 @@ https://alimov2.a.kwimgs.com/upic/2023/01/06/16/BMjAyMzAxMDYxNjMxMTRfNDAzMDAxOTl
 # 源1：https://p2.bdstatic.com/rtmp.liveshow.lss-user.baidubce.com/...
 https://p2.bdstatic.com/rtmp.liveshow.lss-user.baidubce.com/live/stream_bduid_6488563992_8982723413/merged_1707497046297_88536_25144_41936.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',2025年春晚（1个有效源）
-# 源1：https://svip.high24-playback.com/20250129/17159_7bca93c4/200...
-https://svip.high24-playback.com/20250129/17159_7bca93c4/2000k/hls/mixed.m3u8
-
 #EXTINF:-1 group-title='🎬 其他频道',AMC电影（1个有效源）
 # 源1：http://61.221.215.25:8800/hls/43/index.m3u8
 http://61.221.215.25:8800/hls/43/index.m3u8
@@ -889,10 +883,6 @@ http://183.237.95.108:9901/tsfile/live/1008_1.m3u8?key=txiptv&playlive=0&authid=
 # 源1：http://43.138.0.72:35455/yy/1382754187
 http://43.138.0.72:35455/yy/1382754187
 
-#EXTINF:-1 group-title='🎬 其他频道',JJ斗地主（1个有效源）
-# 源1：http://43.251.226.89:8080/play/1995.m3u8
-http://43.251.226.89:8080/play/1995.m3u8
-
 #EXTINF:-1 group-title='🎬 其他频道',七台河新闻综合（1个有效源）
 # 源1：http://live.qthnews.org.cn:1935/live/live1/800k/tzwj_video.m...
 http://live.qthnews.org.cn:1935/live/live1/800k/tzwj_video.m3u8
@@ -900,10 +890,6 @@ http://live.qthnews.org.cn:1935/live/live1/800k/tzwj_video.m3u8
 #EXTINF:-1 group-title='🎬 其他频道',七台河民生社教（1个有效源）
 # 源1：http://live.qthnews.org.cn:1935/live/live2/800k/tzwj_video.m...
 http://live.qthnews.org.cn:1935/live/live2/800k/tzwj_video.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',七龙珠（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11601966
-http://www.douzhicloud.site:35455/huya/11601966
 
 #EXTINF:-1 group-title='🎬 其他频道',万州三峡移民（1个有效源）
 # 源1：http://123.146.162.24:8017/c2F0hmi/1000/live.m3u8
@@ -1085,10 +1071,6 @@ http://l.cztvcloud.com/channels/lantian/SXyuhang3/720p.m3u8
 # 源1：http://l.cztvcloud.com/channels/lantian/SXyuhang1/720p.m3u8
 http://l.cztvcloud.com/channels/lantian/SXyuhang1/720p.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',倚天屠龙记（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/23734246
-http://www.douzhicloud.site:35455/huya/23734246
-
 #EXTINF:-1 group-title='🎬 其他频道',倩女幽魂人间道（1个有效源）
 # 源1：http://jsmov2.a.yximgs.com/bs3/video-hls/5250634317044855747...
 http://jsmov2.a.yximgs.com/bs3/video-hls/5250634317044855747_hlsb.m3u8
@@ -1169,25 +1151,9 @@ http://live.dxhmt.cn:9081/tv/10527-1.m3u8
 # 源1：http://iot-mqqt.111yao.cn:8080/live/diyp_fhdy.m3u8
 http://iot-mqqt.111yao.cn:8080/live/diyp_fhdy.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',刘德华电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11342424
-http://www.douzhicloud.site:35455/huya/11342424
-
-#EXTINF:-1 group-title='🎬 其他频道',创世纪（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/29465852
-http://www.douzhicloud.site:35455/huya/29465852
-
 #EXTINF:-1 group-title='🎬 其他频道',剑阁综合（1个有效源）
 # 源1：https://m3u8.channel.dzsm.com/nmip-media/channellive/channel...
 https://m3u8.channel.dzsm.com/nmip-media/channellive/channel105549/playlist.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',功夫电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11352941
-http://www.douzhicloud.site:35455/huya/11352941
-
-#EXTINF:-1 group-title='🎬 其他频道',北海新闻综合（1个有效源）
-# 源1：https://live.gxrb.com.cn/gx/beihai/index.m3u8
-https://live.gxrb.com.cn/gx/beihai/index.m3u8
 
 #EXTINF:-1 group-title='🎬 其他频道',南国都市（2个有效源）
 # 源1：https://tencentplay.gztv.com/live/nanguodushi.m3u8?txSecret=...
@@ -1231,10 +1197,6 @@ https://m3u8channel-bx.yunxya.com/nmip-media/channellive/channel104666/playlist.
 # 源1：https://l2fpdktp.live.sxmty.com/live/hls/e4c3b363cc4549788e2...
 https://l2fpdktp.live.sxmty.com/live/hls/e4c3b363cc4549788e2d983f403e07db/d99ce1eb686e41b9afc888110bd95aa7.m3u8?zshanxd
 
-#EXTINF:-1 group-title='🎬 其他频道',古天乐电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/29982675
-http://www.douzhicloud.site:35455/huya/29982675
-
 #EXTINF:-1 group-title='🎬 其他频道',句容党建（1个有效源）
 # 源1：http://43.251.226.89:8080/play/533.m3u8
 http://43.251.226.89:8080/play/533.m3u8
@@ -1247,10 +1209,6 @@ http://jrlive.jrntv.com/live/_definst_/yingshis/chunklist_w1994429382.m3u8?zjian
 # 源1：http://jrlive.jrntv.com/live/_definst_/jrxwzhs/playlist.m3u8
 http://jrlive.jrntv.com/live/_definst_/jrxwzhs/playlist.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',句容生活（1个有效源）
-# 源1：http://43.251.226.89:8080/play/1052.m3u8
-http://43.251.226.89:8080/play/1052.m3u8
-
 #EXTINF:-1 group-title='🎬 其他频道',可克达拉综合（1个有效源）
 # 源1：http://file.loulannews.cn/nmip-media/channellive/channel1038...
 http://file.loulannews.cn/nmip-media/channellive/channel103824/playlist.m3u8
@@ -1258,10 +1216,6 @@ http://file.loulannews.cn/nmip-media/channellive/channel103824/playlist.m3u8
 #EXTINF:-1 group-title='🎬 其他频道',合肥新闻（1个有效源）
 # 源1：http://112.27.235.94:8000/hls/18/index.m3u8
 http://112.27.235.94:8000/hls/18/index.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',名侦探柯南（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/30080236
-http://www.douzhicloud.site:35455/huya/30080236
 
 #EXTINF:-1 group-title='🎬 其他频道',吴忠公共（1个有效源）
 # 源1：http://live.kanwz.net/ggpd/sd/live.m3u8
@@ -1335,10 +1289,6 @@ http://newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/default/c6baf6f74bb944aeace
 # 源1：http://pili-live-hls.hfmt.net/gntv/xhtv.m3u8?zgand
 http://pili-live-hls.hfmt.net/gntv/xhtv.m3u8?zgand
 
-#EXTINF:-1 group-title='🎬 其他频道',大唐双龙传（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/29465850
-http://www.douzhicloud.site:35455/huya/29465850
-
 #EXTINF:-1 group-title='🎬 其他频道',大宁综合（1个有效源）
 # 源1：http://live.daningtv.com/aac_dngb/playlist.m3u8
 http://live.daningtv.com/aac_dngb/playlist.m3u8
@@ -1355,10 +1305,6 @@ https://gcalic.v.myalicdn.com/gc/tyhjtys_1/index.m3u8
 # 源1：https://play.kankanlive.com/live/1656487214793905.m3u8
 https://play.kankanlive.com/live/1656487214793905.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',天龙八部（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/yy/1351814644
-http://www.douzhicloud.site:35455/yy/1351814644
-
 #EXTINF:-1 group-title='🎬 其他频道',太谷新闻综合（1个有效源）
 # 源1：http://p2.vzan.com/slowlive/596867413819827251/live.m3u8
 http://p2.vzan.com/slowlive/596867413819827251/live.m3u8
@@ -1370,10 +1316,6 @@ http://218.84.12.186:8002/hls/main/playlist.m3u8
 #EXTINF:-1 group-title='🎬 其他频道',奎屯汉语（1个有效源）
 # 源1：http://218.84.12.186:8001/hls/main/playlist.m3u8?zxinjd
 http://218.84.12.186:8001/hls/main/playlist.m3u8?zxinjd
-
-#EXTINF:-1 group-title='🎬 其他频道',妙手仁心（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/29465853
-http://www.douzhicloud.site:35455/huya/29465853
 
 #EXTINF:-1 group-title='🎬 其他频道',安顺新闻（1个有效源）
 # 源1：http://hplayer1.juyun.tv/camera/154379194.m3u8
@@ -1419,13 +1361,13 @@ http://l.cztvcloud.com/channels/lantian/SXshengsi1/720p.m3u8
 # 源1：https://jwcdnqx.hebyun.com.cn/live/pqzh/1500k/tzwj_video.m3u...
 https://jwcdnqx.hebyun.com.cn/live/pqzh/1500k/tzwj_video.m3u8
 
+#EXTINF:-1 group-title='🎬 其他频道',平湖新闻综合（1个有效源）
+# 源1：http://l.cztvcloud.com/channels/lantian/SXpinghu1/720p.m3u8
+http://l.cztvcloud.com/channels/lantian/SXpinghu1/720p.m3u8
+
 #EXTINF:-1 group-title='🎬 其他频道',平湖民生休闲（1个有效源）
 # 源1：http://l.cztvcloud.com/channels/lantian/SXpinghu2/720p.m3u8
 http://l.cztvcloud.com/channels/lantian/SXpinghu2/720p.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',平遥新闻综合（1个有效源）
-# 源1：https://tntgjhjb.live.sxmty.com/live/hls/3a4585ac11ec4e1bb07...
-https://tntgjhjb.live.sxmty.com/live/hls/3a4585ac11ec4e1bb07b419101b370c3/baf63e2b313440c2a25d7859f9b73b05-1.m3u8?zshanxd
 
 #EXTINF:-1 group-title='🎬 其他频道',广元公共（1个有效源）
 # 源1：https://m3u8.channel.dzsm.com/nmip-media/channellive/channel...
@@ -1467,10 +1409,6 @@ http://live.ynurl.com/video/s10044-KYTV/index.m3u8?zyund
 # 源1：https://gcalic.v.myalicdn.com/gc/zyqcdx01_1/index.m3u8
 https://gcalic.v.myalicdn.com/gc/zyqcdx01_1/index.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',强森电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/21059581
-http://www.douzhicloud.site:35455/huya/21059581
-
 #EXTINF:-1 group-title='🎬 其他频道',德惠综合（1个有效源）
 # 源1：http://stream11.jlntv.cn/dehuitv/sd/live.m3u8
 http://stream11.jlntv.cn/dehuitv/sd/live.m3u8
@@ -1486,14 +1424,6 @@ https://gcalic.v.myalicdn.com/gc/hsxksqj_1/index.m3u8
 #EXTINF:-1 group-title='🎬 其他频道',成县综合（1个有效源）
 # 源1：https://play.kankanlive.com/live/1702454377323961.m3u8
 https://play.kankanlive.com/live/1702454377323961.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',成龙电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11342386
-http://www.douzhicloud.site:35455/huya/11342386
-
-#EXTINF:-1 group-title='🎬 其他频道',战争电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/21059574
-http://www.douzhicloud.site:35455/huya/21059574
 
 #EXTINF:-1 group-title='🎬 其他频道',支持作者（1个有效源）
 # 源1：https://vd3.bdstatic.com/mda-rkaittm5s06vzzyq/sc/cae_h264/17...
@@ -1526,10 +1456,6 @@ http://l.cztvcloud.com/channels/lantian/SXwencheng1/720p.m3u8
 #EXTINF:-1 group-title='🎬 其他频道',文成综合（1个有效源）
 # 源1：http://l.cztvcloud.com/channels/lantian/SXwencheng1/720p.m3u...
 http://l.cztvcloud.com/channels/lantian/SXwencheng1/720p.m3u8?zzhed
-
-#EXTINF:-1 group-title='🎬 其他频道',斗鱼港剧（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/douyu/5061550
-http://www.douzhicloud.site:35455/douyu/5061550
 
 #EXTINF:-1 group-title='🎬 其他频道',新县综合（1个有效源）
 # 源1：http://live.dxhmt.cn:9081/tv/11523-1.m3u8
@@ -1619,10 +1545,6 @@ https://m3u8.channel.dzsm.com/nmip-media/channellive/channel104601/playlist.m3u8
 # 源1：http://120.76.248.139/live/bfgd/4200000282.m3u8
 http://120.76.248.139/live/bfgd/4200000282.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',末日电影合集（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/yy/1354889019
-http://www.douzhicloud.site:35455/yy/1354889019
-
 #EXTINF:-1 group-title='🎬 其他频道',来宾综合（1个有效源）
 # 源1：http://zb.gxlbamc.com:1935/live/lbzh.stream/playlist.m3u8
 http://zb.gxlbamc.com:1935/live/lbzh.stream/playlist.m3u8
@@ -1634,14 +1556,6 @@ http://live.spccmc.com:90/live/spxwzh.m3u8
 #EXTINF:-1 group-title='🎬 其他频道',松阳综合（1个有效源）
 # 源1：http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u...
 http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',林正英电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11342421
-http://www.douzhicloud.site:35455/huya/11342421
-
-#EXTINF:-1 group-title='🎬 其他频道',枪战电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/21059579
-http://www.douzhicloud.site:35455/huya/21059579
 
 #EXTINF:-1 group-title='🎬 其他频道',柳河（1个有效源）
 # 源1：http://stream5.jlntv.cn/lh/sd/live.m3u8?zjild
@@ -1675,10 +1589,6 @@ http://l.cztvcloud.com/channels/lantian/SXwuyi1/720p.m3u8
 # 源1：http://uzoiczhh.live.sxmty.com/live/hls/0d41f1480c4042d49927...
 http://uzoiczhh.live.sxmty.com/live/hls/0d41f1480c4042d49927858f01fde707/53130407737b417b9a6259b57246bae3.m3u8?zshanxd
 
-#EXTINF:-1 group-title='🎬 其他频道',武侠电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11342427
-http://www.douzhicloud.site:35455/huya/11342427
-
 #EXTINF:-1 group-title='🎬 其他频道',武威新闻（1个有效源）
 # 源1：https://play.kankanlive.com/live/1693539781636986.m3u8
 https://play.kankanlive.com/live/1693539781636986.m3u8
@@ -1692,8 +1602,8 @@ https://tvpull.smartwq.cn/wqlive/convergencemedia/playlist.m3u8?ztianjd
 https://live.wjyanghu.com/live/CH1.m3u8
 
 #EXTINF:-1 group-title='🎬 其他频道',武进生活（1个有效源）
-# 源1：http://43.251.226.89:8080/play/522.m3u8
-http://43.251.226.89:8080/play/522.m3u8
+# 源1：http://live.wjyanghu.com/live/CH2.m3u8
+http://live.wjyanghu.com/live/CH2.m3u8
 
 #EXTINF:-1 group-title='🎬 其他频道',永嘉新闻综合（1个有效源）
 # 源1：http://l.cztvcloud.com/channels/lantian/SXyongjia1/720p.m3u8
@@ -1787,9 +1697,9 @@ https://gcalic.v.myalicdn.com/gc/hkts03_1/index.m3u8
 # 源1：http://l.cztvcloud.com/channels/lantian/SXdongtou1/720p.m3u8
 http://l.cztvcloud.com/channels/lantian/SXdongtou1/720p.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',活佛济公3（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/23903123
-http://www.douzhicloud.site:35455/huya/23903123
+#EXTINF:-1 group-title='🎬 其他频道',津南一套（1个有效源）
+# 源1：http://play.jinnantv.top/live/JNTV1.m3u8?ztianjd
+http://play.jinnantv.top/live/JNTV1.m3u8?ztianjd
 
 #EXTINF:-1 group-title='🎬 其他频道',海宁新闻综合（1个有效源）
 # 源1：https://p2hs.vzan.com/slowlive/317913155078575177/live.m3u8
@@ -1828,12 +1738,16 @@ http://live.dxhmt.cn:9081/tv/10825-1.m3u8
 http://hzcm-live.media.hugd.com/1e6b554b9ab74513958c0e1ffe664d22/9acaa7634309494cb29a85eb12136607.m3u8?auth_key=2272900830-9a2389b8bf4e49d580d4ad807423d326-0-ea78a5c7a678c436263582d368f5009e
 
 #EXTINF:-1 group-title='🎬 其他频道',湖州文化娱乐（1个有效源）
-# 源1：http://hzcm-live.media.hugd.com/613c47f0ab0d4eaa98b21378d0db...
-http://hzcm-live.media.hugd.com/613c47f0ab0d4eaa98b21378d0db6ded/0051d31c9dd543a7825eea4e49675b2a.m3u8?auth_key=2277598059-0a5ebfa1c0dc4671b42a60810fc37039-0-fa625b7d1feab612062453c12e3c8887
+# 源1：https://hzcm-live.media.hugd.com/613c47f0ab0d4eaa98b21378d0d...
+https://hzcm-live.media.hugd.com/613c47f0ab0d4eaa98b21378d0db6ded/0051d31c9dd543a7825eea4e49675b2a.m3u8?auth_key=2277598059-0a5ebfa1c0dc4671b42a60810fc37039-0-fa625b7d1feab612062453c12e3c8887
 
 #EXTINF:-1 group-title='🎬 其他频道',湖州新闻综合（1个有效源）
 # 源1：http://hzcm-live.media.hugd.com/3f5fa7d64c7c46a38c6bd8ad35e8...
 http://hzcm-live.media.hugd.com/3f5fa7d64c7c46a38c6bd8ad35e836cc/65128273761b4731ae53729ea6dcf932.m3u8?auth_key=2277598215-9d21c15111244bea8d298c361d31a72e-0-d031198f58d44b0e91ba2e3f3b188865&fbl=
+
+#EXTINF:-1 group-title='🎬 其他频道',漫画解说（1个有效源）
+# 源1：https://www.goodiptv.club/douyu/5907076
+https://www.goodiptv.club/douyu/5907076
 
 #EXTINF:-1 group-title='🎬 其他频道',潢川综合（1个有效源）
 # 源1：http://live.dxhmt.cn:9081/tv/11526-1.m3u8
@@ -1867,18 +1781,6 @@ https://gcwbndali.v.myalicdn.com/gcwbnd/ipanda1000_2/index.m3u8
 # 源1：https://gcalic.v.myalicdn.com/gc/ljgcszsnkgc_1/index.m3u8
 https://gcalic.v.myalicdn.com/gc/ljgcszsnkgc_1/index.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',猫和老鼠（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11352879
-http://www.douzhicloud.site:35455/huya/11352879
-
-#EXTINF:-1 group-title='🎬 其他频道',玄幻电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11342414
-http://www.douzhicloud.site:35455/huya/11342414
-
-#EXTINF:-1 group-title='🎬 其他频道',王晶电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/11602058
-http://www.douzhicloud.site:35455/huya/11602058
-
 #EXTINF:-1 group-title='🎬 其他频道',玛纳斯综合（1个有效源）
 # 源1：http://218.84.127.245:1026/hls/main1/playlist.m3u8
 http://218.84.127.245:1026/hls/main1/playlist.m3u8
@@ -1911,21 +1813,37 @@ https://play.kankanlive.com/live/1711955176432990.m3u8
 # 源1：http://120.76.248.139/live/bfgd/4200000149.m3u8
 http://120.76.248.139/live/bfgd/4200000149.m3u8
 
+#EXTINF:-1 group-title='🎬 其他频道',电影八点档（1个有效源）
+# 源1：http://live.metshop.top/huya/880261?cdn=alicdn
+http://live.metshop.top/huya/880261?cdn=alicdn
+
 #EXTINF:-1 group-title='🎬 其他频道',电影刘德华（1个有效源）
 # 源1：http://live.metshop.top/huya/11342424?cdn=alicdn
 http://live.metshop.top/huya/11342424?cdn=alicdn
 
-#EXTINF:-1 group-title='🎬 其他频道',电影梁家辉（1个有效源）
-# 源1：http://live.metshop.top/huya/11342429?cdn=alicdn
-http://live.metshop.top/huya/11342429?cdn=alicdn
+#EXTINF:-1 group-title='🎬 其他频道',电影功夫片（1个有效源）
+# 源1：http://live.metshop.top/huya/11352941?cdn=alicdn
+http://live.metshop.top/huya/11352941?cdn=alicdn
+
+#EXTINF:-1 group-title='🎬 其他频道',电影动作电影（1个有效源）
+# 源1：http://live.metshop.top/huya/11602077?cdn=alicdn
+http://live.metshop.top/huya/11602077?cdn=alicdn
+
+#EXTINF:-1 group-title='🎬 其他频道',电影搞笑喜剧（1个有效源）
+# 源1：http://live.metshop.top/huya/11342423?cdn=alicdn
+http://live.metshop.top/huya/11342423?cdn=alicdn
+
+#EXTINF:-1 group-title='🎬 其他频道',电影犯罪片（1个有效源）
+# 源1：http://live.metshop.top/huya/11352974?cdn=alicdn
+http://live.metshop.top/huya/11352974?cdn=alicdn
 
 #EXTINF:-1 group-title='🎬 其他频道',电影谍战片（1个有效源）
 # 源1：http://live.metshop.top/huya/21059587?cdn=alicdn
 http://live.metshop.top/huya/21059587?cdn=alicdn
 
-#EXTINF:-1 group-title='🎬 其他频道',电影贺岁（1个有效源）
-# 源1：http://live.metshop.top/huya/11601971?cdn=alicdn
-http://live.metshop.top/huya/11601971?cdn=alicdn
+#EXTINF:-1 group-title='🎬 其他频道',电影高分动作（1个有效源）
+# 源1：http://live.metshop.top/huya/11352884?cdn=alicdn
+http://live.metshop.top/huya/11352884?cdn=alicdn
 
 #EXTINF:-1 group-title='🎬 其他频道',电视指南（1个有效源）
 # 源1：http://38.75.136.137:98/gslb/dsdqpub/dszn.m3u8?auth=testpub
@@ -1944,8 +1862,8 @@ http://live.dxhmt.cn:9081/tv/10185-1.m3u8
 http://stream8.jlntv.cn/baishan2/playlist.m3u8?zjild
 
 #EXTINF:-1 group-title='🎬 其他频道',盈江综合（1个有效源）
-# 源1：http://live.ynurl.com/video/s10016-yjtv1hd/index.m3u8
-http://live.ynurl.com/video/s10016-yjtv1hd/index.m3u8
+# 源1：http://live.ynurl.com/video/s10016-YJTV-2/index.m3u8?zyund
+http://live.ynurl.com/video/s10016-YJTV-2/index.m3u8?zyund
 
 #EXTINF:-1 group-title='🎬 其他频道',直播中国（1个有效源）
 # 源1：https://gcalic.v.myalicdn.com/gc/wgw05_1/index.m3u8?contenti...
@@ -1991,17 +1909,9 @@ http://live.dxhmt.cn:9081/tv/11081-1.m3u8
 # 源1：https://play.kankanlive.com/live/1680577080200944.m3u8
 https://play.kankanlive.com/live/1680577080200944.m3u8
 
-#EXTINF:-1 group-title='🎬 其他频道',笑看风云（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/29465858
-http://www.douzhicloud.site:35455/huya/29465858
-
 #EXTINF:-1 group-title='🎬 其他频道',第一财经（1个有效源）
 # 源1：http://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8
 http://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',精灵宝可梦（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/23749096
-http://www.douzhicloud.site:35455/huya/23749096
 
 #EXTINF:-1 group-title='🎬 其他频道',纪实科教（1个有效源）
 # 源1：http://120.76.248.139/live/bfgd/4200000113.m3u8
@@ -2026,10 +1936,6 @@ http://live.shaoxing.com.cn/video/s10001-sxtv1/index.m3u8?zzhed
 #EXTINF:-1 group-title='🎬 其他频道',绍兴电视台公共（1个有效源）
 # 源1：http://live.shaoxing.com.cn/video/s10001-sxtv2/index.m3u8?%E...
 http://live.shaoxing.com.cn/video/s10001-sxtv2/index.m3u8?%E5%85%B3%E6%B3%A8%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7[%E6%99%B4%E5%9B%AD]
-
-#EXTINF:-1 group-title='🎬 其他频道',经典剧集（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/douyu/6863367
-http://www.douzhicloud.site:35455/douyu/6863367
 
 #EXTINF:-1 group-title='🎬 其他频道',缙云新闻综合（1个有效源）
 # 源1：http://l.cztvcloud.com/channels/lantian/SXjinyun1/720p.m3u8
@@ -2119,10 +2025,6 @@ http://l.cztvcloud.com/channels/lantian/SXxiaoshan1/720p.m3u8
 # 源1：http://live.ynurl.com/video/s10019-mzdst/index.m3u8?zyund
 http://live.ynurl.com/video/s10019-mzdst/index.m3u8?zyund
 
-#EXTINF:-1 group-title='🎬 其他频道',蜡笔小新（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/bilibili/30837590
-http://www.douzhicloud.site:35455/bilibili/30837590
-
 #EXTINF:-1 group-title='🎬 其他频道',衡阳新闻综合（1个有效源）
 # 源1：https://liveplay-srs.voc.com.cn/hls/tv/183_554704.m3u8
 https://liveplay-srs.voc.com.cn/hls/tv/183_554704.m3u8
@@ -2150,14 +2052,6 @@ https://play.kankanlive.com/live/1683944827526991.m3u8
 #EXTINF:-1 group-title='🎬 其他频道',诸暨新闻综合（1个有效源）
 # 源1：https://l.cztvcloud.com/channels/lantian/SXzhuji3/720p.m3u8
 https://l.cztvcloud.com/channels/lantian/SXzhuji3/720p.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',谈判专家（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/yy/1382735560
-http://www.douzhicloud.site:35455/yy/1382735560
-
-#EXTINF:-1 group-title='🎬 其他频道',谍战电影（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/huya/21059585
-http://www.douzhicloud.site:35455/huya/21059585
 
 #EXTINF:-1 group-title='🎬 其他频道',象山新闻综合（1个有效源）
 # 源1：http://l.cztvcloud.com/channels/lantian/SXxiangshan1/720p.m3...
@@ -2247,6 +2141,10 @@ http://live.dxhmt.cn:9081/tv/11024-1.m3u8
 # 源1：https://m3u8channel-yc.yunxya.com/nmip-media/channellive/cha...
 https://m3u8channel-yc.yunxya.com/nmip-media/channellive/channel100103/playlist.m3u8
 
+#EXTINF:-1 group-title='🎬 其他频道',金川新闻综合（1个有效源）
+# 源1：http://live.jinchuanrmt.com:90/live/zhxw.m3u8?zsicd
+http://live.jinchuanrmt.com:90/live/zhxw.m3u8?zsicd
+
 #EXTINF:-1 group-title='🎬 其他频道',金平综合（1个有效源）
 # 源1：http://live.ynurl.com/video/s10041-JPTV/index.m3u8
 http://live.ynurl.com/video/s10041-JPTV/index.m3u8
@@ -2260,8 +2158,8 @@ http://stream4.liveyun.hoge.cn/ch02/sd/live.m3u8
 http://58.57.40.22:9901/tsfile/live/1059_1.m3u8
 
 #EXTINF:-1 group-title='🎬 其他频道',铜梁综合（1个有效源）
-# 源1：http://183.64.174.171:40123/ch1.m3u8?zzhongqd
-http://183.64.174.171:40123/ch1.m3u8?zzhongqd
+# 源1：http://183.64.174.171:40123/ch1.m3u8
+http://183.64.174.171:40123/ch1.m3u8
 
 #EXTINF:-1 group-title='🎬 其他频道',铜陵新闻综合（1个有效源）
 # 源1：https://ls.qingting.fm/live/21303/64k.m3u8
@@ -2282,6 +2180,10 @@ https://www.wxhcgbds.com:8081/channelTv/WXTV_1.m3u8?zshanxd
 #EXTINF:-1 group-title='🎬 其他频道',长宁综合（1个有效源）
 # 源1：http://cnpull.sccnfb.com:80/live/123456.m3u8
 http://cnpull.sccnfb.com:80/live/123456.m3u8
+
+#EXTINF:-1 group-title='🎬 其他频道',长影频道（1个有效源）
+# 源1：http://tpc.x3322.net:9901/tsfile/live/1010_1.m3u8
+http://tpc.x3322.net:9901/tsfile/live/1010_1.m3u8
 
 #EXTINF:-1 group-title='🎬 其他频道',长沙新闻综合（1个有效源）
 # 源1：http://ls.qingting.fm/live/4877.m3u8
@@ -2320,12 +2222,12 @@ http://qcfile.qcrmt.com/nmip-media/channellive/channel100933/playlist.m3u8
 http://l.cztvcloud.com/channels/lantian/SXqingtian1/720p.m3u8
 
 #EXTINF:-1 group-title='🎬 其他频道',靖天戏剧（1个有效源）
-# 源1：http://220.135.64.124:5050/li-4gtv-4gtv058/index.m3u8?proxy=...
-http://220.135.64.124:5050/li-4gtv-4gtv058/index.m3u8?proxy=true
+# 源1：http://220.135.64.124:5050/4gtv-4gtv058/index.m3u8?proxy=tru...
+http://220.135.64.124:5050/4gtv-4gtv058/index.m3u8?proxy=true
 
 #EXTINF:-1 group-title='🎬 其他频道',靖天映画（1个有效源）
-# 源1：http://nmk.ioapk.com:5050/4gtv-4gtv055/index.m3u8?proxy=true
-http://nmk.ioapk.com:5050/4gtv-4gtv055/index.m3u8?proxy=true
+# 源1：http://220.135.64.124:5050/4gtv-4gtv055/index.m3u8?proxy=tru...
+http://220.135.64.124:5050/4gtv-4gtv055/index.m3u8?proxy=true
 
 #EXTINF:-1 group-title='🎬 其他频道',靖宇（1个有效源）
 # 源1：http://stream8.jlntv.cn/jytv/sd/live.m3u8?zjild
@@ -2382,10 +2284,6 @@ http://38.75.136.137:98/gslb/dsdqpub/gefwq.m3u8?auth=testpub
 #EXTINF:-1 group-title='🎬 其他频道',鸣沙山（1个有效源）
 # 源1：https://gcalic.v.myalicdn.com/gc/dhyyqst_1/index.m3u8
 https://gcalic.v.myalicdn.com/gc/dhyyqst_1/index.m3u8
-
-#EXTINF:-1 group-title='🎬 其他频道',鹿鼎记（1个有效源）
-# 源1：http://www.douzhicloud.site:35455/yy/28265277
-http://www.douzhicloud.site:35455/yy/28265277
 
 #EXTINF:-1 group-title='🎬 其他频道',麻栗坡电视台（1个有效源）
 # 源1：http://tvdrs.wsrtv.com.cn:8100/channellive/mlptv.flv?zyund
@@ -2469,9 +2367,9 @@ http://jsmov2.a.yximgs.com/bs3/video-hls/5203346449046555193_hlsb.m3u8
 
 ########################################
 # ================================= 汇总统计 =================================
-# 生成时间    ：2026-01-30 16:03:23
-# 总有效频道  ：605 个
-# 总有效源数  ：614 个
-# 分组明细    ：央视频道27个 | 卫视频道42个 | 地方频道109个 | 其他频道427个
-# 缓存说明    ：已保存614个有效源到本地缓存，下次运行无需重复验证
+# 生成时间    ：2026-01-30 18:02:34
+# 总有效频道  ：580 个
+# 总有效源数  ：588 个
+# 分组明细    ：央视频道27个 | 卫视频道41个 | 地方频道110个 | 其他频道402个
+# 缓存说明    ：已保存588个有效源到本地缓存，下次运行无需重复验证
 # ================================================================================
