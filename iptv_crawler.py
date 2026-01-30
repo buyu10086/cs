@@ -11,8 +11,8 @@ from pathlib import Path  # 新增：处理文件路径更安全
 # -------------------------- 全局配置（集中管理，更易修改，补充注释） --------------------------
 # 1. 数据源配置
 IPTV_SOURCE_URLS = [
-    "https://raw.githubusercontent.com/TianmuTNT/iptv/refs/heads/main/iptv.m3u",
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
+    "https://raw.githubusercontent.com/kakaxi-1/IPTV/refs/heads/main/ipv4.txt",
     "https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
     "https://raw.githubusercontent.com/mytv-android/China-TV-Live-M3U8/refs/heads/main/webview.m3u"
 ]
