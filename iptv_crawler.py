@@ -16,6 +16,13 @@ IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
     "https://raw.githubusercontent.com/8080713/iptv-api666/refs/heads/main/output/result.m3u",
     "https://raw.githubusercontent.com/Guovin/iptv-api/refs/heads/gd/output/result.m3u",
+    "http://wx.thego.cn/ak.m3u
+    "https://raw.githubusercontent.com/BurningC4/Chinese-IPTV/master/TV-IPV4.m3u",
+    "https://raw.githubusercontent.com/xzw832/cmys/refs/heads/main/S_CCTV.txt",
+    "https://raw.githubusercontent.com/xzw832/cmys/refs/heads/main/S_weishi.txt",
+    "https://raw.githubusercontent.com/YueChan/Live/main/APTV.m3u",
+    "http://aktv.top/live.m3u",
+    "https://raw.githubusercontent.com/Kimentanm/aptv/master/m3u/iptv.m3u",
     "https://raw.githubusercontent.com/audyfan/tv/refs/heads/main/live.m3u"
 ]
 
