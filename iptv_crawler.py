@@ -11,8 +11,8 @@ import logging
 import multiprocessing
 from typing import Tuple, List, Dict, Optional
 
-# -------------------------- 全局配置（修复数据源提取+URL过滤） --------------------------
-# 1. 数据源配置（保留原有效源）
+# -------------------------- 全局配置（新增CCTV排序开关） --------------------------
+# 1. 数据源配置
 IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
     "https://raw.githubusercontent.com/kakaxi-1/IPTV/refs/heads/main/ipv4.txt",
@@ -24,13 +24,13 @@ IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/audyfan/tv/refs/heads/main/live.m3u"
 ]
 
-# 2. 效率核心配置（放宽部分限制）
-TIMEOUT_VERIFY = 3.0  # 适当增加验证超时
+# 2. 效率核心配置
+TIMEOUT_VERIFY = 3.0
 TIMEOUT_FETCH = 10
 MIN_VALID_CHANNELS = 1
-MAX_THREADS_VERIFY_BASE = 20  # 减少验证线程数，避免网络拥塞
+MAX_THREADS_VERIFY_BASE = 20
 MAX_THREADS_FETCH_BASE = 4
-MIN_DELAY = 0.1  # 适当增加延迟，避免反爬拦截
+MIN_DELAY = 0.1
 MAX_DELAY = 0.3
 DISABLE_SSL_VERIFY = True
 BATCH_PROCESS_SIZE = 50
@@ -43,8 +43,9 @@ CACHE_EXPIRE_HOURS = 24
 REMOVE_DUPLICATE_CHANNELS = True
 REMOVE_LOCAL_URLS = True
 
-# 4. 播放端专属美化配置
+# 4. 播放端+排序专属配置（新增CCTV排序）
 CHANNEL_SORT_ENABLE = True
+CCTV_SORT_ENABLE = True  # 开启CCTV频道数字排序
 GROUP_SECONDARY_CCTV = "📺 央视频道-CCTV1-17"
 GROUP_SECONDARY_WEISHI = "📡 卫视频道-一线/地方"
 GROUP_SECONDARY_LOCAL = "🏙️ 地方频道-各省市区"
@@ -66,13 +67,14 @@ SPEED_MARK_3 = "▶普通"
 SPEED_LEVEL_1 = 50
 SPEED_LEVEL_2 = 150
 
-# -------------------------- 底层优化：修复正则+保留M3U8成对关系 --------------------------
-# 预编译正则（放宽频道名提取条件）
+# -------------------------- 底层优化：新增CCTV数字提取正则 --------------------------
+# 预编译正则（新增CCTV数字提取）
 RE_CHANNEL_NAME = re.compile(r',\s*([^,]+)\s*$', re.IGNORECASE)
 RE_TVG_NAME = re.compile(r'tvg-name="([^"]+)"', re.IGNORECASE)
 RE_TITLE_NAME = re.compile(r'title="([^"]+)"', re.IGNORECASE)
-RE_OTHER_NAME = re.compile(r'([^\s]+)$', re.IGNORECASE)  # 新增：提取行尾内容作为频道名
+RE_OTHER_NAME = re.compile(r'([^\s]+)$', re.IGNORECASE)
 RE_URL_DOMAIN = re.compile(r'https?://([^/]+)/?(.*)')
+RE_CCTV_NUMBER = re.compile(r'CCTV(\d+)', re.IGNORECASE)  # 提取CCTV后的数字
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "192.168.", "10.", "172.", "169.254."}
 VALID_SUFFIX = {".m3u8", ".ts", ".flv", ".rtmp", ".rtsp", ".m4s"}
 VALID_CONTENT_TYPE = {"video/", "application/x-mpegurl", "audio/", "application/octet-stream"}
@@ -113,7 +115,7 @@ def init_global_session():
     adapter = requests.adapters.HTTPAdapter(
         pool_connections=20,
         pool_maxsize=50,
-        max_retries=2,  # 增加重试次数，提升抓取成功率
+        max_retries=2,
         pool_block=False
     )
     session.mount("http://", adapter)
@@ -131,7 +133,7 @@ def init_global_session():
 
 GLOBAL_SESSION = init_global_session()
 
-# -------------------------- 工具函数（修复频道名提取+URL过滤） --------------------------
+# -------------------------- 工具函数（新增CCTV排序函数） --------------------------
 def add_random_delay():
     time.sleep(random.uniform(MIN_DELAY, MAX_DELAY))
 
@@ -148,14 +150,12 @@ def filter_invalid_urls(url: str) -> bool:
     return True
 
 def safe_extract_channel_name(line: str) -> Optional[str]:
-    """修复：放宽频道名提取条件，兼容更多数据源格式"""
     if not line.startswith("#EXTINF:"):
         return None
-    # 尝试多种正则提取，确保能拿到频道名
     match = RE_CHANNEL_NAME.search(line) or RE_TVG_NAME.search(line) or RE_TITLE_NAME.search(line) or RE_OTHER_NAME.search(line)
     if match:
         name = match.group(1).strip()
-        return name if name else "未知频道"  # 无法识别时返回“未知频道”，避免丢失任务
+        return name if name else "未知频道"
     return "未知频道"
 
 def get_player_channel_group(channel_name: str) -> str:
@@ -172,6 +172,16 @@ def get_player_channel_group(channel_name: str) -> str:
         if p in channel_name:
             return GROUP_SECONDARY_LOCAL
     return GROUP_SECONDARY_OTHER
+
+def get_cctv_sort_key(channel_name: str) -> Tuple[int, str]:
+    """新增：CCTV频道排序key（数字优先，再按名称）"""
+    if not CCTV_SORT_ENABLE or "CCTV" not in channel_name.upper():
+        return (999, channel_name.upper())  # 非CCTV频道排后面，按名称排序
+    match = RE_CCTV_NUMBER.search(channel_name.upper())
+    if match:
+        number = int(match.group(1))
+        return (number, channel_name.upper())  # CCTV按数字升序
+    return (999, channel_name.upper())  # 无数字的CCTV频道排最后
 
 def get_speed_mark(response_time: float) -> str:
     if response_time == 0.0:
@@ -259,14 +269,13 @@ def save_persist_cache():
     except Exception as e:
         logger.error(f"保存持久缓存失败：{str(e)[:50]}")
 
-# -------------------------- 核心功能（修复数据源提取+保留M3U8成对关系） --------------------------
+# -------------------------- 核心功能 --------------------------
 def fetch_single_source(url: str, idx: int) -> List[str]:
     add_random_delay()
     try:
         with GLOBAL_SESSION.get(url, timeout=TIMEOUT_FETCH, stream=True) as resp:
             resp.raise_for_status()
             resp.encoding = resp.apparent_encoding or "utf-8"
-            # 保留原始行顺序（修复：不做全局去重，避免破坏M3U8成对关系）
             lines = [line.strip() for line in resp.iter_lines(decode_unicode=True) if line.strip()]
             return lines
     except Exception as e:
@@ -281,7 +290,7 @@ def fetch_raw_data_parallel() -> List[str]:
         futures = [executor.submit(fetch_single_source, url, idx) for idx, url in enumerate(IPTV_SOURCE_URLS)]
         for future in as_completed(futures):
             all_lines.extend(future.result())
-    logger.info(f"抓取完成 → 总有效行：{len(all_lines):,}（保留原始顺序，避免破坏M3U8结构）")
+    logger.info(f"抓取完成 → 总有效行：{len(all_lines):,}")
     return all_lines
 
 def verify_single_url(url: str, channel_name: str) -> Optional[Tuple[str, str, float]]:
@@ -312,17 +321,15 @@ def verify_single_url(url: str, channel_name: str) -> Optional[Tuple[str, str, f
         return None
 
 def extract_verify_tasks(raw_lines: List[str]) -> List[Tuple[str, str]]:
-    """修复：保留M3U8中#EXTINF和URL的成对关系，避免任务数为0"""
     global task_list
     task_list.clear()
     temp_channel = None
     for line in raw_lines:
         if line.startswith("#EXTINF:"):
-            temp_channel = safe_extract_channel_name(line)  # 放宽提取条件
+            temp_channel = safe_extract_channel_name(line)
         elif temp_channel and filter_invalid_urls(line):
             task_list.append((line, temp_channel))
             temp_channel = None
-    # 仅对URL去重，保留频道名对应关系
     unique_urls = set()
     unique_tasks = []
     for url, chan in task_list:
@@ -330,7 +337,7 @@ def extract_verify_tasks(raw_lines: List[str]) -> List[Tuple[str, str]]:
             unique_urls.add(url)
             unique_tasks.append((url, chan))
     task_list = unique_tasks
-    logger.info(f"提取验证任务 → 总任务数：{len(task_list):,}（已去重URL，保留频道对应关系）")
+    logger.info(f"提取验证任务 → 总任务数：{len(task_list):,}")
     return task_list
 
 def verify_tasks_parallel(tasks: List[Tuple[str, str]]):
@@ -353,7 +360,7 @@ def verify_tasks_parallel(tasks: List[Tuple[str, str]]):
     channel_sources_map = {k: v for k, v in channel_sources_map.items() if v}
     logger.info(f"有效频道筛选 → 剩余有效频道：{len(channel_sources_map):,}个")
 
-# -------------------------- 播放端M3U8生成 --------------------------
+# -------------------------- 核心：生成M3U8（集成CCTV排序） --------------------------
 def generate_player_m3u8() -> bool:
     if not channel_sources_map:
         logger.error("无有效频道，无法生成M3U8（可尝试更换数据源）")
@@ -368,15 +375,25 @@ def generate_player_m3u8() -> bool:
         sources_sorted = sorted(sources, key=lambda x: x[1])[:3]
         group = get_player_channel_group(chan_name)
         player_groups[group].append((chan_name, sources_sorted))
-    for group in player_groups:
-        player_groups[group].sort(key=lambda x: x[0])
+    
+    # 核心：按自定义key排序（CCTV数字升序，其他按名称）
+    for group_name, channels in player_groups.items():
+        if group_name == GROUP_SECONDARY_CCTV and CCTV_SORT_ENABLE:
+            # CCTV分组按数字升序排序
+            channels.sort(key=lambda x: get_cctv_sort_key(x[0]))
+            logger.info(f"CCTV频道排序完成 → 顺序：{[chan[0] for chan in channels]}")
+        else:
+            # 其他分组按名称升序排序
+            channels.sort(key=lambda x: x[0].upper())
+    
+    # 过滤无有效频道的分组
     player_groups = {k: v for k, v in player_groups.items() if v}
 
     m3u8_content = [
         "#EXTM3U x-tvg-url=https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml",
         GROUP_SEPARATOR,
-        f"# 📺 IPTV直播源 - 修复版 | {GLOBAL_UPDATE_TIME_FULL}",
-        f"# 🚀 适配：保留M3U8成对关系 | 放宽频道名提取 | 增加重试",
+        f"# 📺 IPTV直播源 - CCTV数字排序版 | {GLOBAL_UPDATE_TIME_FULL}",
+        f"# 🚀 特色：CCTV1→CCTV2→...→CCTV17 数字升序 | 其他频道名称排序",
         f"# 🎯 兼容：TVBox/Kodi/完美视频/极光TV",
         GROUP_SEPARATOR,
         ""
@@ -405,6 +422,7 @@ def generate_player_m3u8() -> bool:
     m3u8_content.extend([
         f"# 📊 汇总 | {GLOBAL_UPDATE_TIME_FULL}",
         f"# 频道：{total_channels}个 | 源：{total_sources}个 | 成功率：{round(total_sources/len(task_list)*100,1) if task_list else 100}%",
+        f"# 排序说明：CCTV频道按数字升序（1→2→...→17），其他频道按名称排序",
         f"# 提示：优先播放第一个URL，卡顿切换其他源",
         GROUP_SEPARATOR
     ])
@@ -413,6 +431,7 @@ def generate_player_m3u8() -> bool:
         with open(OUTPUT_FILE, "w", encoding="utf-8", buffering=1024*1024) as f:
             f.write("\n".join(m3u8_content))
         logger.info(f"✅ M3U8生成完成 → {OUTPUT_FILE}")
+        logger.info(f"📺 CCTV频道排序结果：{[chan[0] for chan in player_groups.get(GROUP_SECONDARY_CCTV, [])]}")
         return True
     except Exception as e:
         logger.error(f"写入失败：{str(e)[:50]}")
@@ -422,10 +441,11 @@ def generate_player_m3u8() -> bool:
 if __name__ == "__main__":
     start_total = time.time()
     logger.info("="*60)
-    logger.info("IPTV直播源抓取工具 - 修复版（解决任务数为0的问题）")
+    logger.info("IPTV直播源抓取工具 - 最终版（CCTV数字排序+播放端美化）")
     logger.info("="*60)
     logger.info(f"启动 | CPU：{CPU_CORES}核 | 验证线程：{MAX_THREADS_VERIFY} | 抓取线程：{MAX_THREADS_FETCH}")
     logger.info(f"更新时间 | 完整：{GLOBAL_UPDATE_TIME_FULL} | 精简：{GLOBAL_UPDATE_TIME_SHORT}")
+    logger.info(f"排序配置 | CCTV数字排序：{CCTV_SORT_ENABLE} | 其他频道名称排序：{CHANNEL_SORT_ENABLE}")
     logger.info("="*60)
 
     load_persist_cache()
