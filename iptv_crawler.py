@@ -659,4 +659,4 @@ if __name__ == "__main__":
     logger.info("="*60)
     if generate_success:
         logger.info(f"执行完成 | 总耗时：{total_time}秒 | 生成文件：{OUTPUT_FILE}（已更新）")
-        logger.info(f
+        logger.info(f)
