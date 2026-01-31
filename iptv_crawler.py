@@ -11,7 +11,7 @@ import logging
 import multiprocessing
 from typing import Tuple, List, Dict, Optional
 
-# -------------------------- 全局配置（新增CCTV排序开关） --------------------------
+# -------------------------- 全局配置（新增多类型排序开关） --------------------------
 # 1. 数据源配置
 IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
@@ -43,13 +43,23 @@ CACHE_EXPIRE_HOURS = 24
 REMOVE_DUPLICATE_CHANNELS = True
 REMOVE_LOCAL_URLS = True
 
-# 4. 播放端+排序专属配置（新增CCTV排序）
+# 4. 排序+播放端配置（新增多类型排序开关）
 CHANNEL_SORT_ENABLE = True
-CCTV_SORT_ENABLE = True  # 开启CCTV频道数字排序
+CCTV_SORT_ENABLE = True          # CCTV按数字排序
+WEISHI_SORT_ENABLE = True        # 卫视频道按热度+拼音排序
+LOCAL_SORT_ENABLE = True         # 地方频道按直辖市+省份拼音排序
+FEATURE_SORT_ENABLE = True       # 特色频道按类型+名称排序
+DIGITAL_SORT_ENABLE = True       # 数字频道按数字排序
+
+# 分组配置
 GROUP_SECONDARY_CCTV = "📺 央视频道-CCTV1-17"
 GROUP_SECONDARY_WEISHI = "📡 卫视频道-一线/地方"
 GROUP_SECONDARY_LOCAL = "🏙️ 地方频道-各省市区"
-GROUP_SECONDARY_OTHER = "🎬 其他频道-特色/数字"
+GROUP_SECONDARY_FEATURE = "🎬 特色频道-电影/体育/少儿"
+GROUP_SECONDARY_DIGITAL = "🔢 数字频道-按数字排序"
+GROUP_SECONDARY_OTHER = "🌀 其他频道-综合"
+
+# 播放端美化配置
 PLAYER_TITLE_PREFIX = True
 PLAYER_TITLE_SHOW_SPEED = True
 PLAYER_TITLE_SHOW_NUM = True
@@ -67,14 +77,39 @@ SPEED_MARK_3 = "▶普通"
 SPEED_LEVEL_1 = 50
 SPEED_LEVEL_2 = 150
 
-# -------------------------- 底层优化：新增CCTV数字提取正则 --------------------------
-# 预编译正则（新增CCTV数字提取）
+# -------------------------- 排序核心配置（新增多类型排序规则） --------------------------
+# 一线卫视频道（优先级最高）
+TOP_WEISHI = ["湖南卫视", "浙江卫视", "江苏卫视", "东方卫视", "北京卫视", "安徽卫视", "山东卫视", "广东卫视"]
+# 直辖市（地方频道优先级最高）
+DIRECT_CITIES = ["北京", "上海", "天津", "重庆"]
+# 省份拼音首字母排序（地方频道第二优先级）
+PROVINCE_PINYIN_ORDER = [
+    "安徽", "福建", "甘肃", "广东", "广西", "贵州", "海南", "河北", "河南", "黑龙江",
+    "湖北", "湖南", "吉林", "江苏", "江西", "辽宁", "内蒙古", "宁夏", "青海", "山东",
+    "山西", "陕西", "上海", "四川", "台湾", "天津", "西藏", "新疆", "云南", "浙江",
+    "重庆", "北京"
+]
+# 特色频道类型排序（优先级）
+FEATURE_TYPE_ORDER = [
+    ("电影", ["电影", "影院", "影视"]),
+    ("体育", ["体育", "赛事", "奥运", "足球", "篮球"]),
+    ("少儿", ["少儿", "卡通", "动画", "宝贝"]),
+    ("财经", ["财经", "股市", "金融", "理财"]),
+    ("综艺", ["综艺", "娱乐", "选秀", "晚会"]),
+    ("新闻", ["新闻", "资讯", "时事"]),
+    ("纪录片", ["纪录片", "纪实", "纪录"]),
+    ("音乐", ["音乐", "歌曲", "MTV"])
+]
+
+# -------------------------- 底层优化：正则+全局变量 --------------------------
+# 预编译正则（新增数字频道提取）
 RE_CHANNEL_NAME = re.compile(r',\s*([^,]+)\s*$', re.IGNORECASE)
 RE_TVG_NAME = re.compile(r'tvg-name="([^"]+)"', re.IGNORECASE)
 RE_TITLE_NAME = re.compile(r'title="([^"]+)"', re.IGNORECASE)
 RE_OTHER_NAME = re.compile(r'([^\s]+)$', re.IGNORECASE)
 RE_URL_DOMAIN = re.compile(r'https?://([^/]+)/?(.*)')
-RE_CCTV_NUMBER = re.compile(r'CCTV(\d+)', re.IGNORECASE)  # 提取CCTV后的数字
+RE_CCTV_NUMBER = re.compile(r'CCTV(\d+)', re.IGNORECASE)
+RE_DIGITAL_NUMBER = re.compile(r'^(\d+)(频道|台)?$', re.IGNORECASE)  # 提取数字频道
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "192.168.", "10.", "172.", "169.254."}
 VALID_SUFFIX = {".m3u8", ".ts", ".flv", ".rtmp", ".rtsp", ".m4s"}
 VALID_CONTENT_TYPE = {"video/", "application/x-mpegurl", "audio/", "application/octet-stream"}
@@ -133,7 +168,7 @@ def init_global_session():
 
 GLOBAL_SESSION = init_global_session()
 
-# -------------------------- 工具函数（新增CCTV排序函数） --------------------------
+# -------------------------- 工具函数（新增多类型排序逻辑） --------------------------
 def add_random_delay():
     time.sleep(random.uniform(MIN_DELAY, MAX_DELAY))
 
@@ -158,31 +193,99 @@ def safe_extract_channel_name(line: str) -> Optional[str]:
         return name if name else "未知频道"
     return "未知频道"
 
-def get_player_channel_group(channel_name: str) -> str:
-    if not channel_name:
-        return GROUP_SECONDARY_OTHER
+def get_channel_subgroup(channel_name: str) -> str:
+    """新增：细分频道分组（数字/特色/其他）"""
+    # 数字频道判断
+    if DIGITAL_SORT_ENABLE and RE_DIGITAL_NUMBER.match(channel_name):
+        return GROUP_SECONDARY_DIGITAL
+    # 特色频道判断
+    if FEATURE_SORT_ENABLE:
+        for feature_type, keywords in FEATURE_TYPE_ORDER:
+            if any(keyword in channel_name for keyword in keywords):
+                return GROUP_SECONDARY_FEATURE
+    # 原有分组判断
     if "CCTV" in channel_name or "央视" in channel_name or "中央" in channel_name:
         return GROUP_SECONDARY_CCTV
     if "卫视" in channel_name:
         return GROUP_SECONDARY_WEISHI
-    province = {"北京", "上海", "天津", "重庆", "河北", "山西", "辽宁", "吉林", "黑龙江",
-                "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南",
-                "广东", "广西", "海南", "四川", "贵州", "云南", "陕西", "甘肃", "青海"}
-    for p in province:
-        if p in channel_name:
+    for area in DIRECT_CITIES + PROVINCE_PINYIN_ORDER:
+        if area in channel_name and "卫视" not in channel_name:
             return GROUP_SECONDARY_LOCAL
+    # 其他频道
     return GROUP_SECONDARY_OTHER
 
+# -------------------------- 各类型频道排序函数 --------------------------
 def get_cctv_sort_key(channel_name: str) -> Tuple[int, str]:
-    """新增：CCTV频道排序key（数字优先，再按名称）"""
+    """CCTV频道排序：数字升序"""
     if not CCTV_SORT_ENABLE or "CCTV" not in channel_name.upper():
-        return (999, channel_name.upper())  # 非CCTV频道排后面，按名称排序
+        return (999, channel_name.upper())
     match = RE_CCTV_NUMBER.search(channel_name.upper())
-    if match:
-        number = int(match.group(1))
-        return (number, channel_name.upper())  # CCTV按数字升序
-    return (999, channel_name.upper())  # 无数字的CCTV频道排最后
+    return (int(match.group(1)) if match else 999, channel_name.upper())
 
+def get_weishi_sort_key(channel_name: str) -> Tuple[int, str]:
+    """卫视频道排序：一线卫视优先→省份拼音排序"""
+    if not WEISHI_SORT_ENABLE:
+        return (999, channel_name.upper())
+    # 一线卫视按配置顺序排序
+    for idx, top_ws in enumerate(TOP_WEISHI):
+        if top_ws in channel_name:
+            return (idx, channel_name.upper())
+    # 其他卫视按省份拼音排序
+    for idx, province in enumerate(PROVINCE_PINYIN_ORDER):
+        if province in channel_name:
+            return (len(TOP_WEISHI) + idx, channel_name.upper())
+    # 无匹配省份的卫视排最后
+    return (len(TOP_WEISHI) + len(PROVINCE_PINYIN_ORDER), channel_name.upper())
+
+def get_local_sort_key(channel_name: str) -> Tuple[int, str]:
+    """地方频道排序：直辖市优先→省份拼音排序"""
+    if not LOCAL_SORT_ENABLE:
+        return (999, channel_name.upper())
+    # 直辖市优先
+    for idx, city in enumerate(DIRECT_CITIES):
+        if city in channel_name:
+            return (idx, channel_name.upper())
+    # 省份按拼音排序
+    for idx, province in enumerate(PROVINCE_PINYIN_ORDER):
+        if province in channel_name and province not in DIRECT_CITIES:
+            return (len(DIRECT_CITIES) + idx, channel_name.upper())
+    # 其他地方频道排最后
+    return (len(DIRECT_CITIES) + len(PROVINCE_PINYIN_ORDER), channel_name.upper())
+
+def get_feature_sort_key(channel_name: str) -> Tuple[int, str]:
+    """特色频道排序：类型优先→名称字母排序"""
+    if not FEATURE_SORT_ENABLE:
+        return (999, channel_name.upper())
+    # 按特色类型排序
+    for idx, (feature_type, keywords) in enumerate(FEATURE_TYPE_ORDER):
+        if any(keyword in channel_name for keyword in keywords):
+            return (idx, channel_name.upper())
+    # 其他特色频道排最后
+    return (len(FEATURE_TYPE_ORDER), channel_name.upper())
+
+def get_digital_sort_key(channel_name: str) -> Tuple[int, str]:
+    """数字频道排序：数字升序"""
+    if not DIGITAL_SORT_ENABLE:
+        return (999, channel_name.upper())
+    match = RE_DIGITAL_NUMBER.match(channel_name)
+    return (int(match.group(1)) if match else 999, channel_name.upper())
+
+def get_channel_sort_key(group_name: str, channel_name: str) -> Tuple[int, str]:
+    """统一排序入口：根据分组调用对应排序函数"""
+    if group_name == GROUP_SECONDARY_CCTV:
+        return get_cctv_sort_key(channel_name)
+    elif group_name == GROUP_SECONDARY_WEISHI:
+        return get_weishi_sort_key(channel_name)
+    elif group_name == GROUP_SECONDARY_LOCAL:
+        return get_local_sort_key(channel_name)
+    elif group_name == GROUP_SECONDARY_FEATURE:
+        return get_feature_sort_key(channel_name)
+    elif group_name == GROUP_SECONDARY_DIGITAL:
+        return get_digital_sort_key(channel_name)
+    else:
+        return (999, channel_name.upper())
+
+# -------------------------- 其他工具函数 --------------------------
 def get_speed_mark(response_time: float) -> str:
     if response_time == 0.0:
         return SPEED_MARK_CACHE
@@ -215,14 +318,19 @@ def smart_truncate_url(url: str) -> str:
 def build_player_title(channel_name: str, sources: List[Tuple[str, float]]) -> str:
     title_parts = []
     if PLAYER_TITLE_PREFIX:
-        if GROUP_SECONDARY_CCTV in get_player_channel_group(channel_name):
+        subgroup = get_channel_subgroup(channel_name)
+        if subgroup == GROUP_SECONDARY_CCTV:
             title_parts.append("📺")
-        elif GROUP_SECONDARY_WEISHI in get_player_channel_group(channel_name):
+        elif subgroup == GROUP_SECONDARY_WEISHI:
             title_parts.append("📡")
-        elif GROUP_SECONDARY_LOCAL in get_player_channel_group(channel_name):
+        elif subgroup == GROUP_SECONDARY_LOCAL:
             title_parts.append("🏙️")
-        else:
+        elif subgroup == GROUP_SECONDARY_FEATURE:
             title_parts.append("🎬")
+        elif subgroup == GROUP_SECONDARY_DIGITAL:
+            title_parts.append("🔢")
+        else:
+            title_parts.append("🌀")
     title_parts.append(channel_name)
     if PLAYER_TITLE_SHOW_NUM:
         title_parts.append(f"{len(sources)}源")
@@ -269,7 +377,7 @@ def save_persist_cache():
     except Exception as e:
         logger.error(f"保存持久缓存失败：{str(e)[:50]}")
 
-# -------------------------- 核心功能 --------------------------
+# -------------------------- 核心功能（抓取+验证） --------------------------
 def fetch_single_source(url: str, idx: int) -> List[str]:
     add_random_delay()
     try:
@@ -360,45 +468,51 @@ def verify_tasks_parallel(tasks: List[Tuple[str, str]]):
     channel_sources_map = {k: v for k, v in channel_sources_map.items() if v}
     logger.info(f"有效频道筛选 → 剩余有效频道：{len(channel_sources_map):,}个")
 
-# -------------------------- 核心：生成M3U8（集成CCTV排序） --------------------------
+# -------------------------- 核心：生成排序后的M3U8 --------------------------
 def generate_player_m3u8() -> bool:
     if not channel_sources_map:
         logger.error("无有效频道，无法生成M3U8（可尝试更换数据源）")
         return False
+    # 按细分分组整理频道
     player_groups = {
         GROUP_SECONDARY_CCTV: [],
         GROUP_SECONDARY_WEISHI: [],
         GROUP_SECONDARY_LOCAL: [],
+        GROUP_SECONDARY_FEATURE: [],
+        GROUP_SECONDARY_DIGITAL: [],
         GROUP_SECONDARY_OTHER: []
     }
     for chan_name, sources in channel_sources_map.items():
         sources_sorted = sorted(sources, key=lambda x: x[1])[:3]
-        group = get_player_channel_group(chan_name)
-        player_groups[group].append((chan_name, sources_sorted))
+        subgroup = get_channel_subgroup(chan_name)
+        player_groups[subgroup].append((chan_name, sources_sorted))
     
-    # 核心：按自定义key排序（CCTV数字升序，其他按名称）
+    # 各分组按对应规则排序
     for group_name, channels in player_groups.items():
-        if group_name == GROUP_SECONDARY_CCTV and CCTV_SORT_ENABLE:
-            # CCTV分组按数字升序排序
-            channels.sort(key=lambda x: get_cctv_sort_key(x[0]))
-            logger.info(f"CCTV频道排序完成 → 顺序：{[chan[0] for chan in channels]}")
-        else:
-            # 其他分组按名称升序排序
-            channels.sort(key=lambda x: x[0].upper())
+        if channels:
+            channels.sort(key=lambda x: get_channel_sort_key(group_name, x[0]))
+            logger.info(f"{group_name}排序完成 → 顺序：{[chan[0] for chan in channels[:10]]}...")  # 只打印前10个
     
     # 过滤无有效频道的分组
     player_groups = {k: v for k, v in player_groups.items() if v}
 
+    # 生成M3U8内容
     m3u8_content = [
         "#EXTM3U x-tvg-url=https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml",
         GROUP_SEPARATOR,
-        f"# 📺 IPTV直播源 - CCTV数字排序版 | {GLOBAL_UPDATE_TIME_FULL}",
-        f"# 🚀 特色：CCTV1→CCTV2→...→CCTV17 数字升序 | 其他频道名称排序",
+        f"# 📺 IPTV直播源 - 全类型排序版 | {GLOBAL_UPDATE_TIME_FULL}",
+        f"# 🚀 排序规则：",
+        f"#   央视频道：CCTV1→CCTV2→...→CCTV17（数字升序）",
+        f"#   卫视频道：一线卫视优先→省份拼音排序",
+        f"#   地方频道：直辖市优先→省份拼音排序",
+        f"#   特色频道：电影→体育→少儿→财经→综艺（类型优先）",
+        f"#   数字频道：1→2→3→...→10→11（数字升序）",
         f"# 🎯 兼容：TVBox/Kodi/完美视频/极光TV",
         GROUP_SEPARATOR,
         ""
     ]
 
+    # 写入各分组内容
     for group_name, channels in player_groups.items():
         m3u8_content.extend([
             f"# 📌 分组：{group_name} | 频道数：{len(channels)} | 更新：{GLOBAL_UPDATE_TIME_FULL}",
@@ -417,21 +531,21 @@ def generate_player_m3u8() -> bool:
         m3u8_content.append(GROUP_SEPARATOR)
         m3u8_content.append("")
 
+    # 汇总统计
     total_channels = sum(len(v) for v in player_groups.values())
     total_sources = sum(len(s[1]) for v in player_groups.values() for s in v)
     m3u8_content.extend([
         f"# 📊 汇总 | {GLOBAL_UPDATE_TIME_FULL}",
-        f"# 频道：{total_channels}个 | 源：{total_sources}个 | 成功率：{round(total_sources/len(task_list)*100,1) if task_list else 100}%",
-        f"# 排序说明：CCTV频道按数字升序（1→2→...→17），其他频道按名称排序",
-        f"# 提示：优先播放第一个URL，卡顿切换其他源",
+        f"# 总频道数：{total_channels}个 | 总有效源：{total_sources}个 | 验证成功率：{round(total_sources/len(task_list)*100,1) if task_list else 100}%",
+        f"# 排序说明：所有频道按类型分组排序，播放器内查找更高效",
+        f"# 提示：优先播放第一个URL（最快），卡顿可切换后续备用源",
         GROUP_SEPARATOR
     ])
 
     try:
         with open(OUTPUT_FILE, "w", encoding="utf-8", buffering=1024*1024) as f:
             f.write("\n".join(m3u8_content))
-        logger.info(f"✅ M3U8生成完成 → {OUTPUT_FILE}")
-        logger.info(f"📺 CCTV频道排序结果：{[chan[0] for chan in player_groups.get(GROUP_SECONDARY_CCTV, [])]}")
+        logger.info(f"✅ 全类型排序版M3U8生成完成 → {OUTPUT_FILE}")
         return True
     except Exception as e:
         logger.error(f"写入失败：{str(e)[:50]}")
@@ -441,11 +555,11 @@ def generate_player_m3u8() -> bool:
 if __name__ == "__main__":
     start_total = time.time()
     logger.info("="*60)
-    logger.info("IPTV直播源抓取工具 - 最终版（CCTV数字排序+播放端美化）")
+    logger.info("IPTV直播源抓取工具 - 全类型排序终极版")
     logger.info("="*60)
     logger.info(f"启动 | CPU：{CPU_CORES}核 | 验证线程：{MAX_THREADS_VERIFY} | 抓取线程：{MAX_THREADS_FETCH}")
     logger.info(f"更新时间 | 完整：{GLOBAL_UPDATE_TIME_FULL} | 精简：{GLOBAL_UPDATE_TIME_SHORT}")
-    logger.info(f"排序配置 | CCTV数字排序：{CCTV_SORT_ENABLE} | 其他频道名称排序：{CHANNEL_SORT_ENABLE}")
+    logger.info(f"排序配置 | CCTV：{CCTV_SORT_ENABLE} | 卫视：{WEISHI_SORT_ENABLE} | 地方：{LOCAL_SORT_ENABLE} | 特色：{FEATURE_SORT_ENABLE} | 数字：{DIGITAL_SORT_ENABLE}")
     logger.info("="*60)
 
     load_persist_cache()
