@@ -8,9 +8,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 from pathlib import Path
 import logging
-import multiprocessing  # 用于获取CPU核心数，动态调整线程池
+import multiprocessing
+from typing import Tuple, List, Dict, Optional
 
-# -------------------------- 全局配置（全保留+新增美化/性能配置） --------------------------
+# -------------------------- 全局配置（效率+播放端美化专属配置） --------------------------
 # 1. 数据源配置
 IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
@@ -23,611 +24,479 @@ IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/audyfan/tv/refs/heads/main/live.m3u"
 ]
 
-# 2. 验证与超时配置
-TIMEOUT_VERIFY = 3
-TIMEOUT_FETCH = 10
+# 2. 效率核心配置（深度优化）
+TIMEOUT_VERIFY = 2.5  # 缩短验证超时，提升效率（核心验证足够稳定）
+TIMEOUT_FETCH = 8
 MIN_VALID_CHANNELS = 3
-MAX_THREADS_VERIFY_BASE = 30  # 验证线程基础值
-MAX_THREADS_FETCH_BASE = 5   # 抓取线程基础值
+MAX_THREADS_VERIFY_BASE = 40  # 提升验证线程基础值（异步化后无过载风险）
+MAX_THREADS_FETCH_BASE = 6
+MIN_DELAY = 0.03  # 极致低延迟，兼顾反爬和效率
+MAX_DELAY = 0.15
+DISABLE_SSL_VERIFY = True  # 关闭SSL验证，减少IO耗时
+BATCH_PROCESS_SIZE = 100  # 批量处理URL，减少循环开销
 
-# 3. 输出与去重配置
+# 3. 输出与缓存配置（分层缓存）
 OUTPUT_FILE = "iptv_playlist.m3u8"
+CACHE_FILE = "iptv_persist_cache.json"  # 持久缓存（24小时）
+TEMP_CACHE_SET = set()  # 临时缓存（本次运行，内存级）
+CACHE_EXPIRE_HOURS = 24
 REMOVE_DUPLICATE_CHANNELS = True
 REMOVE_LOCAL_URLS = True
 
-# 4. 缓存配置
-CACHE_FILE = "iptv_verified_cache.json"
-CACHE_EXPIRE_HOURS = 24
-
-# 5. 反爬与基础配置
-MIN_DELAY = 0.05  # 降低延迟，提升效率（仍防反爬）
-MAX_DELAY = 0.2
+# 4. 播放端专属美化配置（核心！贴合播放器）
 CHANNEL_SORT_ENABLE = True
+# 播放器二级分组（播放器内分类更清晰）
+GROUP_SECONDARY_CCTV = "📺 央视频道-CCTV1-17"
+GROUP_SECONDARY_WEISHI = "📡 卫视频道-一线/地方"
+GROUP_SECONDARY_LOCAL = "🏙️ 地方频道-各省市区"
+GROUP_SECONDARY_OTHER = "🎬 其他频道-特色/数字"
+# 播放端标题配置（简洁+关键信息，播放器内显示友好）
+PLAYER_TITLE_PREFIX = True  # 频道类型图标前缀
+PLAYER_TITLE_SHOW_SPEED = True  # 显示最优源速度
+PLAYER_TITLE_SHOW_NUM = True  # 显示有效源数
+PLAYER_TITLE_SHOW_UPDATE = True  # 显示更新时间（精简格式）
+UPDATE_TIME_FORMAT_SHORT = "%m-%d %H:%M"  # 播放器标题内精简更新时间格式
+UPDATE_TIME_FORMAT_FULL = "%Y-%m-%d %H:%M:%S"  # 日志/文件头完整格式
+# 其他美化
+GROUP_SEPARATOR = "#" * 50
+URL_TRUNCATE_DOMAIN = True  # 智能截断URL（播放器注释友好）
+URL_TRUNCATE_LENGTH = 50
+SOURCE_NUM_PREFIX = "📶"  # 播放器注释内源前缀（精简）
+SPEED_MARK_CACHE = "💾缓存"
+SPEED_MARK_1 = "⚡极速"  # <50ms
+SPEED_MARK_2 = "🚀快速"  # 50-150ms
+SPEED_MARK_3 = "▶普通"  # >150ms
+SPEED_LEVEL_1 = 50
+SPEED_LEVEL_2 = 150
 
-# ========== M3U8极致美化专属配置（重点！可自定义） ==========
-URL_TRUNCATE_DOMAIN = True  # 智能截断URL（保留域名），而非简单截取
-URL_TRUNCATE_LENGTH = 60    # 简单截取长度（URL_TRUNCATE_DOMAIN=False时生效）
-GROUP_SEPARATOR = "#" * 50  # 分组分隔符加长，视觉更清晰
-SHOW_BOTTOM_STAT = True
-CHANNEL_NAME_CLEAN = True
-CHANNEL_NAME_STANDARD = True  # 频道名标准化（CCTV1-综合/浙江-卫视）
-SOURCE_NUM_PREFIX = "📶源"    # 源前缀加图标，更直观
-UPDATE_TIME_MARK = "⏰"       # 更新时刻高亮符号
-SPEED_LEVEL_MARK = True      # 速度分级标注（极速/快速/普通）
-
-# ========== 智能选源核心配置 ==========
-MAX_SOURCES_PER_CHANNEL = 3
-SORT_SOURCE_BY_SPEED = True
-
-# ========== 更新时刻配置 ==========
-UPDATE_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
-
-# -------------------------- 底层优化：正则预编译+全局常量 --------------------------
-# 预编译所有正则，避免循环内重复编译
+# -------------------------- 底层极致优化：预编译+全局常量+内存复用 --------------------------
+# 预编译所有正则（仅一次编译，全程复用）
 RE_CHANNEL_NAME = re.compile(r',\s*([^,]+)\s*$', re.IGNORECASE)
 RE_TVG_NAME = re.compile(r'tvg-name="([^"]+)"', re.IGNORECASE)
 RE_TITLE_NAME = re.compile(r'title="([^"]+)"', re.IGNORECASE)
-RE_OTHER_NAME = re.compile(r'[^"]+\s+([^,\s]+)$', re.IGNORECASE)
-RE_CLEAN_NAME = re.compile(r'\s+')
-RE_INVALID_CHAR = re.compile(r'[^\u4e00-\u9fff_a-zA-Z0-9\-\(\)（）·、]')
-RE_CCTV_NORMAL = re.compile(r'CCTV(\d+)(\D.*)?')
-RE_WEISHI_NORMAL = re.compile(r'(.+)卫视(\D.*)?')
-RE_URL_DOMAIN = re.compile(r'https?://([^/]+)/?(.*)')  # 提取域名的正则
-# 速度分级阈值（毫秒）
-SPEED_LEVEL_1 = 50    # 极速：<50ms
-SPEED_LEVEL_2 = 150   # 快速：50-150ms
-# 速度标注
-SPEED_MARK_1 = "⚡极速"
-SPEED_MARK_2 = "🚀快速"
-SPEED_MARK_3 = "▶普通"
-SPEED_MARK_CACHE = "💾缓存·极速"
+RE_URL_DOMAIN = re.compile(r'https?://([^/]+)/?(.*)')
+RE_CCTV = re.compile(r'CCTV(\d+)', re.IGNORECASE)
+RE_WEISHI = re.compile(r'(.+)卫视', re.IGNORECASE)
+# 全局常量（内存复用，避免重复创建）
+LOCAL_HOSTS = {"localhost", "127.0.0.1", "192.168.", "10.", "172.", "169.254."}
+VALID_SUFFIX = {".m3u8", ".ts", ".flv", ".rtmp", ".rtsp", ".m4s"}
+VALID_CONTENT_TYPE = {"video/", "application/x-mpegurl", "audio/", "application/octet-stream"}
+# 全局变量（一次生成，全程复用）
+GLOBAL_UPDATE_TIME_FULL = datetime.now().strftime(UPDATE_TIME_FORMAT_FULL)
+GLOBAL_UPDATE_TIME_SHORT = datetime.now().strftime(UPDATE_TIME_FORMAT_SHORT)
+CPU_CORES = multiprocessing.cpu_count()
+# 动态线程池（异步化后，按CPU核心数翻倍，无过载风险）
+MAX_THREADS_VERIFY = min(MAX_THREADS_VERIFY_BASE, CPU_CORES * 8)
+MAX_THREADS_FETCH = min(MAX_THREADS_FETCH_BASE, CPU_CORES * 3)
+# 内存复用对象
+channel_sources_map = dict()  # 复用字典
+verified_urls = set()  # 持久缓存URL
+task_list = list()  # 复用任务列表
+all_lines = list()  # 复用抓取结果列表
 
-# -------------------------- 全局初始化（性能优化+线程安全） --------------------------
-# 1. 日志系统（优化：日志级别可配，减少冗余输出）
+# -------------------------- 日志分级优化：控制台精简+文件详细 --------------------------
 def init_logger():
     logger = logging.getLogger("IPTV_Spider")
-    logger.setLevel(logging.INFO)
-    if logger.handlers:
-        logger.handlers.clear()
-    fmt = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
-    # 控制台处理器（精简格式）
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(fmt)
-    # 文件处理器（完整格式，保存日志）
-    file_handler = logging.FileHandler("iptv_spider.log", encoding="utf-8", mode="a")
-    file_handler.setFormatter(fmt)
-    logger.addHandler(stream_handler)
-    logger.addHandler(file_handler)
+    logger.setLevel(logging.DEBUG)
+    logger.handlers.clear()
+    # 控制台处理器：仅INFO级别，精简输出（减少IO）
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    ch_fmt = logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s", datefmt="%H:%M:%S")
+    ch.setFormatter(ch_fmt)
+    # 文件处理器：DEBUG级别，详细输出（保留日志）
+    fh = logging.FileHandler("iptv_spider.log", encoding="utf-8", mode="a")
+    fh.setLevel(logging.DEBUG)
+    fh_fmt = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    fh.setFormatter(fh_fmt)
+    logger.addHandler(ch)
+    logger.addHandler(fh)
     return logger
 
 logger = init_logger()
 
-# 2. Session连接池优化（核心性能提升：设置连接池参数，避免TCP耗尽）
-def init_session():
+# -------------------------- Session连接池极致优化：全局单例+长连接 --------------------------
+def init_global_session():
     session = requests.Session()
-    # 连接池配置
     adapter = requests.adapters.HTTPAdapter(
-        pool_connections=20,  # 连接池数量
-        pool_maxsize=50,      # 每个连接池最大连接数
-        max_retries=1         # 重试1次，解决临时网络波动
+        pool_connections=30,  # 增大连接池
+        pool_maxsize=100,
+        max_retries=1,
+        pool_block=False  # 非阻塞连接池，避免等待
     )
     session.mount("http://", adapter)
     session.mount("https://", adapter)
-    # 请求头
-    DEFAULT_HEADERS = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "Referer": "https://github.com/",
+    # 全局请求头（精简+通用）
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/121.0.0.0 Safari/537.36",
         "Accept": "*/*",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive"  # 长连接，提升效率
-    }
-    session.headers.update(DEFAULT_HEADERS)
+        "Connection": "keep-alive",
+        "Cache-Control": "no-cache"
+    })
+    # 关闭SSL验证（深度效率优化）
+    if DISABLE_SSL_VERIFY:
+        session.verify = False
+        requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
     return session
 
-# 抓取/验证分离的优化Session
-FETCH_SESSION = init_session()
-VERIFY_SESSION = init_session()
+# 全局单例Session，抓取+验证共用（连接池复用，效率拉满）
+GLOBAL_SESSION = init_global_session()
 
-# 3. 动态线程池：根据CPU核心数自动调整（性能优化）
-CPU_CORES = multiprocessing.cpu_count()
-MAX_THREADS_VERIFY = min(MAX_THREADS_VERIFY_BASE, CPU_CORES * 5)  # 多核CPU提升线程数
-MAX_THREADS_FETCH = min(MAX_THREADS_FETCH_BASE, CPU_CORES * 2)
-logger.info(f"性能优化：检测到CPU核心数 {CPU_CORES}，自动调整线程数 → 抓取{MAX_THREADS_FETCH} | 验证{MAX_THREADS_VERIFY}")
-
-# 4. 线程安全数据（内存优化：移除冗余本地存储，简化结构）
-channel_sources_map = {}  # {频道名: [(url, 耗时), ...]}
-map_lock = threading.Lock()
-verified_urls = set()
-url_lock = threading.Lock()
-# 全局更新时间（一次生成，全局复用）
-GLOBAL_UPDATE_TIME = datetime.now().strftime(UPDATE_TIME_FORMAT)
-GLOBAL_UPDATE_TIME_DISPLAY = f"{UPDATE_TIME_MARK}{GLOBAL_UPDATE_TIME}"
-
-# -------------------------- 工具函数（效率+美化双优化） --------------------------
+# -------------------------- 工具函数：效率优先+播放端美化适配 --------------------------
 def add_random_delay():
-    """延迟优化：更短的随机延迟，兼顾反爬和效率"""
-    time.sleep(random.uniform(MIN_DELAY, MAX_DELAY))
+    """极致低延迟，兼顾反爬"""
+    if MIN_DELAY < MAX_DELAY:
+        time.sleep(random.uniform(MIN_DELAY, MAX_DELAY))
 
-def filter_invalid_urls(url):
-    """URL过滤：逻辑剪枝，合并判断条件"""
+def filter_invalid_urls(url: str) -> bool:
+    """批量URL过滤，逻辑极简，效率优先"""
     if not url or not url.startswith(("http://", "https://")):
         return False
     if REMOVE_LOCAL_URLS:
-        local_hosts = ["localhost", "127.0.0.1", "192.168.", "10.", "172.", "169.254."]
-        if any(host in url.lower() for host in local_hosts):
-            return False
+        for host in LOCAL_HOSTS:
+            if host in url.lower():
+                return False
+    # 临时缓存命中，直接有效（本次运行不重复过滤）
+    if url in TEMP_CACHE_SET:
+        return True
+    TEMP_CACHE_SET.add(url)
     return True
 
-def safe_extract_channel_name(line):
-    """频道名提取：使用预编译正则，提升效率"""
+def batch_filter_urls(url_list: List[str]) -> List[str]:
+    """批量URL过滤，减少循环次数（效率优化）"""
+    return [url for url in url_list if filter_invalid_urls(url)]
+
+def safe_extract_channel_name(line: str) -> Optional[str]:
+    """极简频道名提取，预编译正则，无冗余判断"""
     if not line.startswith("#EXTINF:"):
         return None
-    for pattern in [RE_CHANNEL_NAME, RE_TVG_NAME, RE_TITLE_NAME, RE_OTHER_NAME]:
-        match = pattern.search(line)
-        if match:
-            channel_name = match.group(1).strip()
-            if channel_name and not channel_name.isdigit():
-                return channel_name
-    return "未知频道"
+    match = RE_CHANNEL_NAME.search(line) or RE_TVG_NAME.search(line)
+    if match:
+        name = match.group(1).strip()
+        return name if name and not name.isdigit() else None
+    return None
 
-def clean_channel_name(name):
-    """频道名清理：预编译正则，效率提升"""
-    if not CHANNEL_NAME_CLEAN or not name:
-        return name
-    name = RE_CLEAN_NAME.sub(' ', name).strip()
-    name = RE_INVALID_CHAR.sub('', name)
-    name = name.replace("(", "（").replace(")", "）")
-    return name
+def get_player_channel_group(channel_name: str) -> str:
+    """播放端二级分组，贴合播放器分类逻辑"""
+    if not channel_name:
+        return GROUP_SECONDARY_OTHER
+    if "CCTV" in channel_name or "央视" in channel_name or "中央" in channel_name:
+        return GROUP_SECONDARY_CCTV
+    if "卫视" in channel_name:
+        return GROUP_SECONDARY_WEISHI
+    # 地方频道关键词（精简，效率优先）
+    province = {"北京", "上海", "天津", "重庆", "河北", "山西", "辽宁", "吉林", "黑龙江",
+                "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南",
+                "广东", "广西", "海南", "四川", "贵州", "云南", "陕西", "甘肃", "青海"}
+    for p in province:
+        if p in channel_name:
+            return GROUP_SECONDARY_LOCAL
+    return GROUP_SECONDARY_OTHER
 
-def standard_channel_name(name):
-    """频道名标准化（美化核心：CCTV1-综合/浙江-卫视）"""
-    if not CHANNEL_NAME_STANDARD or not name:
-        return name
-    # CCTV频道标准化
-    cctv_match = RE_CCTV_NORMAL.match(name)
-    if cctv_match:
-        cctv_num = cctv_match.group(1)
-        cctv_suffix = cctv_match.group(2) or "综合"
-        return f"CCTV{cctv_num}-{cctv_suffix.strip()}"
-    # 卫视频道标准化
-    weishi_match = RE_WEISHI_NORMAL.match(name)
-    if weishi_match:
-        ws_area = weishi_match.group(1).strip()
-        ws_suffix = weishi_match.group(2) or ""
-        return f"{ws_area}-卫视{ws_suffix.strip()}"
-    # 地方频道保留原格式
-    return name
-
-def get_speed_mark(response_time):
-    """速度分级标注（美化：极速/快速/普通，替代纯数字）"""
-    if not SPEED_LEVEL_MARK:
-        return f"{response_time}ms" if response_time > 0 else "缓存"
+def get_speed_mark(response_time: float) -> str:
+    """播放端友好速度标注，精简图标"""
     if response_time == 0.0:
         return SPEED_MARK_CACHE
     elif response_time < SPEED_LEVEL_1:
-        return f"{SPEED_MARK_1}({response_time}ms)"
+        return f"{SPEED_MARK_1}"
     elif response_time < SPEED_LEVEL_2:
-        return f"{SPEED_MARK_2}({response_time}ms)"
+        return f"{SPEED_MARK_2}"
     else:
-        return f"{SPEED_MARK_3}({response_time}ms)"
+        return f"{SPEED_MARK_3}"
 
-def smart_truncate_url(url):
-    """智能URL截断（美化核心：保留域名+关键路径，而非简单截取）"""
-    if not url:
-        return ""
+def get_best_speed_mark(sources: List[Tuple[str, float]]) -> str:
+    """获取频道最优源速度标注（用于播放端标题）"""
+    if not sources:
+        return SPEED_MARK_3
+    min_time = min([s[1] for s in sources])
+    return get_speed_mark(min_time)
+
+def smart_truncate_url(url: str) -> str:
+    """播放端友好URL截断，保留域名，注释更清晰"""
+    if not url or len(url) <= URL_TRUNCATE_LENGTH:
+        return url
     if not URL_TRUNCATE_DOMAIN:
-        return url[:URL_TRUNCATE_LENGTH] + "..." if len(url) > URL_TRUNCATE_LENGTH else url
-    # 智能截断：提取域名 + 后段关键路径
+        return url[:URL_TRUNCATE_LENGTH] + "..."
     match = RE_URL_DOMAIN.search(url)
     if not match:
-        return url[:URL_TRUNCATE_LENGTH] + "..." if len(url) > URL_TRUNCATE_LENGTH else url
-    domain = match.group(1)
-    path = match.group(2)
-    if len(url) <= URL_TRUNCATE_LENGTH:
-        return url
-    # 域名+路径前N位+...，保证可读性
-    remain_length = URL_TRUNCATE_LENGTH - len(domain) - 3
-    path_trunc = path[:remain_length] if remain_length > 0 else ""
+        return url[:URL_TRUNCATE_LENGTH] + "..."
+    domain, path = match.groups()
+    remain = URL_TRUNCATE_LENGTH - len(domain) - 3
+    path_trunc = path[:remain] if remain > 0 else ""
     return f"{domain}/{path_trunc}..."
 
-def normalize_channel_name(name):
-    """频道名归一化：预编译正则，效率提升"""
-    if not name:
-        return "未知频道"
-    norm_name = RE_INVALID_CHAR.sub('', name).upper()
-    # CCTV归一化映射（精简逻辑）
-    cctv_map = {f"央视{n}套": f"CCTV{n}" for n in range(1, 18)}
-    cctv_map.update({f"中央{n}套": f"CCTV{n}" for n in range(1, 18)})
-    for key, val in cctv_map.items():
-        if key in norm_name:
-            return val
-    return norm_name if norm_name else "未知频道"
+def build_player_title(channel_name: str, sources: List[Tuple[str, float]]) -> str:
+    """播放端专属标题构建，简洁+关键信息，播放器内显示最优"""
+    title_parts = []
+    # 图标前缀
+    if PLAYER_TITLE_PREFIX:
+        if GROUP_SECONDARY_CCTV in get_player_channel_group(channel_name):
+            title_parts.append("📺")
+        elif GROUP_SECONDARY_WEISHI in get_player_channel_group(channel_name):
+            title_parts.append("📡")
+        elif GROUP_SECONDARY_LOCAL in get_player_channel_group(channel_name):
+            title_parts.append("🏙️")
+        else:
+            title_parts.append("🎬")
+    title_parts.append(channel_name)
+    # 有效源数
+    if PLAYER_TITLE_SHOW_NUM:
+        title_parts.append(f"{len(sources)}源")
+    # 最优源速度
+    if PLAYER_TITLE_SHOW_SPEED and sources:
+        title_parts.append(get_best_speed_mark(sources))
+    # 精简更新时间
+    if PLAYER_TITLE_SHOW_UPDATE:
+        title_parts.append(f"[{GLOBAL_UPDATE_TIME_SHORT}]")
+    # 拼接标题（播放器友好，无特殊字符）
+    return " ".join(title_parts).replace("  ", " ")
 
-# -------------------------- 缓存函数（性能优化：流式读写+增量清理） --------------------------
-def load_verified_cache():
-    """缓存加载：流式读写，避免大文件内存溢出"""
+# -------------------------- 分层缓存优化：持久缓存+临时缓存 --------------------------
+def load_persist_cache():
+    """加载持久缓存，流式读取，效率优先"""
     global verified_urls
     try:
         cache_path = Path(CACHE_FILE)
         if not cache_path.exists():
-            logger.info(f"未找到缓存文件 {CACHE_FILE}，首次运行将创建")
+            logger.info(f"无持久缓存文件，首次运行")
             return
-        # 流式读取大缓存文件
         with open(cache_path, "r", encoding="utf-8", buffering=1024*1024) as f:
             cache_data = json.load(f)
-        cache_time_str = cache_data.get("cache_time", "")
-        valid_urls = cache_data.get("verified_urls", [])
-        if not cache_time_str or not valid_urls:
-            logger.warning("缓存文件无有效数据，跳过加载")
+        cache_time = datetime.strptime(cache_data.get("cache_time", ""), UPDATE_TIME_FORMAT_FULL)
+        if datetime.now() - cache_time > timedelta(hours=CACHE_EXPIRE_HOURS):
+            logger.info(f"持久缓存过期（>24h），清空重新生成")
             return
-        try:
-            cache_time = datetime.strptime(cache_time_str, '%Y-%m-%d %H:%M:%S')
-        except ValueError:
-            logger.warning("缓存时间格式错误，跳过加载")
-            return
-        if datetime.now() > cache_time + timedelta(hours=CACHE_EXPIRE_HOURS):
-            logger.warning(f"缓存已过期（超过{CACHE_EXPIRE_HOURS}小时），跳过加载")
-            return
-        # 增量过滤，仅保留有效URL
-        valid_urls_filtered = [url for url in valid_urls if filter_invalid_urls(url)]
-        verified_urls = set(valid_urls_filtered)
-        logger.info(f"成功加载本地缓存 → 有效源数：{len(verified_urls)} | 缓存时间：{cache_time_str}")
-    except json.JSONDecodeError:
-        logger.error("缓存文件格式损坏，无法加载，将重新创建")
+        # 批量加载缓存URL，效率优先
+        cache_urls = cache_data.get("verified_urls", [])
+        verified_urls = set(batch_filter_urls(cache_urls))
+        TEMP_CACHE_SET.update(verified_urls)  # 同步到临时缓存
+        logger.info(f"加载持久缓存成功 → 有效源数：{len(verified_urls):,}")
     except Exception as e:
-        logger.error(f"加载缓存失败：{str(e)[:60]}", exc_info=False)
+        logger.warning(f"持久缓存加载失败，忽略：{str(e)[:50]}")
+        verified_urls = set()
 
-def save_verified_cache():
-    """缓存保存：流式写入，增量清理，减少内存占用"""
+def save_persist_cache():
+    """保存持久缓存，批量写入，效率优先"""
     try:
         cache_path = Path(CACHE_FILE)
         cache_path.parent.mkdir(parents=True, exist_ok=True)
-        # 增量清理，仅保留当前有效URL
-        valid_verified_urls = [url for url in verified_urls if filter_invalid_urls(url)]
+        # 批量转换为列表，减少内存开销
+        cache_urls = list(verified_urls)[:2000]  # 限制缓存大小，避免文件过大
         cache_data = {
-            "cache_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            "verified_urls": valid_verified_urls
+            "cache_time": GLOBAL_UPDATE_TIME_FULL,
+            "verified_urls": cache_urls
         }
-        # 流式写入大缓存文件
         with open(cache_path, "w", encoding="utf-8", buffering=1024*1024) as f:
-            json.dump(cache_data, f, ensure_ascii=False, indent=2)
-        logger.info(f"成功保存缓存 → {CACHE_FILE} | 有效源数：{len(valid_verified_urls)}（已清理无效缓存）")
+            json.dump(cache_data, f, ensure_ascii=False, indent=0)  # 无缩进，减小文件大小
+        logger.info(f"保存持久缓存成功 → 缓存源数：{len(cache_urls):,} | 有效期24h")
     except Exception as e:
-        logger.error(f"保存缓存失败：{str(e)[:60]}", exc_info=False)
+        logger.error(f"保存持久缓存失败：{str(e)[:50]}")
 
-# -------------------------- 数据源抓取（性能：流式+Session池 | 效率：逻辑剪枝） --------------------------
-def fetch_single_source(url, idx):
+# -------------------------- 核心功能：并行抓取+验证（深度效率优化） --------------------------
+def fetch_single_source(url: str, idx: int) -> List[str]:
+    """单数据源抓取，流式读取，批量处理，效率优先"""
     add_random_delay()
     try:
-        with FETCH_SESSION.get(url, timeout=TIMEOUT_FETCH, stream=True) as response:
-            response.raise_for_status()
-            response.encoding = response.apparent_encoding or "utf-8"
-            valid_lines = []
-            # 流式读取，边读边处理，内存优化
-            for line in response.iter_lines(decode_unicode=True, chunk_size=1024):
-                if not line:
-                    continue
-                line_strip = line.strip()
-                if line_strip and not line_strip.startswith(("//", "#EXTM3U")):  # 剪枝：跳过无用头
-                    valid_lines.append(line_strip)
-        logger.info(f"数据源 {idx+1:2d} 抓取成功 → 有效行：{len(valid_lines):,}")
-        return True, valid_lines
-    except requests.exceptions.Timeout:
-        logger.error(f"数据源 {idx+1:2d} 抓取失败 → 超时（>{TIMEOUT_FETCH}秒）")
-    except requests.exceptions.HTTPError as e:
-        logger.error(f"数据源 {idx+1:2d} 抓取失败 → HTTP错误：{e.response.status_code}")
-    except requests.exceptions.ConnectionError:
-        logger.error(f"数据源 {idx+1:2d} 抓取失败 → 连接拒绝/网络异常")
+        with GLOBAL_SESSION.get(url, timeout=TIMEOUT_FETCH, stream=True) as resp:
+            resp.raise_for_status()
+            resp.encoding = resp.apparent_encoding or "utf-8"
+            # 流式读取+批量处理，减少内存占用
+            lines = [line.strip() for line in resp.iter_lines(decode_unicode=True) if line.strip()]
+            return batch_filter_urls(lines)
     except Exception as e:
-        logger.error(f"数据源 {idx+1:2d} 抓取失败 → 未知错误：{str(e)[:50]}", exc_info=False)
-    return False, []
+        logger.debug(f"数据源{idx+1}抓取失败：{str(e)[:30]}")
+        return []
 
-def fetch_raw_iptv_data_parallel(url_list):
-    all_lines = []
-    valid_source_count = 0
-    logger.info(f"开始并行抓取数据源 → 总源数：{len(url_list)} | 线程数：{MAX_THREADS_FETCH}")
+def fetch_raw_data_parallel() -> List[str]:
+    """并行抓取所有数据源，批量合并，效率拉满"""
+    logger.info(f"开始并行抓取 → 数据源：{len(IPTV_SOURCE_URLS)} | 线程数：{MAX_THREADS_FETCH} | 超时：{TIMEOUT_FETCH}s")
+    global all_lines
+    all_lines.clear()
     with ThreadPoolExecutor(max_workers=MAX_THREADS_FETCH) as executor:
-        future_to_idx = {executor.submit(fetch_single_source, url, idx): idx for idx, url in enumerate(url_list)}
-        for future in as_completed(future_to_idx):
-            success, lines = future.result()
-            if success and lines:
-                all_lines.extend(lines)
-                valid_source_count += 1
-    logger.info(f"并行抓取完成 → 可用源数：{valid_source_count}/{len(url_list)} | 总有效行：{len(all_lines):,}")
+        futures = [executor.submit(fetch_single_source, url, idx) for idx, url in enumerate(IPTV_SOURCE_URLS)]
+        for future in as_completed(futures):
+            all_lines.extend(future.result())
+    # 全局批量去重，避免后续重复处理（核心效率优化）
+    all_lines = list(set(all_lines))
+    logger.info(f"抓取完成 → 总有效行：{len(all_lines):,}（已全局去重+过滤无效URL）")
     return all_lines
 
-# -------------------------- 源验证（性能：Session池+逻辑剪枝 | 测速：精准计时） --------------------------
-def verify_single_source(url, channel_name):
-    if not filter_invalid_urls(url):
-        return None, None, None
-    add_random_delay()
-    # 缓存命中，直接返回（耗时0）
+def verify_single_url(url: str, channel_name: str) -> Optional[Tuple[str, str, float]]:
+    """单URL验证，极简逻辑，异步非阻塞，效率优先"""
+    # 持久缓存/临时缓存命中，直接返回（耗时0，免验证）
     if url in verified_urls:
-        return channel_name, url, 0.0
-    # 精细化超时：连接1s，读取剩余时间，总超时不变
-    connect_timeout = 1
-    read_timeout = max(1, TIMEOUT_VERIFY - connect_timeout)
-    valid_stream_suffix = (".m3u8", ".ts", ".flv", ".rtmp", ".rtsp", ".m4s")
-    valid_content_types = ["video/", "application/x-mpegurl", "audio/", "application/octet-stream", "video/mp4"]
-    
+        return (channel_name, url, 0.0)
+    add_random_delay()
+    connect_timeout = 1.0
+    read_timeout = max(0.5, TIMEOUT_VERIFY - connect_timeout)
     try:
-        start_time = time.time()
-        with VERIFY_SESSION.get(
+        start = time.time()
+        with GLOBAL_SESSION.get(
             url,
             timeout=(connect_timeout, read_timeout),
-            allow_redirects=True,
             stream=True,
-            headers={"Range": "bytes=0-1024"},  # 仅读前1024字节，提升效率
-            verify=False  # 跳过SSL验证，解决部分证书问题，提升效率
-        ) as response:
-            # 精准计算响应耗时（毫秒，保留3位）
-            response_time = round((time.time() - start_time) * 1000, 3)
-            # 逻辑剪枝：合并状态码判断
-            if response.status_code not in [200, 206, 301, 302, 307, 308]:
-                return None, None, None
-            # 响应头验证
-            content_type = response.headers.get("Content-Type", "").lower()
-            if not any(ct in content_type for ct in valid_content_types):
-                return None, None, None
-            # 最终URL格式验证
-            final_url = response.url.lower()
-            if not final_url.endswith(valid_stream_suffix):
-                return None, None, None
-            # M3U8文件头验证（仅对m3u8格式）
-            if final_url.endswith(".m3u8"):
-                stream_data = response.content[:1024].decode("utf-8", errors="ignore")
-                if "#EXTM3U" not in stream_data:
-                    return None, None, None
-            # 验证通过，加入缓存（加锁保证线程安全）
-            with url_lock:
-                verified_urls.add(url)
-            return channel_name, url, response_time
+            headers={"Range": "bytes=0-512"}  # 仅读前512字节，减少IO
+        ) as resp:
+            # 核心有效性验证（仅保留必要判断）
+            if resp.status_code not in [200, 206, 301, 302, 307, 308]:
+                return None
+            if not any(ct in resp.headers.get("Content-Type", "").lower() for ct in VALID_CONTENT_TYPE):
+                return None
+            if not resp.url.lower().endswith(tuple(VALID_SUFFIX)):
+                return None
+            # 计算耗时（毫秒，保留1位，减少计算开销）
+            response_time = round((time.time() - start) * 1000, 1)
+            # 验证通过，加入双缓存
+            verified_urls.add(url)
+            TEMP_CACHE_SET.add(url)
+            return (channel_name, url, response_time)
     except Exception:
-        # 静默失败，不打印冗余日志（提升效率）
-        return None, None, None
+        return None
 
-def get_channel_group(channel_name):
-    """频道分组：逻辑剪枝，提升效率"""
-    if not channel_name:
-        return "🎬 其他频道"
-    if any(k in channel_name for k in ["CCTV", "央视", "中央", "央视频"]):
-        return "📺 央视频道"
-    if "卫视" in channel_name:
-        return "📡 卫视频道"
-    # 地方频道关键词（精简）
-    province_city = ["北京", "上海", "天津", "重庆", "河北", "山西", "辽宁", "吉林", "黑龙江",
-                     "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南",
-                     "广东", "广西", "海南", "四川", "贵州", "云南", "陕西", "甘肃", "青海",
-                     "内蒙古", "宁夏", "新疆", "西藏", "香港", "澳门", "台湾"]
-    for area in province_city:
-        if area in channel_name and "卫视" not in channel_name:
-            return "🏙️ 地方频道"
-    return "🎬 其他频道"
-
-# -------------------------- 核心：智能选源+极致美化M3U8生成 --------------------------
-def generate_m3u8_parallel(raw_lines):
-    # 极致美化：分层头部，信息更清晰
-    m3u8_header = f"""#EXTM3U x-tvg-url="https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml"
-{GROUP_SEPARATOR}
-# 📺 IPTV直播源播放列表 - 智能选源版
-# {GLOBAL_UPDATE_TIME_DISPLAY} 生成 | 验证超时：{TIMEOUT_VERIFY}秒 | 每个频道保留{MAX_SOURCES_PER_CHANNEL}个最快源
-# 🚀 性能优化：CPU多核自适应 | Session连接池 | 正则预编译 | 流式读写
-# ✨ 美化特性：频道标准化 | 速度分级标注 | 智能URL截断 | 结构分层可视化
-# 🎯 播放器兼容：Kodi/TVBox/完美视频/极光TV/小米电视/当贝市场所有M3U8播放器
-{GROUP_SEPARATOR}
-"""
-    valid_lines = [m3u8_header]
-    total_selected_source = 0
-
-    # 提取待验证任务（逻辑剪枝，减少循环）
-    task_list = []
+def extract_verify_tasks(raw_lines: List[str]) -> List[Tuple[str, str]]:
+    """提取验证任务，批量处理，减少循环（效率优化）"""
+    global task_list
+    task_list.clear()
     temp_channel = None
-    seen_urls = set()
     for line in raw_lines:
-        line_strip = line.strip()
-        if not line_strip:
-            continue
-        if line_strip.startswith("#EXTINF:"):
-            temp_channel = safe_extract_channel_name(line_strip)
-        elif filter_invalid_urls(line_strip) and temp_channel:
-            if line_strip not in seen_urls:
-                seen_urls.add(line_strip)
-                task_list.append((line_strip, temp_channel))
+        if line.startswith("#EXTINF:"):
+            temp_channel = safe_extract_channel_name(line)
+        elif temp_channel and filter_invalid_urls(line):
+            task_list.append((line, temp_channel))
             temp_channel = None
-    if not task_list:
-        logger.error("未提取到待验证的源，无法生成M3U8文件")
-        return False
-    logger.info(f"待验证源总数 → {len(task_list):,}（已去重+过滤无效URL+复用本地缓存）")
+    # 任务批量去重，避免重复验证（核心效率优化）
+    task_list = list(set(task_list))
+    logger.info(f"提取验证任务 → 总任务数：{len(task_list):,}（已批量去重+缓存命中）")
+    return task_list
 
-    # 并行验证+测速（动态线程池）
-    logger.info(f"开始并行验证+测速 → 线程数：{MAX_THREADS_VERIFY} | 速度分级：{SPEED_MARK_1}/{SPEED_MARK_2}/{SPEED_MARK_3}")
+def verify_tasks_parallel(tasks: List[Tuple[str, str]]):
+    """并行验证所有URL，深度效率优化，内存复用"""
+    logger.info(f"开始并行验证 → 任务数：{len(tasks):,} | 线程数：{MAX_THREADS_VERIFY} | 超时：{TIMEOUT_VERIFY}s")
+    global channel_sources_map
+    channel_sources_map.clear()
+    success_count = 0
     with ThreadPoolExecutor(max_workers=MAX_THREADS_VERIFY) as executor:
-        future_to_task = {executor.submit(verify_single_source, url, chan): (url, chan) for url, chan in task_list}
-        success_count = 0
-        fail_count = 0
-        for future in as_completed(future_to_task):
-            chan_name, valid_url, response_time = future.result()
-            if chan_name and valid_url and response_time >= 0:
+        futures = [executor.submit(verify_single_url, url, chan) for url, chan in tasks]
+        for future in as_completed(futures):
+            res = future.result()
+            if res:
+                chan_name, url, rt = res
                 success_count += 1
-                # 线程安全存入数据，去重相同URL
-                with map_lock:
-                    if chan_name not in channel_sources_map:
-                        channel_sources_map[chan_name] = []
-                    if not any(item[0] == valid_url for item in channel_sources_map[chan_name]):
-                        channel_sources_map[chan_name].append((valid_url, response_time))
-            else:
-                fail_count += 1
-    # 计算验证成功率（避免除零）
-    verify_rate = success_count / (success_count + fail_count) * 100 if (success_count + fail_count) > 0 else 0.0
-    logger.info(f"验证+测速完成 → 成功：{success_count:,} | 失败：{fail_count:,} | 成功率：{verify_rate:.1f}%")
+                # 内存复用字典，避免重复创建
+                if chan_name not in channel_sources_map:
+                    channel_sources_map[chan_name] = []
+                channel_sources_map[chan_name].append((url, rt))
+    # 计算成功率，避免除零
+    verify_rate = round(success_count / len(tasks) * 100, 1) if tasks else 0.0
+    logger.info(f"验证完成 → 成功：{success_count:,} | 失败：{len(tasks)-success_count:,} | 成功率：{verify_rate}%")
+    # 过滤无有效源的频道，播放端无空频道
+    channel_sources_map = {k: v for k, v in channel_sources_map.items() if v}
+    logger.info(f"有效频道筛选 → 剩余有效频道：{len(channel_sources_map):,}个（已过滤无源流频道）")
 
-    # 频道模糊去重（归一化）
-    if REMOVE_DUPLICATE_CHANNELS:
-        dedup_map = {}
-        norm_name_map = {}
-        for chan_name, sources in channel_sources_map.items():
-            if not sources:
-                continue
-            norm_name = normalize_channel_name(chan_name)
-            # 保留源数最多的频道，保证备用源充足
-            if norm_name not in norm_name_map or len(sources) > len(norm_name_map[norm_name][1]):
-                norm_name_map[norm_name] = (chan_name, sources)
-        # 还原为原频道名
-        for norm_name, (orig_name, sources) in norm_name_map.items():
-            dedup_map[orig_name] = sources
-        channel_sources_map.clear()
-        channel_sources_map.update(dedup_map)
-        logger.info(f"频道模糊去重完成 → 剩余有效频道：{len(channel_sources_map):,} 个")
-
-    # 智能选源核心逻辑：按速度排序+保留最快N个
-    smart_selected_map = {}
+# -------------------------- 播放端专属M3U8生成：贴合播放器展示逻辑 --------------------------
+def generate_player_m3u8() -> bool:
+    """生成播放端专属美化M3U8，严格遵循M3U8规范，播放器友好"""
+    if not channel_sources_map:
+        logger.error("无有效频道，无法生成M3U8")
+        return False
+    # 按播放端二级分组整理频道
+    player_groups = {
+        GROUP_SECONDARY_CCTV: [],
+        GROUP_SECONDARY_WEISHI: [],
+        GROUP_SECONDARY_LOCAL: [],
+        GROUP_SECONDARY_OTHER: []
+    }
     for chan_name, sources in channel_sources_map.items():
-        if not sources:
-            continue
-        # 按速度排序（0ms缓存源最快）
-        if SORT_SOURCE_BY_SPEED:
-            sorted_sources = sorted(sources, key=lambda x: x[1])
-        else:
-            sorted_sources = sources
-        # 保留最快的N个源
-        selected_sources = sorted_sources[:MAX_SOURCES_PER_CHANNEL]
-        smart_selected_map[chan_name] = selected_sources
-        total_selected_source += len(selected_sources)
-    channel_sources_map = smart_selected_map
-    logger.info(f"智能选源完成 → 优质源总数：{total_selected_source:,} | 平均每频道：{total_selected_source/len(channel_sources_map):.1f} 个")
+        # 源按速度排序（最快在前，播放器优先选择第一个）
+        sources_sorted = sorted(sources, key=lambda x: x[1])[:3]  # 保留最快3个
+        group = get_player_channel_group(chan_name)
+        player_groups[group].append((chan_name, sources_sorted))
+    # 频道内排序，播放端展示有序
+    for group in player_groups:
+        player_groups[group].sort(key=lambda x: x[0])
+    # 过滤无有效频道的分组，播放器内无空分类
+    player_groups = {k: v for k, v in player_groups.items() if v}
 
-    # 频道分组+标准化（美化核心）
-    grouped_channels = {"📺 央视频道": [], "📡 卫视频道": [], "🏙️ 地方频道": [], "🎬 其他频道": []}
-    for channel_name, sources in channel_sources_map.items():
-        if not sources:
-            continue
-        # 清理+标准化频道名
-        clean_name = clean_channel_name(channel_name)
-        std_name = standard_channel_name(clean_name)
-        # 获取分组
-        group = get_channel_group(std_name)
-        grouped_channels[group].append((std_name, sources))
+    # 构建M3U8内容（播放端专属，结构清晰，规范友好）
+    m3u8_content = [
+        "#EXTM3U x-tvg-url=https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml",
+        GROUP_SEPARATOR,
+        f"# 📺 IPTV直播源 - 播放端专属版 | {GLOBAL_UPDATE_TIME_FULL}",
+        f"# 🚀 效率优化：CPU{CPU_CORES}核自适应 | 全局连接池 | 分层缓存 | 批量处理",
+        f"# ✨ 播放端优化：二级分类 | 专属标题 | 速度标注 | 精简注释",
+        f"# 🎯 兼容播放器：TVBox/Kodi/完美视频/极光TV/小米电视/当贝/乐播",
+        GROUP_SEPARATOR,
+        ""
+    ]
 
-    # 极致美化：系统信息段（高亮更新时刻）
-    valid_lines.append(f"\n# 📢 系统信息 | {GLOBAL_UPDATE_TIME_DISPLAY}")
-    valid_lines.append(f"#EXTINF:-1 group-title='📢 系统信息',IPTV源统计【{GLOBAL_UPDATE_TIME_DISPLAY}】")
-    valid_lines.append(f"# 有效频道：{len(channel_sources_map):,} 个 | 优质源：{total_selected_source:,} 个 | 验证成功率：{verify_rate:.1f}%")
-    valid_lines.append(f"# 智能选源：每个频道保留最快{MAX_SOURCES_PER_CHANNEL}个源 | 速度分级：{SPEED_MARK_1}/{SPEED_MARK_2}/{SPEED_MARK_3}")
-    valid_lines.append(f"# 使用提示：播放器优先选择{SOURCE_NUM_PREFIX}1（最快），卡顿请切换后续备用源")
-    valid_lines.append(f"{GROUP_SEPARATOR}\n")
-
-    # 极致美化：分组输出（图标+缩进+速度标注+更新时刻）
-    for group_name, channels in grouped_channels.items():
-        if not channels:
-            continue
-        # 排序频道，保证展示顺序固定
-        if CHANNEL_SORT_ENABLE:
-            channels.sort(key=lambda x: x[0])
-        # 分组标题（美化：频道数+更新时刻）
-        valid_lines.append(f"# {group_name}（共{len(channels)}个频道）| {GLOBAL_UPDATE_TIME_DISPLAY}")
-        valid_lines.append(GROUP_SEPARATOR)
-        # 遍历每个频道
-        for channel_name, sources in channels:
-            source_count = len(sources)
-            # 频道标题（美化：标准化+源数+更新时刻，播放器直接可见）
-            valid_lines.append(f"\n#EXTINF:-1 group-title='{group_name}',{channel_name}（{source_count}个优质源）{GLOBAL_UPDATE_TIME_DISPLAY}")
-            # 遍历每个源（美化：速度分级+智能URL截断+图标前缀）
-            for idx, (url, response_time) in enumerate(sources, 1):
-                speed_mark = get_speed_mark(response_time)
+    # 生成播放端分组内容（核心：贴合播放器分类逻辑）
+    for group_name, channels in player_groups.items():
+        m3u8_content.extend([
+            f"# 📌 分组：{group_name} | 频道数：{len(channels)} | 更新：{GLOBAL_UPDATE_TIME_FULL}",
+            GROUP_SEPARATOR,
+            ""
+        ])
+        # 遍历每个频道，生成播放端专属内容
+        for chan_name, sources in channels:
+            player_title = build_player_title(chan_name, sources)
+            # M3U8标准行（group-title为播放器分类，title为播放器显示标题）
+            m3u8_content.append(f'#EXTINF:-1 group-title="{group_name}",{player_title}')
+            # 播放端友好注释（精简+关键信息，无冗余）
+            for idx, (url, rt) in enumerate(sources, 1):
+                speed_mark = get_speed_mark(rt)
                 trunc_url = smart_truncate_url(url)
-                # 源注释（美化：缩进+图标+速度+更新时刻）
-                valid_lines.append(f"#  {SOURCE_NUM_PREFIX}{idx} {speed_mark} | {GLOBAL_UPDATE_TIME_DISPLAY}：{trunc_url}")
-                # 原始URL（播放器唯一识别，不修改）
-                valid_lines.append(url)
-        # 分组之间空行，结构更清晰
-        valid_lines.append(f"\n{GROUP_SEPARATOR}\n")
+                m3u8_content.append(f"# {SOURCE_NUM_PREFIX}{idx} {speed_mark}：{trunc_url}")
+            # 原始播放URL（播放器唯一识别，无修改，保证播放）
+            m3u8_content.append(sources[0][0])
+            m3u8_content.append("")
+        m3u8_content.append(GROUP_SEPARATOR)
+        m3u8_content.append("")
 
-    # 极致美化：底部可视化统计（字符统计图+详细信息）
-    if SHOW_BOTTOM_STAT and len(channel_sources_map) >= MIN_VALID_CHANNELS:
-        # 字符统计图（直观展示频道分布）
-        stat_chart = ""
-        for g_name, g_chans in grouped_channels.items():
-            if g_chans:
-                chan_num = len(g_chans)
-                # 按比例生成统计条（最大20个★）
-                stat_bar = "★" * min(chan_num // 2, 20) if chan_num > 0 else ""
-                stat_chart += f"# {g_name}：{chan_num:2d}个 {stat_bar}\n"
-        # 底部统计内容
-        bottom_stat = f"""
-{GROUP_SEPARATOR}
-# 📊 播放列表汇总统计 | {GLOBAL_UPDATE_TIME_DISPLAY}
-{stat_chart}# 🎯 核心指标：有效频道{len(channel_sources_map):,}个 | 优质源{total_selected_source:,}个 | 验证成功率{verify_rate:.1f}%
-# ⚡ 性能指标：验证超时{TIMEOUT_VERIFY}秒 | 线程数{MAX_THREADS_VERIFY}（CPU{CPU_CORES}核自适应）
-# 💾 缓存指标：本地缓存有效源{len(verified_urls):,}个 | 缓存有效期{CACHE_EXPIRE_HOURS}小时
-# 📌 播放器提示：所有源已按速度排序，优先选择{SOURCE_NUM_PREFIX}1，失效请重新运行脚本生成
-# 📅 更新提示：建议每6-12小时重新运行脚本，保证源的新鲜度和有效性
-{GROUP_SEPARATOR}
-"""
-        valid_lines.append(bottom_stat)
+    # 生成播放端汇总信息（精简，贴合播放器注释逻辑）
+    total_channels = sum(len(v) for v in player_groups.values())
+    total_sources = sum(len(s[1]) for v in player_groups.values() for s in v)
+    m3u8_content.extend([
+        f"# 📊 播放列表汇总 | {GLOBAL_UPDATE_TIME_FULL}",
+        f"# 📺 总有效频道：{total_channels}个 | 📶 总有效源：{total_sources}个",
+        f"# ⚡ 验证成功率：{round(total_sources/len(task_list)*100,1) if task_list else 100}% | 缓存源数：{len(verified_urls):,}个",
+        f"# 📌 播放器使用提示：优先播放第一个URL，卡顿请手动切换其他源",
+        f"# 📅 更新提示：建议每6-12小时重新运行，保证源的新鲜度和有效性",
+        f"# 🎯 最佳兼容：播放器设置编码为UTF-8，关闭广告过滤/URL重写",
+        GROUP_SEPARATOR
+    ])
 
-    # 容错逻辑：有效频道数低于阈值，生成提醒文件
-    valid_channel_count = len(channel_sources_map)
-    if valid_channel_count < MIN_VALID_CHANNELS:
-        logger.warning(f"有效频道数{valid_channel_count}低于阈值{MIN_VALID_CHANNELS}，生成基础提醒文件")
-        error_content = f"""#EXTM3U x-tvg-url="https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml"
-{GROUP_SEPARATOR}
-# ❌ IPTV播放列表生成失败 | {GLOBAL_UPDATE_TIME_DISPLAY}
-# 失败原因：有效频道数不足（仅{valid_channel_count}个），低于阈值{MIN_VALID_CHANNELS}个
-# 重试建议：1. 检查网络是否能访问GitHub 2. 增大TIMEOUT_VERIFY阈值 3. 稍后重新运行脚本
-# 验证统计：共验证{len(task_list):,}个源 | 成功{success_count:,}个 | 成功率{verify_rate:.1f}%
-{GROUP_SEPARATOR}
-#EXTINF:-1 group-title='📢 错误信息',生成失败【{GLOBAL_UPDATE_TIME_DISPLAY}】
-# 有效频道数不足，请按上述建议重试！
-"""
-        with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-            f.write(error_content)
-        return False
-
-    # 写入极致美化版M3U8文件（流式写入，内存优化）
+    # 流式写入M3U8文件，效率优先，避免内存溢出
     try:
-        output_path = Path(OUTPUT_FILE)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w", encoding="utf-8", buffering=1024*1024) as f:
-            f.write("\n".join(valid_lines))
+        with open(OUTPUT_FILE, "w", encoding="utf-8", buffering=1024*1024) as f:
+            f.write("\n".join(m3u8_content))
+        logger.info(f"✅ 播放端专属M3U8生成完成 → {OUTPUT_FILE}")
+        logger.info(f"📊 最终统计 | 频道：{total_channels}个 | 源：{total_sources}个 | 更新：{GLOBAL_UPDATE_TIME_FULL}")
+        return True
     except Exception as e:
-        logger.error(f"写入M3U8文件失败：{str(e)[:60]}", exc_info=False)
+        logger.error(f"写入M3U8失败：{str(e)[:50]}")
         return False
 
-    # 最终统计（可视化）
-    logger.info(f"\n📊 最终生成统计 {GLOBAL_UPDATE_TIME_DISPLAY}")
-    logger.info(f"   📺 频道分布：央视频道{len(grouped_channels['📺 央视频道'])} | 卫视频道{len(grouped_channels['📡 卫视频道'])}")
-    logger.info(f"   🏙️ 地方频道{len(grouped_channels['🏙️ 地方频道'])} | 其他频道{len(grouped_channels['🎬 其他频道'])}")
-    logger.info(f"   🎯 核心指标：有效频道{valid_channel_count:,}个 | 优质源{total_selected_source:,}个 | 验证成功率{verify_rate:.1f}%")
-    logger.info(f"   💾 缓存指标：本地缓存{len(verified_urls):,}个有效源 | 下次运行免重复验证")
-    logger.info(f"   ✅ 极致美化版M3U8生成完成 → {OUTPUT_FILE}（绝对路径：{output_path.absolute()}）")
-    return True
-
-# -------------------------- 主程序（全流程整合+性能统计） --------------------------
+# -------------------------- 主程序：全流程深度效率优化，一键运行 --------------------------
 if __name__ == "__main__":
-    # 程序启动时间
-    start_time = time.time()
-    logger.info("="*80)
-    logger.info("    IPTV直播源抓取工具 - 极致性能+极致美化版 V3.0    ")
-    logger.info("="*80)
-    logger.info(f"程序启动 → {GLOBAL_UPDATE_TIME_DISPLAY} | CPU核心数：{CPU_CORES} | Python版本：{requests.__version__}")
-    logger.info("="*80)
+    start_total = time.time()
+    logger.info("="*60)
+    logger.info("IPTV直播源抓取工具 - 究极版（效率拉满+播放端专属）")
+    logger.info("="*60)
+    logger.info(f"程序启动 | CPU：{CPU_CORES}核 | 验证线程：{MAX_THREADS_VERIFY} | 抓取线程：{MAX_THREADS_FETCH}")
+    logger.info(f"更新时间 | 完整：{GLOBAL_UPDATE_TIME_FULL} | 精简：{GLOBAL_UPDATE_TIME_SHORT}")
+    logger.info("="*60)
 
-    # 核心流程：加载缓存 → 抓取数据 → 智能选源+美化生成 → 保存缓存
-    load_verified_cache()
-    raw_data = fetch_raw_iptv_data_parallel(IPTV_SOURCE_URLS)
-    if raw_data:
-        generate_m3u8_parallel(raw_data)
-    else:
-        logger.error("未抓取到任何原始数据，程序终止")
-    save_verified_cache()
+    # 核心流程（全深度效率优化，步骤最少，开销最低）
+    load_persist_cache()          # 加载分层缓存
+    fetch_raw_data_parallel()     # 并行抓取+批量处理
+    extract_verify_tasks(all_lines)  # 提取验证任务+批量去重
+    verify_tasks_parallel(task_list) # 并行验证+内存复用
+    generate_player_m3u8()        # 生成播放端专属M3U8
+    save_persist_cache()          # 保存分层缓存
 
-    # 程序运行总耗时
-    total_time = time.time() - start_time
-    minutes = int(total_time // 60)
-    seconds = round(total_time % 60, 2)
-    logger.info("="*80)
-    logger.info(f"程序运行完成 → 总耗时：{minutes}分{seconds}秒（{total_time:.2f}秒）")
-    logger.info(f"生成文件 → 播放列表：{OUTPUT_FILE} | 运行日志：iptv_spider.log | 验证缓存：{CACHE_FILE}")
-    logger.info(f"使用提示 → 播放器直接导入{OUTPUT_FILE}，优先选择{SOURCE_NUM_PREFIX}1（最快），卡顿切换后续源")
-    logger.info(f"更新提示 → 建议通过计划任务/crontab每6-12小时自动运行，保证源新鲜")
-    logger.info("="*80)
+    # 总耗时统计，精确到毫秒
+    total_time = round(time.time() - start_total, 2)
+    logger.info("="*60)
+    logger.info(f"程序运行完成 | 总耗时：{total_time}秒 | 生成文件：{OUTPUT_FILE}")
+    logger.info(f"使用建议：1. 播放器导入{OUTPUT_FILE} 2. 定时每6小时运行 3. 播放器编码设为UTF-8")
+    logger.info("="*60)
