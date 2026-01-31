@@ -659,4 +659,7 @@ if __name__ == "__main__":
     logger.info("="*60)
     if generate_success:
         logger.info(f"执行完成 | 总耗时：{total_time}秒 | 生成文件：{OUTPUT_FILE}（已更新）")
-        logger.info(f)
+        logger.info(f"核心效果 | 自动选最优源，保留3个手动切换源，m3u8文件内容已更新")
+    else:
+        logger.error(f"执行失败 | 总耗时：{total_time}秒 | 未生成有效m3u8文件")
+    logger.info("="*60)
