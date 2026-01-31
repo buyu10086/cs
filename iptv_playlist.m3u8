@@ -1,636 +1,669 @@
 #EXTM3U x-tvg-url=https://iptv-org.github.io/epg/guides/cn/tv.cctv.com.epg.xml
 ##################################################
-# 📺 IPTV直播源 - CCTV数字排序版 | 2026-01-31 06:09:43
-# 🚀 特色：CCTV1→CCTV2→...→CCTV17 数字升序 | 其他频道名称排序
+# 📺 IPTV直播源 - 全类型排序版 | 2026-01-31 06:40:45
+# 🚀 排序规则：
+#   央视频道：CCTV1→CCTV2→...→CCTV17（数字升序）
+#   卫视频道：一线卫视优先→省份拼音排序
+#   地方频道：直辖市优先→省份拼音排序
+#   特色频道：电影→体育→少儿→财经→综艺（类型优先）
+#   数字频道：1→2→3→...→10→11（数字升序）
 # 🎯 兼容：TVBox/Kodi/完美视频/极光TV
 ##################################################
 
-# 📌 分组：📺 央视频道-CCTV1-17 | 频道数：12 | 更新：2026-01-31 06:09:43
+# 📌 分组：📺 央视频道-CCTV1-17 | 频道数：16 | 更新：2026-01-31 06:40:45
 ##################################################
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV1 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV1 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=7
 http://iptv.4666888.xyz/iptv2A.php?id=7
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV2 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV2 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=8
 http://iptv.4666888.xyz/iptv2A.php?id=8
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV3 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV3 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=9
 http://iptv.4666888.xyz/iptv2A.php?id=9
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV4 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV4 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=10
 http://iptv.4666888.xyz/iptv2A.php?id=10
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV10 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV10 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：https://t.freetv.fun/live/cctv-10-1.php
 https://t.freetv.fun/live/cctv-10-1.php
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV13 2源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV13 2源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：epg.pw/stream/5d3d047c64e44d0a24dc33e5700e579457...
 # 📶2 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=11
 https://epg.pw/stream/5d3d047c64e44d0a24dc33e5700e579457201d2960036b43819bd930a0bb76a7.m3u8
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV14 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV14 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=12
 http://iptv.4666888.xyz/iptv2A.php?id=12
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV16 2源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV16 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=32
+http://iptv.4666888.xyz/iptv2A.php?id=32
+
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-13 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：piccpndali.v.myalicdn.com/audio/cctv13_2.m3u8...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel21/1080...
+https://piccpndali.v.myalicdn.com/audio/cctv13_2.m3u8
+
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-15 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：piccpndali.v.myalicdn.com/audio/cctv15_2.m3u8...
+https://piccpndali.v.myalicdn.com/audio/cctv15_2.m3u8
+
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-16 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：piccpndali.v.myalicdn.com/audio/cctv16_2.m3u8...
-# 📶2 ▶普通：http://iptv.4666888.xyz/iptv2A.php?id=32
 https://piccpndali.v.myalicdn.com/audio/cctv16_2.m3u8
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-13 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel21/1080...
-http://ali-m-l.cztv.com/channels/lantian/channel21/1080p.m3u8
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-17 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：piccpndali.v.myalicdn.com/audio/cctv17_2.m3u8...
+https://piccpndali.v.myalicdn.com/audio/cctv17_2.m3u8
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-4 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-4 3源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：dash2.antik.sk/live/test_cctv_tizen/playlist.m3u...
+# 📶2 ▶普通：piccpndali.v.myalicdn.com/audio/cctveurope_2.m3u...
+# 📶3 ▶普通：piccpndali.v.myalicdn.com/audio/cctv4_2.m3u8...
 https://dash2.antik.sk/live/test_cctv_tizen/playlist.m3u8
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV央视台球 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV-6 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：piccpndali.v.myalicdn.com/audio/cctv6_2.m3u8...
+https://piccpndali.v.myalicdn.com/audio/cctv6_2.m3u8
+
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 CCTV央视台球 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：epg.pw/stream/ca9c1cd4b97fb824cedd7fedfd0c7a950a...
 https://epg.pw/stream/ca9c1cd4b97fb824cedd7fedfd0c7a950afdd7f00751cfbb7c2d89831d7746a5.m3u8
 
-#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 央视台球 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📺 央视频道-CCTV1-17",📺 央视台球 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：epg.pw/stream/25677ac2e8c1f7c3dd6359c43eb5f0f54e...
 https://epg.pw/stream/25677ac2e8c1f7c3dd6359c43eb5f0f54efb3f5c11f9dda18d01b3e0308ed017.m3u8
 
 ##################################################
 
-# 📌 分组：📡 卫视频道-一线/地方 | 频道数：11 | 更新：2026-01-31 06:09:43
+# 📌 分组：📡 卫视频道-一线/地方 | 频道数：12 | 更新：2026-01-31 06:40:45
 ##################################################
 
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 三沙卫视 1源 ⚡极速 [01-31 06:09]
-# 📶1 ⚡极速：stream1.freetv.fun/2476872184d56573ae915237d8e3c...
-https://stream1.freetv.fun/2476872184d56573ae915237d8e3c990ded214446351f568b57889cbf63da2e8.m3u8
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 湖南卫视 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32hunws/playlist.m3u...
+# 📶2 ▶普通：http://43.251.226.89:8080/play/921.m3u8
+# 📶3 ▶普通：http://43.251.226.89:8080/play/920.m3u8
+http://satellitepull.cnr.cn/live/wx32hunws/playlist.m3u8
 
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 东方卫视 2源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 浙江卫视 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel001/108...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel01/1080...
+# 📶3 ▶普通：play-qukan.cztv.com/live/1746687519046362.m3u8...
+https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 东方卫视 2源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：epg.pw/stream/6aec3ea636542c53729b5c9dd290864ab0...
 # 📶2 ▶普通：http://bp-resource-dfl.bestv.cn/155/3/video.m3u8
 https://epg.pw/stream/6aec3ea636542c53729b5c9dd290864ab04d4a69d2b9cb7864a9898779915898.m3u8
 
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 东方卫视4K 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 东方卫视4K 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：https://bp-resource-dfl.bestv.cn/148/3/video.m3u8
 https://bp-resource-dfl.bestv.cn/148/3/video.m3u8
 
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 四川卫视 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wxscws/playlist.m3u8...
-http://satellitepull.cnr.cn/live/wxscws/playlist.m3u8
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 北京卫视 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wxbtv/playlist.m3u8...
+http://satellitepull.cnr.cn/live/wxbtv/playlist.m3u8
 
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 大湾区卫视 1源 ⚡极速 [01-31 06:09]
-# 📶1 ⚡极速：stream1.freetv.fun/9e44565ab6186689007a295d8b94b...
-https://stream1.freetv.fun/9e44565ab6186689007a295d8b94b2a970fafde637068b0e3837e5f84689a8f3.m3u8
-
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 安多卫视 1源 ⚡极速 [01-31 06:09]
-# 📶1 ⚡极速：stream1.freetv.fun/52d0df257c5c3cec42f2ae19268db...
-https://stream1.freetv.fun/52d0df257c5c3cec42f2ae19268dbbc261256ff391b27bd83553bea941d0c186.m3u8
-
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 延边卫视 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxinchang2/720...
-http://l.cztvcloud.com/channels/lantian/SXxinchang2/720p.m3u8#
-
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 浙江卫视 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com:80/channels/lantian/channel001/...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel001/108...
-# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel001/108...
-http://ali-m-l.cztv.com:80/channels/lantian/channel001/1080p.m3u8
-
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 湖南卫视 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：http://43.251.226.89:8080/play/921.m3u8
-# 📶2 ▶普通：http://43.251.226.89:8080/play/920.m3u8
-http://43.251.226.89:8080/play/921.m3u8
-
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 香港卫视 2源 ⚡极速 [01-31 06:09]
-# 📶1 ⚡极速：stream1.freetv.fun/ae7eaf28d8610cdc1651ef6a1f7db...
-# 📶2 🚀快速：stream1.freetv.fun/5335c88a9a7d8b74173b491f480d4...
-https://stream1.freetv.fun/ae7eaf28d8610cdc1651ef6a1f7dbb24b49c5a87627d0d881330afaea37a1616.m3u8
-
-#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 黑龙江卫视 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 黑龙江卫视 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao3/720p.m...
 http://l.cztvcloud.com/channels/lantian/SXyuyao3/720p.m3u8
 
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 四川卫视 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wxscws/playlist.m3u8...
+http://satellitepull.cnr.cn/live/wxscws/playlist.m3u8
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 三沙卫视 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：stream1.freetv.fun/2476872184d56573ae915237d8e3c...
+https://stream1.freetv.fun/2476872184d56573ae915237d8e3c990ded214446351f568b57889cbf63da2e8.m3u8
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 大湾区卫视 1源 🚀快速 [01-31 06:40]
+# 📶1 🚀快速：stream1.freetv.fun/9e44565ab6186689007a295d8b94b...
+https://stream1.freetv.fun/9e44565ab6186689007a295d8b94b2a970fafde637068b0e3837e5f84689a8f3.m3u8
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 安多卫视 1源 🚀快速 [01-31 06:40]
+# 📶1 🚀快速：stream1.freetv.fun/52d0df257c5c3cec42f2ae19268db...
+https://stream1.freetv.fun/52d0df257c5c3cec42f2ae19268dbbc261256ff391b27bd83553bea941d0c186.m3u8
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 延边卫视 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxinchang2/720...
+http://l.cztvcloud.com/channels/lantian/SXxinchang2/720p.m3u8#
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方",📡 香港卫视 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：stream1.freetv.fun/ae7eaf28d8610cdc1651ef6a1f7db...
+# 📶2 ▶普通：stream1.freetv.fun/5335c88a9a7d8b74173b491f480d4...
+https://stream1.freetv.fun/ae7eaf28d8610cdc1651ef6a1f7dbb24b49c5a87627d0d881330afaea37a1616.m3u8
+
 ##################################################
 
-# 📌 分组：🏙️ 地方频道-各省市区 | 频道数：28 | 更新：2026-01-31 06:09:43
+# 📌 分组：🏙️ 地方频道-各省市区 | 频道数：19 | 更新：2026-01-31 06:40:45
 ##################################################
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 上海第一财经 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3...
-https://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 福建经济 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32fjdnjjgb/playlist....
+http://satellitepull.cnr.cn/live/wx32fjdnjjgb/playlist.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 北京新闻 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：https://brtv-radiolive.rbc.cn/alive/fm945.m3u8
-# 📶2 ▶普通：satellitepull.cnr.cn/live/wxbjxwgb/playlist.m3u8...
-https://brtv-radiolive.rbc.cn/alive/fm945.m3u8
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 甘肃经济 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wxgshhzs/playlist.m3u8...
+https://satellitepull.cnr.cn/live/wxgshhzs/playlist.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 吉林乡村 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 甘肃都市 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wxgsdstb/playlist.m3u8...
+https://satellitepull.cnr.cn/live/wxgsdstb/playlist.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 吉林乡村 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：satellitepull.cnr.cn/live/wxjlxcgb/playlist.m3u8...
 https://satellitepull.cnr.cn/live/wxjlxcgb/playlist.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 四川科教 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 四川科教 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://182.150.115.21:8030/pcgacg/pcgacg_0.m3u8
 http://182.150.115.21:8030/pcgacg/pcgacg_0.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 广东体育 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：epg.pw/stream/7b470f9fc5c305db0c8622117b7b25ca00...
-https://epg.pw/stream/7b470f9fc5c305db0c8622117b7b25ca00eb35ba3e93e865cf0ff9df5c736681.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江休闲台 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江休闲台 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel006/720...
 http://ali-m-l.cztv.com/channels/lantian/channel006/720p.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江公共新闻 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel007/108...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel07/1080...
-# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel007/108...
-http://ali-m-l.cztv.com/channels/lantian/channel007/1080p.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江国际 3源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江国际 3源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel010/108...
 # 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel010/720...
 # 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel010/108...
 http://ali-m-l.cztv.com/channels/lantian/channel010/1080p.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江少儿 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel008/108...
-# 📶2 ▶普通：ali-vl.cztv.com/channels/lantian/channel008/360p...
-# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel008/108...
-http://ali-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江影视 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel005/108...
-https://ali-m-l.cztv.com/channels/lantian/channel005/1080p.m3u8?
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江教科 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江教科 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel004/108...
 http://ali-m-l.cztv.com/channels/lantian/channel004/1080p.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江教科影视 3源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江教育 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel004/108...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel04/720p...
+https://ali-m-l.cztv.com/channels/lantian/channel004/1080p.m3u8?
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江数码时代 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel12/720p...
+http://ali-m-l.cztv.com/channels/lantian/channel12/720p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江民生 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel006/108...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel006/108...
+# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel06/1080...
+http://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江民生休闲 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-vl.cztv.com/channels/lantian/channel006/360p...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel006/108...
+http://ali-vl.cztv.com/channels/lantian/channel006/360p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江留学 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-vl.cztv.com/channels/lantian/channel009/360p...
+http://ali-vl.cztv.com/channels/lantian/channel009/360p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江经济 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/108...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel03/720p...
+# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/108...
+http://ali-m-l.cztv.com/channels/lantian/channel003/1080p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江经济生活 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxiaoshan2/720...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel03/1080...
+# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel03/1080...
+http://l.cztvcloud.com/channels/lantian/SXxiaoshan2/720p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江经视 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/720...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/108...
+http://ali-m-l.cztv.com/channels/lantian/channel003/720p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江遂昌 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXsuichang1/720...
+http://l.cztvcloud.com/channels/lantian/SXsuichang1/720p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江钱江 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel02/1080...
+# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m...
+# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel002/108...
+http://ali-m-l.cztv.com/channels/lantian/channel02/1080p.m3u8
+
+#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江钱江都市 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel002/108...
+https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8
+
+##################################################
+
+# 📌 分组：🎬 特色频道-电影/体育/少儿 | 频道数：47 | 更新：2026-01-31 06:40:45
+##################################################
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 上虞文化影院 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXshangyu2/720p...
+http://l.cztvcloud.com/channels/lantian/SXshangyu2/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 东阳影视生活 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXdongyang1/720...
+http://l.cztvcloud.com/channels/lantian/SXdongyang1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 浙江影视 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel005/108...
+https://ali-m-l.cztv.com/channels/lantian/channel005/1080p.m3u8?
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 浙江教科影视 3源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel04/1080...
 # 📶2 ▶普通：ali-vl.cztv.com/channels/lantian/channel004/360p...
 # 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel004/108...
 http://ali-m-l.cztv.com/channels/lantian/channel04/1080p.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江教育 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel04/720p...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel004/108...
-http://ali-m-l.cztv.com/channels/lantian/channel04/720p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 广东体育 1源 🚀快速 [01-31 06:40]
+# 📶1 🚀快速：epg.pw/stream/7b470f9fc5c305db0c8622117b7b25ca00...
+https://epg.pw/stream/7b470f9fc5c305db0c8622117b7b25ca00eb35ba3e93e865cf0ff9df5c736681.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江数码时代 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel12/720p...
-http://ali-m-l.cztv.com/channels/lantian/channel12/720p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 精品体育 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：epg.pw/stream/866a097a0907c9832440f8df38272dd555...
+https://epg.pw/stream/866a097a0907c9832440f8df38272dd555abf05200dfbafcc137e214c9b30ca7.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江新闻 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel007/720...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel07/720p...
-# 📶3 ▶普通：ali-vl.cztv.com/channels/lantian/channel007/360p...
-http://ali-m-l.cztv.com/channels/lantian/channel007/720p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 纬来体育 3源 🚀快速 [01-31 06:40]
+# 📶1 🚀快速：epg.pw/stream/ab6df63b64d0cc44a1f4f029ed847a26fa...
+# 📶2 ▶普通：epg.pw/stream/8855a9936e37e608a0ec8a014cce1673de...
+# 📶3 ▶普通：epg.pw/stream/4f18dfe0593db5c686eb64ae8edaf2a920...
+https://epg.pw/stream/ab6df63b64d0cc44a1f4f029ed847a26fa54a7aebd455578fb05a63f02c22f4b.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江民生 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel006/108...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel06/1080...
-# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel06/720p...
-http://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 风云足球 2源 🚀快速 [01-31 06:40]
+# 📶1 🚀快速：epg.pw/stream/ac8062ec9484078061d3bef507c15a423a...
+# 📶2 ▶普通：https://live.goodiptv.club/api/yqgd.php?id=fyzq
+https://epg.pw/stream/ac8062ec9484078061d3bef507c15a423ac57ae4144e3fcc4b0a198dd420f911.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江民生休闲 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-vl.cztv.com/channels/lantian/channel006/360p...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel006/108...
-http://ali-vl.cztv.com/channels/lantian/channel006/360p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 浙江少儿 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-vl.cztv.com/channels/lantian/channel008/360p...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel008/108...
+# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel008/108...
+http://ali-vl.cztv.com/channels/lantian/channel008/360p.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江留学 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-vl.cztv.com/channels/lantian/channel009/360p...
-http://ali-vl.cztv.com/channels/lantian/channel009/360p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 金鹰卡通 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：stream1.freetv.fun/04c887f5ef1094da7dee8aa04f8c3...
+https://stream1.freetv.fun/04c887f5ef1094da7dee8aa04f8c3d763c80977655b913034c1c93e3883a91bb.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江经济 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel03/720p...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/108...
-# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/108...
-http://ali-m-l.cztv.com/channels/lantian/channel03/720p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 上海第一财经 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3...
+https://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江经济生活 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel03/1080...
-# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXxiaoshan2/720...
-# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel03/1080...
-http://ali-m-l.cztv.com/channels/lantian/channel03/1080p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 第一财经 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3...
+http://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江经视 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/720...
-# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel003/108...
-http://ali-m-l.cztv.com/channels/lantian/channel003/720p.m3u8
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 龙游生活娱乐 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou2/720p...
+# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou2/720p...
+http://l.cztvcloud.com/channels/lantian/SXlongyou2/720p.m3u8
 
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江遂昌 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXsuichang1/720...
-http://l.cztvcloud.com/channels/lantian/SXsuichang1/720p.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江钱江 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel002/108...
-# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m...
-# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel02/1080...
-http://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 浙江钱江都市 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel002/108...
-https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 甘肃经济 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wxgshhzs/playlist.m3u8...
-https://satellitepull.cnr.cn/live/wxgshhzs/playlist.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 甘肃都市 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wxgsdstb/playlist.m3u8...
-https://satellitepull.cnr.cn/live/wxgsdstb/playlist.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 福建新闻 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32fjxwgb/playlist.m3...
-http://satellitepull.cnr.cn/live/wx32fjxwgb/playlist.m3u8
-
-#EXTINF:-1 group-title="🏙️ 地方频道-各省市区",🏙️ 福建经济 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32fjdnjjgb/playlist....
-http://satellitepull.cnr.cn/live/wx32fjdnjjgb/playlist.m3u8
-
-##################################################
-
-# 📌 分组：🎬 其他频道-特色/数字 | 频道数：88 | 更新：2026-01-31 06:09:43
-##################################################
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 2024年春晚 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：p2.bdstatic.com/rtmp.liveshow.lss-user.baidubce....
-https://p2.bdstatic.com/rtmp.liveshow.lss-user.baidubce.com/live/stream_bduid_6488563992_8982723413/merged_1707497046297_88536_25144_41936.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 Arirang 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：amdlive.ctnd.com.edgesuite.net/arirang_1ch/smil:...
-http://amdlive.ctnd.com.edgesuite.net/arirang_1ch/smil:arirang_1ch.smil/chunklist_b2256000_sleng.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 CNA新闻 1源 🚀快速 [01-31 06:09]
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 CNA新闻 1源 🚀快速 [01-31 06:40]
 # 📶1 🚀快速：d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4...
 https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index_5.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 CNN 1源 🚀快速 [01-31 06:09]
-# 📶1 🚀快速：turnerlive.warnermediacdn.com/hls/live/586495/cn...
-https://turnerlive.warnermediacdn.com/hls/live/586495/cnngo/cnn_slate/VIDEO_0_3564000.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 Now剧集 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：pullpackage.alivecdn.com/live/B9AKX0X3gSWZVv91H6...
-http://pullpackage.alivecdn.com/live/B9AKX0X3gSWZVv91H6UZDdsYyM8Fie9HvmJFzg3XN8JiR27kog.flv
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 Plus即时 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：https://vdm6-hw.nbgdsygs.com/live/h6-2.flv
-https://vdm6-hw.nbgdsygs.com/live/h6-2.flv
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 TVB明珠 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：grandprix2023.asuscomm.com:8892/bysid/2.m3u8...
-http://grandprix2023.asuscomm.com:8892/bysid/2.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 VOA美国之音 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：voa-ingest.akamaized.net/hls/live/2033878/tvmc08...
-https://voa-ingest.akamaized.net/hls/live/2033878/tvmc08/playlist.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 YMG未来 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuhang3/720p....
-http://l.cztvcloud.com/channels/lantian/SXyuhang3/720p.m3u8?
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 三立新闻 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：epg.pw/stream/6b49e3faa38adda85abab446f032dc1e68...
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 三立新闻 1源 🚀快速 [01-31 06:40]
+# 📶1 🚀快速：epg.pw/stream/6b49e3faa38adda85abab446f032dc1e68...
 https://epg.pw/stream/6b49e3faa38adda85abab446f032dc1e686baa0760a9cfa66e2df8fd6fe3b445.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 上虞文化影院 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXshangyu2/720p...
-http://l.cztvcloud.com/channels/lantian/SXshangyu2/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 上虞新商都 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXshangyu3/720p...
-http://l.cztvcloud.com/channels/lantian/SXshangyu3/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 东阳影视生活 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXdongyang1/720...
-http://l.cztvcloud.com/channels/lantian/SXdongyang1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 中国党员教育 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：12371ksc.v.kcdnvip.com/12371/dangyuanwang_1/inde...
-http://12371ksc.v.kcdnvip.com/12371/dangyuanwang_1/index.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 中国蓝新闻 3源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 中国蓝新闻 3源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel009/108...
 # 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel009/108...
 # 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel009/108...
 http://ali-m-l.cztv.com/channels/lantian/channel009/1080p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 之江纪录 3源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 云和新闻 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m...
+http://l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m3u8?
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 云和新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m...
+http://l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 兰溪新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlanxi1/720p.m...
+http://l.cztvcloud.com/channels/lantian/SXlanxi1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 北京新闻 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：https://brtv-radiolive.rbc.cn/alive/fm945.m3u8
+# 📶2 ▶普通：satellitepull.cnr.cn/live/wxbjxwgb/playlist.m3u8...
+https://brtv-radiolive.rbc.cn/alive/fm945.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 宜兴新闻 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：yixing-tv-ori-hls.jstv.com/yixing-tv-ori/yixing_...
+http://yixing-tv-ori-hls.jstv.com/yixing-tv-ori/yixing_xw.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 嵊州新闻综合 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXshengzhou1/72...
+# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXshengzhou1/72...
+http://l.cztvcloud.com/channels/lantian/SXshengzhou1/720p.m3u8?zzhed#http://l.cztvcloud.com/channels/lantian/SXshengzhou1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 平湖新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXpinghu1/720p....
+http://l.cztvcloud.com/channels/lantian/SXpinghu1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 文成新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXwencheng1/720...
+http://l.cztvcloud.com/channels/lantian/SXwencheng1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 新昌新闻综合 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxinchang1/720...
+# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXxinchang1/720...
+http://l.cztvcloud.com/channels/lantian/SXxinchang1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 普陀新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXputuo1/720p.m...
+http://l.cztvcloud.com/channels/lantian/SXputuo1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 武义新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXwuyi1/720p.m3...
+http://l.cztvcloud.com/channels/lantian/SXwuyi1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 永嘉新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyongjia1/720p...
+http://l.cztvcloud.com/channels/lantian/SXyongjia1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 江津新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：http://222.179.155.21:1935/ch1.m3u8
+http://222.179.155.21:1935/ch1.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 浙江公共新闻 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel007/108...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel07/1080...
+# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel007/108...
+http://ali-m-l.cztv.com/channels/lantian/channel007/1080p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 浙江新闻 3源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：ali-vl.cztv.com/channels/lantian/channel007/360p...
+# 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel07/720p...
+# 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel007/720...
+http://ali-vl.cztv.com/channels/lantian/channel007/360p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 涡阳新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：http://220.180.124.18:888/live/ch0.m3u8
+http://220.180.124.18:888/live/ch0.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 福建新闻 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32fjxwgb/playlist.m3...
+http://satellitepull.cnr.cn/live/wx32fjxwgb/playlist.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 缙云新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXjinyun1/720p....
+http://l.cztvcloud.com/channels/lantian/SXjinyun1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 苍南新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXcangnan1/720p...
+https://l.cztvcloud.com/channels/lantian/SXcangnan1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 萧山新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxiaoshan1/720...
+https://l.cztvcloud.com/channels/lantian/SXxiaoshan1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 西宁新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：t.freetv.fun/live/xi-zhu-xin-wen-zong-he-1.flv...
+https://t.freetv.fun/live/xi-zhu-xin-wen-zong-he-1.flv
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 诸暨新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXzhuji3/720p.m...
+https://l.cztvcloud.com/channels/lantian/SXzhuji3/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 象山新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxiangshan1/72...
+http://l.cztvcloud.com/channels/lantian/SXxiangshan1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 赣州新闻 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：pili-live-hls-sjxgz2024.sobeylive.com/jxgz2024/3...
+https://pili-live-hls-sjxgz2024.sobeylive.com/jxgz2024/396_q_live172526329228525.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 镇江新闻综合 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：http://zjtv-wshls.homecdn.com/live/2aa50.m3u8
+# 📶2 ▶普通：http://cm-wshls.homecdn.com/live/2aa50.m3u8
+http://zjtv-wshls.homecdn.com/live/2aa50.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 韩国新闻 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：amdlive.ctnd.com.edgesuite.net:80/arirang_1ch/sm...
+http://amdlive.ctnd.com.edgesuite.net:80/arirang_1ch/smil:arirang_1ch.smil/chunklist_b2256000_sleng.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 龙泉新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongquan1/720...
+http://l.cztvcloud.com/channels/lantian/SXlongquan1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 龙游新闻 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou1/720p...
+http://l.cztvcloud.com/channels/lantian/SXlongyou1/720p.m3u8?
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 龙游新闻综合 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou1/720p...
+https://l.cztvcloud.com/channels/lantian/SXlongyou1/720p.m3u8
+
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 之江纪录 3源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel012/108...
 # 📶2 ▶普通：ali-m-l.cztv.com/channels/lantian/channel12/1080...
 # 📶3 ▶普通：ali-m-l.cztv.com/channels/lantian/channel12/720p...
 http://ali-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 之江记录 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🎬 特色频道-电影/体育/少儿",🎬 音乐现场 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m...
+# 📶2 ▶普通：satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m...
+http://satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m3u8
+
+##################################################
+
+# 📌 分组：🌀 其他频道-综合 | 频道数：50 | 更新：2026-01-31 06:40:45
+##################################################
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 2024年春晚 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：p2.bdstatic.com/rtmp.liveshow.lss-user.baidubce....
+https://p2.bdstatic.com/rtmp.liveshow.lss-user.baidubce.com/live/stream_bduid_6488563992_8982723413/merged_1707497046297_88536_25144_41936.m3u8
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 Arirang 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：amdlive.ctnd.com.edgesuite.net/arirang_1ch/smil:...
+http://amdlive.ctnd.com.edgesuite.net/arirang_1ch/smil:arirang_1ch.smil/chunklist_b2256000_sleng.m3u8
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 CNN 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：turnerlive.warnermediacdn.com/hls/live/586495/cn...
+https://turnerlive.warnermediacdn.com/hls/live/586495/cnngo/cnn_slate/VIDEO_0_3564000.m3u8
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 Now剧集 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：pullpackage.alivecdn.com/live/B9AKX0X3gSWZVv91H6...
+http://pullpackage.alivecdn.com/live/B9AKX0X3gSWZVv91H6UZDdsYyM8Fie9HvmJFzg3XN8JiR27kog.flv
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 Plus即时 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：https://vdm6-hw.nbgdsygs.com/live/h6-2.flv
+https://vdm6-hw.nbgdsygs.com/live/h6-2.flv
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 TVB明珠 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：grandprix2023.asuscomm.com:8892/bysid/2.m3u8...
+http://grandprix2023.asuscomm.com:8892/bysid/2.m3u8
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 VOA美国之音 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：voa-ingest.akamaized.net/hls/live/2033878/tvmc08...
+https://voa-ingest.akamaized.net/hls/live/2033878/tvmc08/playlist.m3u8
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 YMG未来 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuhang3/720p....
+http://l.cztvcloud.com/channels/lantian/SXyuhang3/720p.m3u8?
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 上虞新商都 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXshangyu3/720p...
+http://l.cztvcloud.com/channels/lantian/SXshangyu3/720p.m3u8
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 中国党员教育 1源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：12371ksc.v.kcdnvip.com/12371/dangyuanwang_1/inde...
+http://12371ksc.v.kcdnvip.com/12371/dangyuanwang_1/index.m3u8
+
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 之江记录 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel012/108...
 http://ali-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8?
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 乐至综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 乐至综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://175.155.106.72:89/live1/live1.m3u8
 http://175.155.106.72:89/live1/live1.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 云和新闻 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m...
-http://l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m3u8?
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 云和新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m...
-http://l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 亳州农村 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 亳州农村 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://zbbf2.ahbztv.com/live/418.m3u8
 http://zbbf2.ahbztv.com/live/418.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 人与自然 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 人与自然 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/de...
 http://newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/default/1425e1d505654cb48ba82b807b221193/1200.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 余姚姚江文化 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m...
-# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao3/720p.m...
-https://l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m3u8
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 余姚姚江文化 2源 ▶普通 [01-31 06:40]
+# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao3/720p.m...
+# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m...
+https://l.cztvcloud.com/channels/lantian/SXyuyao3/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 余姚综合 3源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 余姚综合 3源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao1/720p.m...
 # 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao1/720p.m...
 # 📶3 ▶普通：l.cztvcloud.com/channels/lantian/SXyuyao1/720p.m...
-http://l.cztvcloud.com/channels/lantian/SXyuyao1/720p.m3u8?
+http://l.cztvcloud.com/channels/lantian/SXyuyao1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 余杭未来 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 余杭未来 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlanxi1/720p.m...
 http://l.cztvcloud.com/channels/lantian/SXlanxi1/720p.m3u8?
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 余杭未来E 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 余杭未来E 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuhang3/720p....
 http://l.cztvcloud.com/channels/lantian/SXyuhang3/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 余杭综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 余杭综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyuhang1/720p....
 http://l.cztvcloud.com/channels/lantian/SXyuhang1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 兰溪新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlanxi1/720p.m...
-http://l.cztvcloud.com/channels/lantian/SXlanxi1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 凤凰香港 3源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 凤凰香港 3源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：epg.pw/stream/5f16dc7fc8aaaed3205516c63e4a8c24bc...
 # 📶2 ▶普通：epg.pw/stream/8770e89223a086eb1b8a0c931e42296d77...
 # 📶3 ▶普通：http://43.251.226.89:8080/play/890.m3u8
 https://epg.pw/stream/5f16dc7fc8aaaed3205516c63e4a8c24bca9dbba1181684244729cf574505b0e.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 句容生活 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 句容生活 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://43.251.226.89:8080/play/1052.m3u8
 http://43.251.226.89:8080/play/1052.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 哈密一套 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 哈密一套 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：tvpull.hmgbtv.com/hmtv/channel9cd66b3d5d258b2b.f...
 https://tvpull.hmgbtv.com/hmtv/channel9cd66b3d5d258b2b.flv
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 哈密三套 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 哈密三套 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：tvpull.hmgbtv.com/hmtv/channelfb0e5c505477aa44/p...
 https://tvpull.hmgbtv.com/hmtv/channelfb0e5c505477aa44/playlist.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 哈密二套 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 哈密二套 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：tvpull.hmgbtv.com/hmtv/channel108259412c6a6711/p...
 https://tvpull.hmgbtv.com/hmtv/channel108259412c6a6711/playlist.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 地理中国 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 地理中国 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/de...
 http://newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/default/c6baf6f74bb944aeacee1065ea72c798/1200.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 姚江文化 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 姚江文化 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXqingtian1/720...
 http://l.cztvcloud.com/channels/lantian/SXqingtian1/720p.m3u8?
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 宜兴新闻 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：yixing-tv-ori-hls.jstv.com/yixing-tv-ori/yixing_...
-http://yixing-tv-ori-hls.jstv.com/yixing-tv-ori/yixing_xw.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 嵊州新闻综合 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXshengzhou1/72...
-# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXshengzhou1/72...
-http://l.cztvcloud.com/channels/lantian/SXshengzhou1/720p.m3u8?zzhed#http://l.cztvcloud.com/channels/lantian/SXshengzhou1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 嵊泗综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 嵊泗综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXshengsi1/720p...
 http://l.cztvcloud.com/channels/lantian/SXshengsi1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 平湖新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXpinghu1/720p....
-http://l.cztvcloud.com/channels/lantian/SXpinghu1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 平湖民生休闲 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 平湖民生休闲 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXpinghu2/720p....
 http://l.cztvcloud.com/channels/lantian/SXpinghu2/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 庆元综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 庆元综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXqingyuan1/720...
 http://l.cztvcloud.com/channels/lantian/SXqingyuan1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 开化国家公园 2源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 开化国家公园 2源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXkaihua2/720p....
 # 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXkaihua2/720p....
 http://l.cztvcloud.com/channels/lantian/SXkaihua2/720p.m3u8?zzhed#http://l.cztvcloud.com/channels/lantian/SXkaihua2/720p.m3u8zzhed#http://l.cztvcloud.com/channels/lantian/SXkaihua2/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 文成新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXwencheng1/720...
-http://l.cztvcloud.com/channels/lantian/SXwencheng1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 新昌新闻综合 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxinchang1/720...
-# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXxinchang1/720...
-http://l.cztvcloud.com/channels/lantian/SXxinchang1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 新昌生活 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 新昌生活 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxinchang2/720...
 http://l.cztvcloud.com/channels/lantian/SXxinchang2/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 春晚2025 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 春晚2025 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：res.cctvnews.cctv.com/video/3005/record/cctv/mer...
 https://res.cctvnews.cctv.com/video/3005/record/cctv/merge1/133396667284143308839013005/8fbd6180bdef4da19f6155cf6b4652e1-4.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 普陀新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXputuo1/720p.m...
-http://l.cztvcloud.com/channels/lantian/SXputuo1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 普陀电视台 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 普陀电视台 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXputuo1/720p.m...
 https://l.cztvcloud.com/channels/lantian/SXputuo1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 松阳综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 松阳综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXsongyang1/720...
 http://l.cztvcloud.com/channels/lantian/SXsongyang1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 武义新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXwuyi1/720p.m3...
-http://l.cztvcloud.com/channels/lantian/SXwuyi1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 水浒传 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 水浒传 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://43.251.226.89:8080/play/1562.m3u8
 http://43.251.226.89:8080/play/1562.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 永嘉新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXyongjia1/720p...
-http://l.cztvcloud.com/channels/lantian/SXyongjia1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 江津新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：http://222.179.155.21:1935/ch1.m3u8
-http://222.179.155.21:1935/ch1.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 洞头综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 洞头综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXdongtou1/720p...
 http://l.cztvcloud.com/channels/lantian/SXdongtou1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 涡阳新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：http://220.180.124.18:888/live/ch0.m3u8
-http://220.180.124.18:888/live/ch0.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 淮阴综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 淮阴综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：huaiyin-tv-replay.cm.jstv.com/huaiyin-tv/huaiyin...
 https://huaiyin-tv-replay.cm.jstv.com/huaiyin-tv/huaiyinf.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 番禺综合 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 番禺综合 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：video.epaper.pybtv.cn:8080/live/rtmp_live_demo.f...
 http://video.epaper.pybtv.cn:8080/live/rtmp_live_demo.flv
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 第一剧场 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：epg.pw/stream/6d7bf281e3d739806a73f5373acaa6e019...
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 第一剧场 1源 🚀快速 [01-31 06:40]
+# 📶1 🚀快速：epg.pw/stream/6d7bf281e3d739806a73f5373acaa6e019...
 https://epg.pw/stream/6d7bf281e3d739806a73f5373acaa6e01988ec9739f5ac1355ce54b47a928472.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 第一财经 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3...
-http://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 精品体育 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：epg.pw/stream/866a097a0907c9832440f8df38272dd555...
-https://epg.pw/stream/866a097a0907c9832440f8df38272dd555abf05200dfbafcc137e214c9b30ca7.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 纬来体育 3源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：epg.pw/stream/8855a9936e37e608a0ec8a014cce1673de...
-# 📶2 ▶普通：epg.pw/stream/4f18dfe0593db5c686eb64ae8edaf2a920...
-# 📶3 ▶普通：epg.pw/stream/ab6df63b64d0cc44a1f4f029ed847a26fa...
-https://epg.pw/stream/8855a9936e37e608a0ec8a014cce1673dee9c5d68d560da376cc92e5edef2b25.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 缙云新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXjinyun1/720p....
-http://l.cztvcloud.com/channels/lantian/SXjinyun1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 自然传奇 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 自然传奇 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/de...
 http://newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/default/81a1ad3a661748bfb8560c92d38204ca/1200.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 苍南新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXcangnan1/720p...
-https://l.cztvcloud.com/channels/lantian/SXcangnan1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 萧山新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxiaoshan1/720...
-https://l.cztvcloud.com/channels/lantian/SXxiaoshan1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 萧山生活 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 萧山生活 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxiaoshan2/720...
 https://l.cztvcloud.com/channels/lantian/SXxiaoshan2/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 萧山综合 2源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 萧山综合 2源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxiaoshan1/720...
 # 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXxiaoshan1/720...
-http://l.cztvcloud.com/channels/lantian/SXxiaoshan1/720p.m3u8
+http://l.cztvcloud.com/channels/lantian/SXxiaoshan1/720p.m3u8?
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 西宁新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：t.freetv.fun/live/xi-zhu-xin-wen-zong-he-1.flv...
-https://t.freetv.fun/live/xi-zhu-xin-wen-zong-he-1.flv
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 西宁生活服务 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 西宁生活服务 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：t.freetv.fun/live/xi-zhu-sheng-huo-fu-wu-1.flv...
 https://t.freetv.fun/live/xi-zhu-sheng-huo-fu-wu-1.flv
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 诸暨新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXzhuji3/720p.m...
-https://l.cztvcloud.com/channels/lantian/SXzhuji3/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 象山新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXxiangshan1/72...
-http://l.cztvcloud.com/channels/lantian/SXxiangshan1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 赣州公共 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 赣州公共 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：pili-live-hls-sjxgz2024.sobeylive.com/jxgz2024/3...
 https://pili-live-hls-sjxgz2024.sobeylive.com/jxgz2024/396_q_live172526334096251.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 赣州新闻 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：pili-live-hls-sjxgz2024.sobeylive.com/jxgz2024/3...
-https://pili-live-hls-sjxgz2024.sobeylive.com/jxgz2024/396_q_live172526329228525.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 都市剧场 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 都市剧场 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：satellitepull.cnr.cn/live/wxcqxwgb/playlist.m3u8...
 https://satellitepull.cnr.cn/live/wxcqxwgb/playlist.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 金鹰卡通 1源 ⚡极速 [01-31 06:09]
-# 📶1 ⚡极速：stream1.freetv.fun/04c887f5ef1094da7dee8aa04f8c3...
-https://stream1.freetv.fun/04c887f5ef1094da7dee8aa04f8c3d763c80977655b913034c1c93e3883a91bb.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 钱江都市 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 钱江都市 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：ali-m-l.cztv.com/channels/lantian/channel002/108...
 https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8?
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 镇江二套社会民生 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 镇江二套社会民生 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://zjtv-wshls.homecdn.com/live/2aa16.m3u8
 http://zjtv-wshls.homecdn.com/live/2aa16.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 镇江新闻综合 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：http://zjtv-wshls.homecdn.com/live/2aa50.m3u8
-# 📶2 ▶普通：http://cm-wshls.homecdn.com/live/2aa50.m3u8
-http://zjtv-wshls.homecdn.com/live/2aa50.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 闯关东 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 闯关东 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：http://43.251.226.89:8080/play/1731.m3u8
 http://43.251.226.89:8080/play/1731.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 青田电视台 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 青田电视台 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXqingtian1/720...
 http://l.cztvcloud.com/channels/lantian/SXqingtian1/720p.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 韩国新闻 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：amdlive.ctnd.com.edgesuite.net:80/arirang_1ch/sm...
-http://amdlive.ctnd.com.edgesuite.net:80/arirang_1ch/smil:arirang_1ch.smil/chunklist_b2256000_sleng.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 音乐现场 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m...
-# 📶2 ▶普通：satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m...
-http://satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 风云足球 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：epg.pw/stream/ac8062ec9484078061d3bef507c15a423a...
-# 📶2 ▶普通：https://live.goodiptv.club/api/yqgd.php?id=fyzq
-https://epg.pw/stream/ac8062ec9484078061d3bef507c15a423ac57ae4144e3fcc4b0a198dd420f911.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 飞碟之谜01 1源 ▶普通 [01-31 06:09]
+#EXTINF:-1 group-title="🌀 其他频道-综合",🌀 飞碟之谜01 1源 ▶普通 [01-31 06:40]
 # 📶1 ▶普通：hls.cntv.lxdns.com/asp/hls/2000/0303000a/3/defau...
 https://hls.cntv.lxdns.com/asp/hls/2000/0303000a/3/default/f0a47e155d32450daa1d36a04fd7d262/2000.m3u8
 
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 龙泉新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongquan1/720...
-http://l.cztvcloud.com/channels/lantian/SXlongquan1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 龙游新闻 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou1/720p...
-http://l.cztvcloud.com/channels/lantian/SXlongyou1/720p.m3u8?
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 龙游新闻综合 1源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou1/720p...
-https://l.cztvcloud.com/channels/lantian/SXlongyou1/720p.m3u8
-
-#EXTINF:-1 group-title="🎬 其他频道-特色/数字",🎬 龙游生活娱乐 2源 ▶普通 [01-31 06:09]
-# 📶1 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou2/720p...
-# 📶2 ▶普通：l.cztvcloud.com/channels/lantian/SXlongyou2/720p...
-http://l.cztvcloud.com/channels/lantian/SXlongyou2/720p.m3u8
-
 ##################################################
 
-# 📊 汇总 | 2026-01-31 06:09:43
-# 频道：139个 | 源：187个 | 成功率：1.1%
-# 排序说明：CCTV频道按数字升序（1→2→...→17），其他频道按名称排序
-# 提示：优先播放第一个URL，卡顿切换其他源
+# 📊 汇总 | 2026-01-31 06:40:45
+# 总频道数：144个 | 总有效源：195个 | 验证成功率：1.2%
+# 排序说明：所有频道按类型分组排序，播放器内查找更高效
+# 提示：优先播放第一个URL（最快），卡顿可切换后续备用源
 ##################################################
