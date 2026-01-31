@@ -15,7 +15,8 @@ IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/kakaxi-1/IPTV/refs/heads/main/ipv4.txt",
     "https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u",
     "https://raw.githubusercontent.com/8080713/iptv-api666/refs/heads/main/output/result.m3u",
-    "https://raw.githubusercontent.com/Guovin/iptv-api/refs/heads/gd/output/result.m3u"
+    "https://raw.githubusercontent.com/Guovin/iptv-api/refs/heads/gd/output/result.m3u",
+    "https://raw.githubusercontent.com/audyfan/tv/refs/heads/main/live.m3u"
 ]
 
 # 2. 验证与超时配置
