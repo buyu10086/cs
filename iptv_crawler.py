@@ -270,3 +270,4 @@ def select_best_sources(sources: List[Tuple[str, float]]) -> List[Tuple[str, flo
             remaining_sources = [s for s in sorted_sources if s[0] != primary_source[0]]
         # 选择2个备用源（按速度排序）
         backup_sources = remaining_sources[:TOTAL_SOURCES_PER_CHANNEL - 1
+        ]
