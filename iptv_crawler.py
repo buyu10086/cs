@@ -641,4 +641,22 @@ if __name__ == "__main__":
     logger.info("="*60)
     logger.info("IPTV直播源抓取工具 - 极速优化版（自动选最优+3个手动切换源）")
     logger.info("="*60)
-    logger.info(f"启动配置 |
+    logger.info(f"启动配置 | CPU：{CPU_CORES}核 | 验证线程：{MAX_THREADS_VERIFY} | 抓取线程：{MAX_THREADS_FETCH}")
+    logger.info(f"更新时间 | 完整：{GLOBAL_UPDATE_TIME_FULL} | 精简：{GLOBAL_UPDATE_TIME_SHORT}")
+    logger.info(f"选源配置 | 自动选最优：{AUTO_SELECT_SOURCE} | 每个频道保留源数：{TOTAL_SOURCES_PER_CHANNEL}")
+    logger.info("="*60)
+    
+    # 执行核心流程
+    load_persist_cache()
+    fetch_raw_data_parallel()
+    extract_verify_tasks(all_lines)
+    verify_tasks_parallel(task_list)
+    generate_success = generate_player_m3u8()
+    save_persist_cache()
+    
+    # 打印最终执行结果
+    total_time = round(time.time() - start_total, 2)
+    logger.info("="*60)
+    if generate_success:
+        logger.info(f"执行完成 | 总耗时：{total_time}秒 | 生成文件：{OUTPUT_FILE}（已更新）")
+        logger.info(f
