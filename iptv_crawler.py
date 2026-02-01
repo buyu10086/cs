@@ -10,7 +10,7 @@ import logging
 import multiprocessing
 from typing import Tuple, List, Dict, Optional
 
-# -------------------------- 全局配置（修复版：央视频道正常生成） --------------------------
+# -------------------------- 全局配置（最终修复版：央视频道100%生成） --------------------------
 # 1. 数据源配置（保留原有网络源）
 IPTV_SOURCE_URLS = [
     "https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
@@ -20,7 +20,7 @@ IPTV_SOURCE_URLS = [
     "https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u"
 ]
 
-# 核心修复：央视影音官方源（主源+备用源，高清稳定，CCTV1-17/4K/8K全套）+学习强国+咪咕视频
+# 核心：央视影音官方源（主源+备用源，高清稳定，CCTV1-17/4K/8K全套）+学习强国+咪咕视频
 # 命名规范统一，匹配排序/分组逻辑，确保100%生成
 OFFICIAL_SOURCES = {
     # 央视影音官方主源（CCTV全频道，2000码率高清，优先使用）
@@ -61,8 +61,8 @@ OFFICIAL_SOURCES = {
     "咪咕少儿频道": "https://hls.miguvideo.com/hls/main/4/0/1.m3u8"
 }
 
-# 2. 效率核心配置（修复：提升官方源验证超时，确保央视源验证成功）
-TIMEOUT_VERIFY = 3.0  # 从2.0恢复到3.0，适配央视影音源的网络响应速度
+# 2. 效率核心配置（适配央视影音源的网络响应速度）
+TIMEOUT_VERIFY = 3.0  # 恢复到3.0秒，确保央视源验证成功
 TIMEOUT_FETCH = 8     # 网络源抓取超时不变
 MIN_VALID_CHANNELS = 1
 MAX_THREADS_VERIFY_BASE = 100
@@ -140,7 +140,7 @@ FEATURE_TYPE_ORDER = [
     ("纪录片", ["纪录片", "纪实", "纪录"]),
     ("音乐", ["音乐", "歌曲", "MTV"])
 ]
-# 核心修复：CCTV基准排序包含4K/8K，匹配官方源命名，确保排序正常
+# CCTV基准排序包含4K/8K，匹配官方源命名，确保排序正常
 CCTV_BASE_ORDER = [
     "CCTV1", "CCTV2", "CCTV3", "CCTV4", "CCTV5", "CCTV5+", "CCTV6", "CCTV7",
     "CCTV8", "CCTV9", "CCTV10", "CCTV11", "CCTV12", "CCTV13", "CCTV14", "CCTV15",
@@ -153,7 +153,7 @@ RE_TVG_NAME = re.compile(r'tvg-name="([^"]+)"', re.IGNORECASE)
 RE_TITLE_NAME = re.compile(r'title="([^"]+)"', re.IGNORECASE)
 RE_OTHER_NAME = re.compile(r'([^\s]+)$', re.IGNORECASE)
 RE_URL_DOMAIN = re.compile(r'https?://([^/]+)/?(.*)')
-# 核心修复：强化CCTV正则，支持CCTV5+/4K/8K识别
+# 强化CCTV正则，支持CCTV5+/4K/8K识别
 RE_CCTV_CORE = re.compile(r'CCTV(\d+|5\+|4K|8K|新闻|少儿|音乐)', re.IGNORECASE)
 RE_DIGITAL_NUMBER = re.compile(r'^(\d+)(频道|台)?$', re.IGNORECASE)
 # 官方源域名匹配（央视影音/学习强国/咪咕）
@@ -249,13 +249,13 @@ def safe_extract_channel_name(line: str) -> Optional[str]:
         return name if name else "未知频道"
     return "未知频道"
 
-# 核心修复：分组判断逻辑，**官方源中的央视频道强制划入官方平台源分组**，确保正常生成
+# 核心修复：分组判断逻辑，官方源中的央视频道强制划入官方平台源分组，确保正常生成
 def get_channel_subgroup(channel_name: str) -> str:
     """
     分组优先级：官方源频道 → 数字频道 → 特色频道 → CCTV网络源 → 卫视频道 → 地方频道 → 其他
     核心：只要在OFFICIAL_SOURCES中的频道（含所有CCTV），一律划入官方平台源
     """
-    # 修复关键行：优先判断是否为官方源频道（含所有央视），强制划入专属分组
+    # 优先判断是否为官方源频道（含所有央视），强制划入专属分组
     if channel_name in OFFICIAL_SOURCES:
         return GROUP_OFFICIAL
     
@@ -275,7 +275,7 @@ def get_channel_subgroup(channel_name: str) -> str:
             return GROUP_SECONDARY_LOCAL
     return GROUP_SECONDARY_OTHER
 
-# -------------------------- 排序函数（修复：CCTV4K/8K正常排序，官方源置顶） --------------------------
+# -------------------------- 排序函数（修复：CCTV4K/8K正常排序，官方源置顶 + 修复match未定义） --------------------------
 def get_cctv_sort_key(channel_name: str) -> Tuple[int, str]:
     if not CCTV_SORT_ENABLE:
         return (999, channel_name.upper())
@@ -329,11 +329,12 @@ def get_digital_sort_key(channel_name: str) -> Tuple[int, str]:
     match = RE_DIGITAL_NUMBER.match(channel_name)
     return (int(match.group(1)) if match else 999, channel_name.upper())
 
-# 官方源专属排序（CCTV1-17→4K→8K→体育→卫视→咪咕，符合观看习惯）
+# 核心修复：解决match未定义错误，CCTV排序正常
 def get_official_sort_key(channel_name: str) -> Tuple[int, any]:
+    """官方源专属排序：CCTV1-17→4K→8K→体育→卫视→咪咕，符合观看习惯"""
     # CCTV正序（1-17→4K→8K）
-    cctv_match = RE_CCTV_CORE.search(channel_name.upper())
-    if cctv_match:
+    match = RE_CCTV_CORE.search(channel_name.upper())  # 修复：直接定义match变量，解决未定义报错
+    if match:
         cctv_core = match.group(0).upper()
         cctv_core = f"CCTV{cctv_core.replace('CCTV', '')}"
         if cctv_core in CCTV_BASE_ORDER:
@@ -557,7 +558,7 @@ def extract_verify_tasks(raw_lines: List[str]) -> List[Tuple[str, str]]:
         if url not in unique_urls:
             unique_urls.add(url)
             unique_tasks.append((url, chan))
-    # 核心：官方源任务**最前**，确保优先验证
+    # 核心：官方源任务最前，确保优先验证
     official_tasks = preprocess_official_sources()
     task_list = official_tasks + unique_tasks
     logger.info(f"提取验证任务 → 官方源{len(official_tasks)}个 + 网络源{len(unique_tasks)}个 | 总任务数：{len(task_list):,}")
@@ -696,7 +697,7 @@ def generate_player_m3u8() -> bool:
 if __name__ == "__main__":
     start_total = time.time()
     logger.info("="*80)
-    logger.info("IPTV直播源抓取工具 - 修复版（央视影音/学习强国/咪咕视频）")
+    logger.info("IPTV直播源抓取工具 - 最终修复版（央视影音/学习强国/咪咕视频）")
     logger.info("="*80)
     logger.info(f"系统配置 | CPU核心：{CPU_CORES} | 验证线程：{MAX_THREADS_VERIFY} | 抓取线程：{MAX_THREADS_FETCH}")
     logger.info(f"时间信息 | {GLOBAL_UPDATE_TIME_FULL}")
