@@ -4,13 +4,13 @@
 # 兼容播放器：VLC、PotPlayer
 
 #EXTINF:-1,CCTV-1
-http://38.75.136.137:98/gslb/dsdqpub/cctv1hd.m3u8
+http://38.75.136.137:98/gslb/dsdqbv/cctv1hd.m3u8
 
 #EXTINF:-1,CCTV-2
 http://38.75.136.137:98/gslb/dsdqpub/cctv2hd.m3u8
 
 #EXTINF:-1,CCTV-3
-http://38.75.136.137:98/gslb/dsdqbv/cctv3hd.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv3hd/2000/index.m3u8
 
 #EXTINF:-1,Ando TV
 http://play.kankanlive.com/live/1711956137852982.m3u8
@@ -45,7 +45,7 @@ https://dash2.antik.sk/live/test_cctv_tizen/playlist.m3u8
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv4meihd/51/index.m3u8
 
 #EXTINF:-1,CCTV-5
-http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/cctv5plusnew/1200/index.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/cctv5hdnew/1200/index.m3u8
 
 #EXTINF:-1,CCTV-6
 http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv6hd/2000/index.m3u8
@@ -60,7 +60,7 @@ http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv8hd/2000/index.m3u8
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv9hd/51/index.m3u8
 
 #EXTINF:-1,CCTV-10
-http://38.75.136.137:98/gslb/dsdqbv/cctv10hd.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv10hd/2000/index.m3u8
 
 #EXTINF:-1,CCTV-11
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/cctv11hd/51/20200103/index.m3u8
@@ -69,13 +69,13 @@ http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/cctv11hd/51/20200103/index.m
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv12hd/51/index.m3u8
 
 #EXTINF:-1,CCTV-13
-http://hlsztemgsplive.miguvideo.com:8080/envivo_x/2018/SD/cctv13/2000/index.m3u8
+http://38.75.136.137:98/gslb/dsdqbv/cctv13hd.m3u8
 
 #EXTINF:-1,CCTV-14
 http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv14hd/2000/index.m3u8
 
 #EXTINF:-1,CCTV-15
-http://38.75.136.137:98/gslb/dsdqpub/cctv15hd.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv15hd/51/index.m3u8
 
 #EXTINF:-1,CCTV-17
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv17hd/51/index.m3u8
