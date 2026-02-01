@@ -3,7 +3,30 @@ import time
 import random
 import json
 from datetime import datetime, timedelta
-import re
+import re📡 卫视频道-一线/地方（全量）（共32个频道）| ⏰02-03 10:00
+==================================================
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方（全量）",📡 湖南卫视 3源 ⚡极速 [02-03 10:00]
+# 📶1 ⚡极速：cdn.hunantv.com/xxx/live.m3u8...
+https://cdn.hunantv.com/xxx/live.m3u8
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方（全量）",📡 浙江卫视 3源 🚀快速 [02-03 10:00]
+# 📶1 🚀快速：iptv.zjstv.com/xxx/stream.ts...
+https://iptv.zjstv.com/xxx/stream.ts
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方（全量）",📡 江苏卫视HD 2源 💾缓存 [02-03 10:00]
+# 📶1 💾缓存：jsbc.tv/xxx/4k.m3u8...
+https://jsbc.tv/xxx/4k.m3u8
+
+...
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方（全量）",📡 内蒙古卫视 2源 ▶普通 [02-03 10:00]
+# 📶1 ▶普通：nmtv.com/xxx/live.m3u8...
+https://nmtv.com/xxx/live.m3u8
+
+#EXTINF:-1 group-title="📡 卫视频道-一线/地方（全量）",📡 西藏卫视 1源 ⚡极速 [02-03 10:00]
+# 📶1 ⚡极速：xztv.com/xxx/stream.ts...
+https://xztv.com/xxx/stream.ts
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 from pathlib import Path
