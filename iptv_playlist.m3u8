@@ -7,10 +7,10 @@
 http://38.75.136.137:98/gslb/dsdqpub/cctv1hd.m3u8
 
 #EXTINF:-1,CCTV-2
-http://38.75.136.137:98/gslb/dsdqpub/cctv2hd.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/cctv2hd/1500/index.m3u8
 
 #EXTINF:-1,CCTV-3
-http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv3hd/2000/index.m3u8
+http://38.75.136.137:98/gslb/dsdqbv/cctv3hd.m3u8
 
 #EXTINF:-1,Ando TV
 http://play.kankanlive.com/live/1711956137852982.m3u8
@@ -42,10 +42,10 @@ http://118.81.195.79:9003/hls/20/index.m3u8
 https://dash2.antik.sk/live/test_cctv_tizen/playlist.m3u8
 
 #EXTINF:-1,CCTV-4
-http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/cctv4hd/1500/index.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv4meihd/51/index.m3u8
 
 #EXTINF:-1,CCTV-5
-http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/cctv5plusnew/1200/index.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/cctv5hdnew/1200/index.m3u8
 
 #EXTINF:-1,CCTV-6
 http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv6hd/2000/index.m3u8
@@ -60,7 +60,7 @@ http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv8hd/2000/index.m3u8
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv9hd/51/index.m3u8
 
 #EXTINF:-1,CCTV-10
-http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv10hd/2000/index.m3u8
+http://38.75.136.137:98/gslb/dsdqbv/cctv10hd.m3u8
 
 #EXTINF:-1,CCTV-11
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/cctv11hd/51/20200103/index.m3u8
@@ -75,7 +75,7 @@ http://hlsztemgsplive.miguvideo.com:8080/envivo_x/2018/SD/cctv13/2000/index.m3u8
 http://hlsztemgsplive.miguvideo.com:8080/wd_r2/2018/ocn/cctv14hd/2000/index.m3u8
 
 #EXTINF:-1,CCTV-15
-http://38.75.136.137:98/gslb/dsdqpub/cctv15hd.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv15hd/51/index.m3u8
 
 #EXTINF:-1,CCTV-17
 http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20200324/cctv17hd/51/index.m3u8
@@ -564,4 +564,4 @@ http://media.fantv.hk/m3u8/archive/channel2_stream1.m3u8
 http://223.110.245.169/PLTV/4/224/3221227026/index.m3u8
 
 #EXTINF:-1,CCTV 未知频道
-http://hlsztemgsplive.miguvideo.com:8080/wd_r2/cctv/jiangsuhd/1200/index.m3u8
+http://hlsztemgsplive.miguvideo.com:8080/migu/kailu/20210415/cctvzhongxuesheng/51/index.m3u8
