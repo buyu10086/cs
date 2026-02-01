@@ -1,5 +1,6 @@
 import requests
 import re
+import datetime  # 导入Python标准库的datetime，修复AttributeError
 from typing import List, Dict, Tuple
 
 # 超时时间设置（单位：秒），响应时间越短，认为源越快
@@ -29,14 +30,15 @@ def test_source_speed(source_url: str) -> float:
     若源不可用（超时、连接失败、状态码非200），返回一个极大值
     """
     try:
-        start_time = requests.utils.datetime.datetime.now()
+        # 使用标准库datetime，不再依赖requests.utils，修复核心错误
+        start_time = datetime.datetime.now()
         # 只请求头部信息（不下载完整内容，提高测速效率）
         response = requests.head(
             source_url,
             timeout=TIMEOUT,
             allow_redirects=True  # 允许重定向，兼容部分跳转源
         )
-        end_time = requests.utils.datetime.datetime.now()
+        end_time = datetime.datetime.now()
         response_time = (end_time - start_time).total_seconds()
         
         # 仅当状态码为200时，认为源可用，返回实际响应时间
