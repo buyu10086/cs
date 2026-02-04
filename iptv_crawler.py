@@ -399,7 +399,7 @@ def crawl_and_select_top3(session):
     return all_channels
 
 def generate_iptv_playlist(top3_channels):
-    """生成前三最优源的m3u8文件（兼容zubo源的运营商标记）"""
+    """生成前三最优源的m3u8文件（兼容zubo源的运营商标记，未分类→其它频道）"""
     if not top3_channels:
         print("❌ 无有效频道，无法生成播放列表")
         return
@@ -435,11 +435,11 @@ def generate_iptv_playlist(top3_channels):
                     playlist_content.append(f"{std_ch},{url}{tag}")
         playlist_content.append("")
 
-    # 写入未分类频道
-    uncategorized = [ch for ch in top3_channels.keys() if not any(ch in clist for clist in CHANNEL_CATEGORIES.values())]
-    if uncategorized:
-        playlist_content.append("未分类频道,#genre#")
-        for std_ch in uncategorized:
+    # 关键修改：未分类频道 → 其它频道
+    other_channels = [ch for ch in top3_channels.keys() if not any(ch in clist for clist in CHANNEL_CATEGORIES.values())]
+    if other_channels:
+        playlist_content.append("其它频道,#genre#")  # 分类名修改为“其它频道”
+        for std_ch in other_channels:
             urls = top3_channels[std_ch]
             for idx, url in enumerate(urls):
                 if idx >= top_k:
@@ -456,7 +456,7 @@ def generate_iptv_playlist(top3_channels):
         output_path.write_text("\n".join(playlist_content).rstrip("\n"), encoding="utf-8")
         print(f"\n🎉 成功生成最优播放列表：{output_path.name}")
         print(f"📂 路径：{output_path.absolute()}")
-        print(f"💡 说明：1. 每个频道保留最多{top_k}个源，标记为$最优/$次优/$三优；2. zubo源的运营商信息已保留（如$上海市电信），方便按网络选择")
+        print(f"💡 说明：1. 未分类频道已统一改为“其它频道”；2. 每个频道保留最多{top_k}个源，标记为$最优/$次优/$三优；3. zubo源的运营商信息已保留（如$上海市电信），方便按网络选择")
     except Exception as e:
         print(f"❌ 生成文件失败：{e}")
 
@@ -466,7 +466,7 @@ def generate_iptv_playlist(top3_channels):
 if __name__ == "__main__":
     print("="*70)
     print("📺 IPTV直播源爬取 + zubo格式支持 + 前三最优源筛选工具（最终版）")
-    print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析")
+    print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 未分类频道→其它频道")
     print("="*70)
     # 1. 创建请求会话
     session = get_requests_session()
