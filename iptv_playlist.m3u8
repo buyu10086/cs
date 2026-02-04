@@ -1,7 +1,7 @@
-更新时间: 2026-02-04 10:48:09（北京时间）
+更新时间: 2026-02-04 11:27:20（北京时间）
 
 更新时间,#genre#
-2026-02-04 10:48:09,本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有
+2026-02-04 11:27:20,本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有
 
 央视频道,#genre#
 CCTV1,http://58.57.40.22:9901/tsfile/live/0001_1.m3u8$最优
@@ -24,6 +24,7 @@ CCTV15,http://58.57.40.22:9901/tsfile/live/1015_1.m3u8$最优
 CCTV16,http://69.30.246.194/live/cctv16.m3u8$最优
 CCTV17,http://58.57.40.22:9901/tsfile/live/0019_1.m3u8$最优
 兵器科技,http://120.238.94.10:9901/tsfile/live/1096_1.m3u8$最优
+风云音乐,http://120.238.94.10:9901/tsfile/live/1089_1.m3u8$最优
 风云足球,http://27.41.245.32:801/hls/906/index.m3u8$最优
 风云剧场,http://120.238.94.10:9901/tsfile/live/1090_1.m3u8$最优
 怀旧剧场,http://38.75.136.137:98/gslb/dsdqpub/hjjc.m3u8?auth=testpub$最优
@@ -39,8 +40,8 @@ CCTV17,http://58.57.40.22:9901/tsfile/live/0019_1.m3u8$最优
 湖南卫视,https://txmov2.a.kwimgs.com/bs3/video-hls/5199687338554291078_hlsb.m3u8$最优
 浙江卫视,http://58.57.40.22:9901/tsfile/live/1029_1.m3u8$最优
 江苏卫视,http://58.57.40.22:9901/tsfile/live/1031_1.m3u8$最优
-东方卫视,https://bp-resource-dfl.bestv.cn/148/3/video.m3u8$最优
-东方卫视,https://txmov2.a.kwimgs.com/bs3/video-hls/5219953535631090825_hlsb.m3u8$次优
+东方卫视,https://txmov2.a.kwimgs.com/bs3/video-hls/5219953535631090825_hlsb.m3u8$最优
+东方卫视,https://bp-resource-dfl.bestv.cn/148/3/video.m3u8$次优
 深圳卫视,http://58.57.40.22:9901/tsfile/live/1036_1.m3u8$最优
 北京卫视,http://58.57.40.22:9901/tsfile/live/1032_1.m3u8$最优
 广东卫视,http://58.57.40.22:9901/tsfile/live/1039_1.m3u8$最优
@@ -87,18 +88,17 @@ CHC动作电影,http://120.238.94.82:9901/tsfile/live/1052_1.m3u8$最优
 CHC家庭影院,http://43.251.226.89:8080/play/225.m3u8$最优
 重温经典,https://other.ottiptv.cc/cwjd.m3u8$最优
 凤凰卫视电影台,http://iot-mqqt.111yao.cn:8080/live/diyp_fhdy.m3u8$最优
-纪实科教,http://120.76.248.139/live/bfgd/4200000113.m3u8$最优
-纪实科教,http://111.31.106.140/downflv.brtvcloud.com/8klive/8kliveok.m3u8$次优
+纪实科教,http://111.31.106.140/downflv.brtvcloud.com/8klive/8kliveok.m3u8$最优
+纪实科教,http://120.76.248.139/live/bfgd/4200000113.m3u8$次优
 五星体育,https://other.ottiptv.cc/wxty.m3u8$最优
 汽摩,http://120.76.248.139/live/bfgd/4200000168.m3u8$最优
 梨园频道,https://dxtx.hntv.tv/live/lypd.m3u8?txSecret=10c771842a0be59e8b575d765173ec96&txTime=7B923E0A&wsSecret=41543190cdf375f1c73207222bb96542&wsTime=1769313549$最优
-都市剧场,https://satellitepull.cnr.cn/live/wxcqxwgb/playlist.m3u8$最优
 卡酷少儿,http://58.57.40.22:9901/tsfile/live/1060_1.m3u8$最优
 金鹰卡通,http://58.57.40.22:9901/tsfile/live/1059_1.m3u8$最优
 哈哈炫动,http://120.238.94.10:9901/tsfile/live/1037_1.m3u8$最优
 音乐现场,http://satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m3u8$最优
 
-北京频道,#genre#
+湖北地方台,#genre#
 
 河南省级,#genre#
 河南卫视,http://58.57.40.22:9901/tsfile/live/1048_1.m3u8$最优
@@ -108,6 +108,7 @@ CHC家庭影院,http://43.251.226.89:8080/play/225.m3u8$最优
 渑池新闻综合,http://live.dxhmt.cn:9081/tv/11221-1.m3u8$最优
 
 未分类频道,#genre#
+2026-02-04 04:37:44,http://kakaxi.indevs.in/LOGO/Disclaimer.mp4$最优
 CGTN,http://english-livetx.cgtn.com/hls/yypdyyctzb_hd.m3u8$最优
 CGTN俄语,https://0472.org/hls/cgtne.m3u8$最优
 CGTN法语,https://0472.org/hls/cgtnf.m3u8$最优
@@ -268,6 +269,7 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 云和新闻综合,http://l.cztvcloud.com/channels/lantian/SXyunhe1/720p.m3u8$最优
 云霄综合,https://live.zzyxxw.com:2443/live/xwzh.m3u8$最优
 井研综合,http://tvfile.jyrmt.cn/nmip-media/channellive/channel104452/playlist.m3u8$最优
+亳州农村,http://zbbf2.ahbztv.com/live/418.m3u8$最优
 什邡新闻,http://live.sfrmt.com:85/live/zhpd.m3u8?zsicd$最优
 仁寿综合,https://play.scrstv.com.cn/DT/live.m3u8?auth_key=60001724663204-0-0-c1cc4ded9841ac34f63cdbd3aec647ef$最优
 任丘综合,https://jwcdnqx.hebyun.com.cn/live/rqtv1/1500k/tzwj_video.m3u8$最优
@@ -297,7 +299,6 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 北京生活,https://wstvcpudali.v.myalicdn.com/wstvcpud/udrmbtv7_1/index.m3u8?adapt=0&BR=audio$最优
 北京科教,http://player.cntv.cn/standard/live_HLSDRM20180606.swf?ChannelID=btv3&P2PChannelID=pd://cctv_p2p_hdbtv3$最优
 北京青年,http://player.cntv.cn/standard/live_HLSDRM20180919.swf?v=180.171.5.8.9.6.3.9&ChannelID=btv8&videoTVChannel=btv8&P2PChannelID=pd://cctv_p2p_hdbtv8&tai=btv8&VideoName=btv8&channelID=btv8$最优
-北海新闻综合,https://live.gxrb.com.cn/gx/beihai/index.m3u8$最优
 南京十八,https://mgtv.ottiptv.cc/migu/838151753.m3u8?migutoken=e1c3c9e2e67541d90ea94c4c917f96ecf43c6c0ae7c616929d8676e7c14bc5587ba870ce22575333640bfff61b05d4d468f6564c6251023f1ad20957cfe3b2c12e71b4662f83dce5d920a86c29$最优
 南京教科,http://nklive.nbs.cn/hls/75b3c462-b831-4de7-a34b-5d3221db2069/index.m3u8$最优
 南京新闻综合,http://nklive.nbs.cn/hls/d511bc9d-a694-4453-b3a2-4fc842cc97a1/index.m3u8$最优
@@ -335,7 +336,6 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 天祝综合,https://play.kankanlive.com/live/1656487214793905.m3u8$最优
 太谷新闻综合,http://p2.vzan.com/slowlive/596867413819827251/live.m3u8$最优
 奎屯哈萨克语,http://218.84.12.186:8002/hls/main/playlist.m3u8$最优
-宁夏经济,https://ls.qingting.fm/live/1841/64k.m3u8$最优
 安徽国际,https://www.ahtv.cn/folder9000/folder20193?channelIndex=6$最优
 安徽导视,http://dspdhls.appcoo.com:8888/live/dspd/index.m3u8$最优
 安徽综艺体育,http://112.27.235.94:8000/hls/25/index.m3u8$最优
@@ -463,7 +463,6 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 涟水电视台综合,https://lianshui-tv-hls.cm.jstv.com:443/lianshui-tv/lsxw.m3u8$最优
 涡阳新闻综合,http://220.180.124.18:888/live/ch0.m3u8$最优
 淅川电视,http://live.dxhmt.cn:9081/tv/11326-1.m3u8$最优
-淮安新闻综合,https://mgtv.ottiptv.cc/migu/639731826.m3u8?migutoken=383a4690d772fe16ccec98f2da2e7e0c3b362ae2d9a0fa219e9a7bb76bb96d4ca6392f861efb0a61154552c563897f4660867745735f85e310ec9fb52d7fc55cd30da8d55169f8c415c5a69a15$最优
 淮阴综合,https://huaiyin-tv-replay.cm.jstv.com/huaiyin-tv/huaiyinf.m3u8$最优
 清河经济综艺,https://jwcdnqx.hebyun.com.cn/live/qinghe1/1500k/tzwj_video.m3u8$最优
 温县综合,http://live.dxhmt.cn:9081/tv/10825-1.m3u8$最优
@@ -560,7 +559,6 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 钱江都市,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8$最优
 铜梁综合,http://183.64.174.171:40123/ch1.m3u8$最优
 铜陵新闻综合,https://ls.qingting.fm/live/21303/64k.m3u8$最优
-镇江二套社会民生,http://zjtv-wshls.homecdn.com/live/2aa16.m3u8$最优
 镇江新闻综合,http://cm-wshls.homecdn.com/live/2aa50.m3u8$最优
 长子综合,https://www.wxhcgbds.com:8081/channelTv/WXTV_1.m3u8?zshanxd$最优
 长宁综合,http://cnpull.sccnfb.com:80/live/123456.m3u8$最优
@@ -596,7 +594,6 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 东丰,http://stream5.jlntv.cn/df/sd/live.m3u8?zjild$最优
 中国党员教育,http://12371ksc.v.kcdnvip.com/12371/dangyuanwang_1/index.m3u8$最优
 中国村庄,http://newcntv.qcloudcdn.com/asp/hls/4000/0303000a/3/default/93fc12dbf14241c18c23da104fbade23/4000.m3u8$最优
-临潭,http://pili-live-hls.hfmt.net/gntv/lttv.m3u8?zgand$最优
 人与自然,http://newcntv.qcloudcdn.com/asp/hls/1200/0303000a/3/default/1425e1d505654cb48ba82b807b221193/1200.m3u8$最优
 伊犁汉语,http://110.153.180.106:55555/out_1/index.m3u8?zxinjd$最优
 双辽,http://stream5.jlntv.cn/sl/sd/live.m3u8?zjild$最优
