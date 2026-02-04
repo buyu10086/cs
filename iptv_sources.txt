@@ -1,3 +1,7 @@
 https://gh-proxy.com/raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt
 https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u
 https://iptv.hacks.tools/domestic/FM%20%E6%94%B6%E9%9F%B3%E6%9C%BA%E6%BA%90/all/m3u
+https://live.zhi35.com/iptv.m3u
+https://gh.aptv.app/https://raw.githubusercontent.com/Kimentanm/aptv/master/m3u/iptv.m3u
+https://raw.githubusercontent.com/imDazui/Tvlist-awesome-m3u-m3u8/master/m3u/%E5%8C%97%E4%BA%AC%E8%81%94%E9%80%9A.m3u
+https://itv.aptv.app/china-iptv/hndx.m3u
