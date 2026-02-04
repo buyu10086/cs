@@ -2,3 +2,4 @@ https://gh-proxy.com/raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPT
 https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/cctv.m3u
 https://gh-proxy.com/raw.githubusercontent.com/zwc456baby/iptv_alive/refs/heads/main/live.m3u
 https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u
+https://iptv.hacks.tools/domestic/FM%20%E6%94%B6%E9%9F%B3%E6%9C%BA%E6%BA%90/all/m3u
