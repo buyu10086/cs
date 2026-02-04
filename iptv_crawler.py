@@ -1,196 +1,410 @@
-import requests
 import re
-import datetime
-from typing import List, Dict, Tuple
+import requests
+import time
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# 放宽超时时间，适配官方源响应
-TIMEOUT = 10
+# ===============================
+# 全局配置区（核心参数可调）
+# ===============================
+CONFIG = {
+    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 根目录IPTV源链接文件
+    "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优m3u8文件
+    "HEADERS": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Connection": "close"  # 关闭长连接，减少资源占用
+    },
+    # 测速配置
+    "TEST_TIMEOUT": 5,  # 单链接测速超时（秒），网络差可改为8
+    "MAX_WORKERS": 30,  # 并发测速线程数，建议20-50，带宽高可上调
+    "RETRY_TIMES": 2,  # 网络请求重试次数
+    "TOP_K": 3,  # 保留前K个最优源，固定为3（无需修改）
+    "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有"
+}
 
-# 新增官方/合法公开源，提升稳定性与合法性
-IPTV_SOURCES = [
-    # 合法公开授权源（优先选择）
-    "https://gh-proxy.com/https://raw.githubusercontent.com/iptv-org/iptv/master/streams/cn.m3u",  # iptv-org 合法授权源
-    "https://gh-proxy.com/https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/cctv.m3u",  # 整理后的央视合法源
-    
-    # 原有稳定源（筛选合法内容）
-    "https://gh-proxy.com/https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt",
-    "https://gh-proxy.com/https://raw.githubusercontent.com/kakaxi-1/IPTV/refs/heads/main/ipv4.txt",
-    "https://gh-proxy.com/https://raw.githubusercontent.com/zwc456baby/iptv_alive/refs/heads/main/live.m3u"
-]
+# ===============================
+# 频道分类配置（保持不变）
+# ===============================
+CHANNEL_CATEGORIES = {
+    "央视频道": [
+        "CCTV1", "CCTV2", "CCTV3", "CCTV4", "CCTV4欧洲", "CCTV4美洲", "CCTV5", "CCTV5+", "CCTV6", "CCTV7",
+        "CCTV8", "CCTV9", "CCTV10", "CCTV11", "CCTV12", "CCTV13", "CCTV14", "CCTV15", "CCTV16", "CCTV17", "CCTV4K", "CCTV8K",
+        "兵器科技", "风云音乐", "风云足球", "风云剧场", "怀旧剧场", "第一剧场", "女性时尚", "世界地理", "央视台球", "高尔夫网球",
+        "央视文化精品", "卫生健康", "电视指南", "中学生", "发现之旅", "书法频道", "国学频道", "环球奇观"
+    ],
+    "卫视频道": [
+        "湖南卫视", "浙江卫视", "江苏卫视", "东方卫视", "深圳卫视", "北京卫视", "广东卫视", "广西卫视", "东南卫视", "海南卫视",
+        "河北卫视", "河南卫视", "湖北卫视", "江西卫视", "四川卫视", "重庆卫视", "贵州卫视", "云南卫视", "天津卫视", "安徽卫视",
+        "山东卫视", "辽宁卫视", "黑龙江卫视", "吉林卫视", "内蒙古卫视", "宁夏卫视", "山西卫视", "陕西卫视", "甘肃卫视", "青海卫视",
+        "新疆卫视", "西藏卫视", "三沙卫视", "兵团卫视", "延边卫视", "安多卫视", "康巴卫视", "农林卫视", "厦门卫视", "山东教育卫视",
+        "中国教育1台", "中国教育2台", "中国教育3台", "中国教育4台", "早期教育"
+    ],
+    "数字频道": [
+        "CHC动作电影", "CHC家庭影院", "CHC影迷电影", "淘电影", "淘精彩", "淘剧场", "淘4K", "淘娱乐", "淘BABY", "淘萌宠", "重温经典",
+        "星空卫视", "CHANNEL[V]", "凤凰卫视中文台", "凤凰卫视资讯台", "凤凰卫视香港台", "凤凰卫视电影台", "求索纪录", "求索科学",
+        "求索生活", "求索动物", "纪实人文", "金鹰纪实", "纪实科教", "睛彩青少", "睛彩竞技", "睛彩篮球", "睛彩广场舞", "魅力足球", "五星体育",
+        "劲爆体育", "快乐垂钓", "茶频道", "先锋乒羽", "天元围棋", "汽摩", "梨园频道", "文物宝库", "武术世界", "哒啵赛事", "哒啵电竞", "黑莓电影", "黑莓动画", 
+        "乐游", "生活时尚", "都市剧场", "欢笑剧场", "游戏风云", "金色学堂", "动漫秀场", "新动漫", "卡酷少儿", "金鹰卡通", "优漫卡通", "哈哈炫动", "嘉佳卡通", 
+        "中国交通", "中国天气", "华数4K", "华数星影", "华数动作影院", "华数喜剧影院", "华数家庭影院", "华数经典电影", "华数热播剧场", "华数碟战剧场",
+        "华数军旅剧场", "华数城市剧场", "华数武侠剧场", "华数古装剧场", "华数魅力时尚", "华数少儿动画", "华数动画", "爱综艺", "爱体育", "爱电影", "爱大剧", "爱生活", "高清纪实", "IPTV谍战剧场", "IPTV相声小品", "IPTV野外", "音乐现场", "IPTV野外", "IPTV法治", "河南IPTV-导视", "网络棋牌", "好学生", "央视篮球"
+    ],
+    "北京频道": [
+        "BRTV北京卫视HD", "BRTV新闻HD", "BRTV影视HD", "BRTV文艺HD", "BRTV财经HD", 
+        "BRTV生活HD", "BRTV青年HD", "BRTV纪实科教HD", "BRTV卡酷少儿HD", "BRTV冬奥纪实HD", 
+        "BRTV冬奥纪实[HDR]", "BRTV冬奥纪实[超清]", "BRTV体育休闲[超清]", "BTV国际频道", 
+        "淘电影HD", "淘剧场HD", "淘娱乐HD", "淘BabyHD", "淘精彩HD", "茶频道HD"
+    ],
+    "河南省级": [
+        "河南卫视", "河南都市频道", "河南民生频道", "河南法治频道", "河南电视剧频道", "河南新闻频道", 
+        "河南乡村频道", "河南戏曲频道", "河南收藏天下", "河南中华功夫", "河南移动电视", "河南调解剧场", 
+        "河南移动戏曲", "河南睛彩中原", "大象新闻", "大剧院", "健康河南融媒", "体育赛事"
+    ],
+    "河南市县": [
+        "郑州1新闻综合", "郑州2商都频道", "郑州3文体旅游", "鄭州4豫剧频道", "郑州5妇女儿童", "郑州6都市生活",
+        "洛阳-1新闻综合", "洛阳-2科教频道", "洛阳-3文旅频道", "南阳1新闻综合", "南阳2公共频道", "南阳3科教频道",
+        "商丘1新闻综合", "商丘2公共频道", "商丘3文体科教", "周口公共频道", "周口教育频道", "周口新闻综合",
+        "开封1新闻综合", "开封2文化旅游", "新乡公共频道", "新乡新闻综合", "新乡综合频道", "焦作公共频道", 
+        "焦作综合频道", "漯河新闻综合", "信阳新闻综合", "信阳文旅频道", "许昌农业科教", "许昌综合频道",
+        "平顶山新闻综合", "平顶山城市频道", "平顶山公共频道", "平顶山教育台", "鹤壁新闻综合", "安阳新闻综合",
+        "安阳文旅频道", "三门峡新闻综合", "濮阳新闻综合", "濮阳公共频道", "济源-1", "永城新闻联播", 
+        "项城电视台", "禹州电视台", "邓州综合频道", "新密综合频道", "登封综合频道", "巩义综合频道", 
+        "荥阳综合频道", "新郑TV-1", "新县综合频道", "淅川电视台-1", "镇平新闻综合", "宝丰TV-1", 
+        "宝丰-1", "舞钢电视台-1", "嵩县综合新闻", "宜阳综合频道", "汝阳综合频道", "孟津综合综合", 
+        "灵宝综合频道", "渑池新闻综合", "义马综合频道", "内黄综合频道", "封丘1新闻综合", "延津电视台", 
+        "获嘉综合频道", "原阳电视台", "卫辉综合频道", "淇县电视台", "内黄综合频道", "郸城", 
+        "唐河TV-1", "上蔡-1", "舞阳新闻综合", "临颍综合频道", "杞县新闻综合", "光山综合频道",
+        "平煤安全环保", "浉河广电中心", "平桥广电中心", "新蔡TV", "叶县电视台-1", "郏县综合频道"
+    ]
+}
 
-def fetch_remote_iptv(source_url: str) -> str:
-    for retry in range(2):
-        try:
-            response = requests.get(
-                source_url,
-                timeout=TIMEOUT,
-                allow_redirects=True,
-                headers={
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                }
-            )
-            response.encoding = response.apparent_encoding or 'utf-8'
-            if response.status_code in (200, 206, 301, 302):
-                return response.text
-        except Exception as e:
-            if retry == 1:
-                print(f"⚠️  拉取失败：{source_url}（错误：{str(e)[:50]}）")
-    return ""
+# ===============================
+# 频道别名映射（保持不变）
+# ===============================
+CHANNEL_MAPPING = {
+    "CCTV1": ["CCTV-1", "CCTV-1 HD", "CCTV1 HD", "CCTV-1综合"],
+    "CCTV2": ["CCTV-2", "CCTV-2 HD", "CCTV2 HD", "CCTV-2财经"],
+    "CCTV3": ["CCTV-3", "CCTV-3 HD", "CCTV3 HD", "CCTV-3综艺"],
+    "CCTV4": ["CCTV-4", "CCTV-4 HD", "CCTV4 HD", "CCTV-4中文国际"],
+    "CCTV4欧洲": ["CCTV-4欧洲", "CCTV-4欧洲", "CCTV4欧洲 HD", "CCTV-4 欧洲", "CCTV-4中文国际欧洲", "CCTV4中文欧洲"],
+    "CCTV4美洲": ["CCTV-4美洲", "CCTV-4北美", "CCTV4美洲 HD", "CCTV-4 美洲", "CCTV-4中文国际美洲", "CCTV4中文美洲"],
+    "CCTV5": ["CCTV-5", "CCTV-5 HD", "CCTV5 HD", "CCTV-5体育"],
+    "CCTV5+": ["CCTV-5+", "CCTV-5+ HD", "CCTV5+ HD", "CCTV-5+体育赛事"],
+    "CCTV6": ["CCTV-6", "CCTV-6 HD", "CCTV6 HD", "CCTV-6电影"],
+    "CCTV7": ["CCTV-7", "CCTV-7 HD", "CCTV7 HD", "CCTV-7国防军事"],
+    "CCTV8": ["CCTV-8", "CCTV-8 HD", "CCTV8 HD", "CCTV-8电视剧"],
+    "CCTV9": ["CCTV-9", "CCTV-9 HD", "CCTV9 HD", "CCTV-9纪录"],
+    "CCTV10": ["CCTV-10", "CCTV-10 HD", "CCTV10 HD", "CCTV-10科教"],
+    "CCTV11": ["CCTV-11", "CCTV-11 HD", "CCTV11 HD", "CCTV-11戏曲"],
+    "CCTV12": ["CCTV-12", "CCTV-12 HD", "CCTV12 HD", "CCTV-12社会与法"],
+    "CCTV13": ["CCTV-13", "CCTV-13 HD", "CCTV13 HD", "CCTV-13新闻"],
+    "CCTV14": ["CCTV-14", "CCTV-14 HD", "CCTV14 HD", "CCTV-14少儿"],
+    "CCTV15": ["CCTV15", "CCTV-15 HD", "CCTV15 HD", "CCTV-15音乐"],
+    "CCTV16": ["CCTV16", "CCTV-16 HD", "CCTV-16 4K", "CCTV-16奥林匹克", "CCTV16 4K", "CCTV16奥林匹克4K"],
+    "CCTV17": ["CCTV17", "CCTV-17 HD", "CCTV17 HD", "CCTV17农业农村"],
+    "CCTV4K": ["CCTV4K超高清", "CCTV-4K超高清", "CCTV-4K 超高清", "CCTV 4K"],
+    "CCTV8K": ["CCTV8K超高清", "CCTV-8K超高清", "CCTV-8K 超高清", "CCTV 8K"],
+    "兵器科技": ["CCTV-兵器科技", "CCTV兵器科技"],
+    "风云音乐": ["CCTV-风云音乐", "CCTV风云音乐"],
+    "第一剧场": ["CCTV-第一剧场", "CCTV第一剧场"],
+    "风云足球": ["CCTV-风云足球", "CCTV风云足球"],
+    "风云剧场": ["CCTV-风云剧场", "CCTV风云剧场"],
+    "怀旧剧场": ["CCTV-怀旧剧场", "CCTV怀旧剧场"],
+    "女性时尚": ["CCTV-女性时尚", "CCTV女性时尚"],
+    "世界地理": ["CCTV-世界地理", "CCTV世界地理"],
+    "央视台球": ["CCTV-央视台球", "CCTV央视台球"],
+    "高尔夫网球": ["CCTV-高尔夫网球", "CCTV高尔夫网球", "CCTV央视高网", "CCTV-高尔夫·网球", "央视高网"],
+    "央视文化精品": ["CCTV-央视文化精品", "CCTV央视文化精品", "CCTV文化精品", "CCTV-文化精品", "文化精品"],
+    "卫生健康": ["CCTV-卫生健康", "CCTV卫生健康"],
+    "电视指南": ["CCTV-电视指南", "CCTV电视指南"],
+    "农林卫视": ["陕西农林卫视"],
+    "三沙卫视": ["海南三沙卫视"],
+    "兵团卫视": ["新疆兵团卫视"],
+    "延边卫视": ["吉林延边卫视"],
+    "安多卫视": ["青海安多卫视"],
+    "康巴卫视": ["四川康巴卫视"],
+    "山东教育卫视": ["山东教育"],
+    "中国教育1台": ["CETV1", "中国教育一台", "中国教育1", "CETV-1 综合教育", "CETV-1"],
+    "中国教育2台": ["CETV2", "中国教育二台", "中国教育2", "CETV-2 空中课堂", "CETV-2"],
+    "中国教育3台": ["CETV3", "中国教育三台", "中国教育3", "CETV-3 教育服务", "CETV-3"],
+    "中国教育4台": ["CETV4", "中国教育四台", "中国教育4", "CETV-4 职业教育", "CETV-4"],
+    "早期教育": ["中国教育5台", "中国教育五台", "CETV早期教育", "华电早期教育", "CETV 早期教育"],
+    "湖南卫视": ["湖南卫视4K"],
+    "北京卫视": ["北京卫视4K"],
+    "东方卫视": ["东方卫视4K"],
+    "广东卫视": ["广东卫视4K"],
+    "深圳卫视": ["深圳卫视4K"],
+    "山东卫视": ["山东卫视4K"],
+    "四川卫视": ["四川卫视4K"],
+    "浙江卫视": ["浙江卫视4K"],
+    "CHC影迷电影": ["CHC高清电影", "CHC-影迷电影", "影迷电影", "chc高清电影"],
+    "淘电影": ["IPTV淘电影", "北京IPTV淘电影", "北京淘电影"],
+    "淘精彩": ["IPTV淘精彩", "北京IPTV淘精彩", "北京淘精彩"],
+    "淘剧场": ["IPTV淘剧场", "北京IPTV淘剧场", "北京淘剧场"],
+    "淘4K": ["IPTV淘4K", "北京IPTV4K超清", "北京淘4K", "淘4K", "淘 4K"],
+    "淘娱乐": ["IPTV淘娱乐", "北京IPTV淘娱乐", "北京淘娱乐"],
+    "淘BABY": ["IPTV淘BABY", "北京IPTV淘BABY", "北京淘BABY", "IPTV淘baby", "北京IPTV淘baby", "北京淘baby"],
+    "淘萌宠": ["IPTV淘萌宠", "北京IPTV萌宠TV", "北京淘萌宠"],
+    "魅力足球": ["上海魅力足球"],
+    "睛彩青少": ["睛彩羽毛球"],
+    "求索纪录": ["求索记录", "求索纪录4K", "求索记录4K", "求索纪录 4K", "求索记录 4K"],
+    "金鹰纪实": ["湖南金鹰纪实", "金鹰记实"],
+    "纪实科教": ["北京纪实科教", "BRTV纪实科教", "纪实科教8K"],
+    "星空卫视": ["星空衛視", "星空衛视", "星空卫視"],
+    "CHANNEL[V]": ["CHANNEL-V", "Channel[V]"],
+    "凤凰卫视中文台": ["凤凰中文", "凤凰中文台", "凤凰卫视中文", "凤凰卫视"],
+    "凤凰卫视香港台": ["凤凰香港台", "凤凰卫视香港", "凤凰香港"],
+    "凤凰卫视资讯台": ["凤凰资讯", "凤凰资讯台", "凤凰咨询", "凤凰咨询台", "凤凰卫视咨询台", "凤凰卫视资讯", "凤凰卫视咨询"],
+    "凤凰卫视电影台": ["凤凰电影", "凤凰电影台", "凤凰卫视电影", "鳳凰衛視電影台", " 凤凰电影"],
+    "茶频道": ["湖南茶频道"],
+    "快乐垂钓": ["湖南快乐垂钓"],
+    "先锋乒羽": ["湖南先锋乒羽"],
+    "天元围棋": ["天元围棋频道"],
+    "汽摩": ["重庆汽摩", "汽摩频道", "重庆汽摩频道"],
+    "梨园频道": ["河南梨园频道", "梨园", "河南梨园"],
+    "文物宝库": ["河南文物宝库"],
+    "武术世界": ["河南武术世界"],
+    "乐游": ["乐游频道", "上海乐游频道", "乐游纪实", "SiTV乐游频道", "SiTV 乐游频道"],
+    "欢笑剧场": ["上海欢笑剧场4K", "欢笑剧场 4K", "欢笑剧场4K", "上海欢笑剧场"],
+    "生活时尚": ["生活时尚4K", "SiTV生活时尚", "上海生活时尚"],
+    "都市剧场": ["都市剧场4K", "SiTV都市剧场", "上海都市剧场"],
+    "游戏风云": ["游戏风云4K", "SiTV游戏风云", "上海游戏风云"],
+    "金色学堂": ["金色学堂4K", "SiTV金色学堂", "上海金色学堂"],
+    "动漫秀场": ["动漫秀场4K", "SiTV动漫秀场", "上海动漫秀场"],
+    "卡酷少儿": ["北京KAKU少儿", "BRTV卡酷少儿", "北京卡酷少儿", "卡酷动画"],
+    "哈哈炫动": ["炫动卡通", "上海哈哈炫动"],
+    "优漫卡通": ["江苏优漫卡通", "优漫漫画"],
+    "金鹰卡通": ["湖南金鹰卡通"],
+    "中国交通": ["中国交通频道"],
+    "中国天气": ["中国天气频道"],
+    "华数4K": ["华数低于4K", "华数4K电影", "华数爱上4K"]
+}
 
-def filter_cctv_channels(iptv_content: str, collected_channels: Dict[str, List[str]]) -> None:
-    m3u_pattern = re.compile(
-        r'#EXTINF:.+?,(?P<name>.+?(?:CCTV|央视|中央).+?)\s*\n?(?P<url>https?://.+?)(?:\s|\n|#|$)',
-        re.IGNORECASE | re.DOTALL
+# ===============================
+# 核心工具函数（仅修改选优逻辑）
+# ===============================
+def get_requests_session():
+    """创建带重试机制的requests会话"""
+    session = requests.Session()
+    retry_strategy = Retry(
+        total=CONFIG["RETRY_TIMES"],
+        backoff_factor=0.3,
+        status_forcelist=[429, 500, 502, 503, 504]
     )
-    txt_pattern = re.compile(
-        r'(?P<name>.+?(?:CCTV|央视|中央).+?)\s*[:：=]\s*(?P<url>https?://.+?m3u8)',
-        re.IGNORECASE
-    )
-    url_only_pattern = re.compile(
-        r'(?P<url>https?://.+?(?:CCTV|cctv).+?m3u8)',
-        re.IGNORECASE
-    )
-    chinese_cctv_pattern = re.compile(
-        r'(?P<name>.+?(?:央视|中央).+?\d+|.+?综合频道|.+?新闻频道)\s*[:：=]\s*(?P<url>https?://.+?m3u8)',
-        re.IGNORECASE
-    )
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    session.headers.update(CONFIG["HEADERS"])
+    return session
 
-    for name, url in m3u_pattern.findall(iptv_content):
-        name, url = name.strip(), url.strip()
-        collected_channels.setdefault(name, []).append(url)
-    
-    for name, url in txt_pattern.findall(iptv_content):
-        name = name.strip() if name else f"CCTV-未知频道（{url[-20:]}）"
-        collected_channels.setdefault(name, []).append(url.strip())
-    
-    for name, url in chinese_cctv_pattern.findall(iptv_content):
-        name = name.strip()
-        if re.search(r'1套|综合', name, re.IGNORECASE):
-            name = "CCTV-1 综合频道"
-        elif re.search(r'2套|财经', name, re.IGNORECASE):
-            name = "CCTV-2 财经频道"
-        elif re.search(r'13套|新闻', name, re.IGNORECASE):
-            name = "CCTV-13 新闻频道"
-        elif re.search(r'5套|体育', name, re.IGNORECASE):
-            name = "CCTV-5 体育频道"
-        collected_channels.setdefault(name, []).append(url.strip())
-    
-    url_only_matches = url_only_pattern.findall(iptv_content)
-    for url in url_only_matches:
-        url = url.strip()
-        cctv_match = re.search(r'CCTV[-_]?(\d+|\+|新闻)', url, re.IGNORECASE)
-        name = f"CCTV-{cctv_match.group(1)}" if cctv_match else "CCTV 未知频道"
-        collected_channels.setdefault(name, []).append(url)
-    
-    for channel_name in collected_channels:
-        seen = set()
-        unique_sources = []
-        for src in collected_channels[channel_name]:
-            if src not in seen and src.startswith(("http://", "https://")):
-                seen.add(src)
-                unique_sources.append(src)
-        collected_channels[channel_name] = unique_sources
+def build_alias_map():
+    """构建频道别名->标准名映射"""
+    alias_map = {name: name for name in CHANNEL_MAPPING.keys()}
+    for main_name, aliases in CHANNEL_MAPPING.items():
+        for alias in aliases:
+            alias_map[alias] = main_name
+    return alias_map
 
-def cctv_channel_sort(channels: List[Dict]) -> List[Dict]:
-    def extract_channel_number(channel_name: str) -> Tuple[int, str]:
-        match = re.search(r'CCTV[-_]?(\d+)([+]?)', channel_name, re.IGNORECASE)
-        if match:
-            return (int(match.group(1)), match.group(2))
-        if re.search(r'新闻', channel_name, re.IGNORECASE):
-            return (100, "新闻")
-        if re.search(r'财经', channel_name, re.IGNORECASE):
-            return (101, "财经")
-        if re.search(r'体育', channel_name, re.IGNORECASE):
-            return (102, "体育")
-        return (999, channel_name)
-    return sorted(channels, key=lambda x: extract_channel_number(x['name']))
-
-def test_source_speed(source_url: str) -> float:
+def test_single_url(url):
+    """单链接测速：返回(链接, 延迟)，超时/失败返回(链接, 无穷大)"""
     try:
-        start_time = datetime.datetime.now()
-        response = requests.get(
-            source_url,
-            timeout=TIMEOUT,
-            allow_redirects=True,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            },
-            stream=True
+        start_time = time.time()
+        # 用HEAD请求只获取响应头，不下载内容，大幅提升测速速度
+        response = requests.head(
+            url,
+            timeout=CONFIG["TEST_TIMEOUT"],
+            headers=CONFIG["HEADERS"],
+            allow_redirects=True  # 跟随重定向，测试最终有效链接
         )
-        response_time = (datetime.datetime.now() - start_time).total_seconds()
-        valid_status_codes = (200, 206, 301, 302, 403)
-        return response_time if response.status_code in valid_status_codes else 10.0
+        response.close()  # 立即关闭连接，释放资源
+        latency = time.time() - start_time
+        return (url, round(latency, 2))
     except Exception:
-        return 10.0
+        return (url, float('inf'))
 
-def auto_select_fast_source(channel: Dict) -> Dict:
-    source_list = channel.get('sources', [])
-    if not source_list:
-        channel.update({'fastest_source': None, 'response_time': '无可用源'})
-        return channel
-    source_speed = [(test_source_speed(s), s) for s in source_list if s]
-    available_sources = [(sp, url) for sp, url in source_speed if sp <= 10.0]
-    if not available_sources:
-        channel.update({
-            'fastest_source': source_list[0],
-            'response_time': '测速失败，使用默认源'
-        })
-        return channel
-    fastest_speed, fastest_url = sorted(available_sources, key=lambda x: x[0])[0]
-    channel.update({
-        'fastest_source': fastest_url,
-        'response_time': f"{fastest_speed:.4f} 秒" if fastest_speed < 10.0 else "测速较慢，可用"
-    })
-    return channel
+def test_urls_concurrent(urls):
+    """并发测速：返回{有效链接: 延迟}字典，自动过滤无效链接"""
+    if not urls:
+        return {}
+    result_dict = {}
+    with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
+        future_to_url = {executor.submit(test_single_url, url): url for url in urls}
+        for future in as_completed(future_to_url):
+            url, latency = future.result()
+            if latency < float('inf'):  # 只保留有效链接
+                result_dict[url] = latency
+    return result_dict
 
-def generate_m3u8_playlist(valid_channels: List[Dict], filename: str = "iptv_playlist.m3u8") -> None:
-    usable_channels = [c for c in valid_channels if c.get('fastest_source')]
-    if not usable_channels:
-        print("\n❌ 无可用频道，无法生成 m3u8 文件")
-        return
-    with open(filename, 'w', encoding='utf-8') as f:
-        f.write("#EXTM3U\n")
-        f.write("#EXT-X-VERSION:3\n")
-        f.write("# 生成说明：合法公开CCTV频道列表（仅用于个人学习交流）\n")
-        f.write("# 兼容播放器：VLC、PotPlayer\n")
-        for channel in usable_channels:
-            f.write(f"\n#EXTINF:-1,{channel['name']}\n")
-            f.write(f"{channel['fastest_source']}\n")
-    print(f"\n✅ 已生成 m3u8 播放列表：{filename}")
-    print(f"   包含 {len(usable_channels)} 个合法 CCTV 频道")
+def read_iptv_sources_from_txt():
+    """读取txt中的IPTV源链接（保持不变，优化日志）"""
+    txt_path = Path(CONFIG["SOURCE_TXT_FILE"])
+    valid_urls = []
 
-def main():
-    print("=== 开始执行 CCTV 频道筛选（含官方合法源）===")
-    collected_cctv = {}
-    for i, source_url in enumerate(IPTV_SOURCES, 1):
-        print(f"\n{i}/{len(IPTV_SOURCES)} 正在拉取：{source_url}")
-        iptv_content = fetch_remote_iptv(source_url)
-        if iptv_content:
-            filter_cctv_channels(iptv_content, collected_cctv)
-            print(f"   拉取成功，当前累计 {len(collected_cctv)} 个 CCTV 频道")
-    if not collected_cctv:
-        print("\n❌ 未筛选到任何 CCTV 频道，任务终止")
-        return
-    cctv_channels = [{'name': n, 'sources': s} for n, s in collected_cctv.items()]
-    sorted_channels = cctv_channel_sort(cctv_channels)
-    print(f"\n=== 频道排序完成，共 {len(sorted_channels)} 个 CCTV 频道 ===")
-    print("\n=== 开始测速筛选（宽松模式）===")
-    final_result = [auto_select_fast_source(channel) for channel in sorted_channels]
-    print("\n=== 终端结果汇总 ===")
-    valid_count = 0
-    for idx, channel in enumerate(final_result, 1):
-        if channel['fastest_source']:
-            valid_count += 1
-        print(f"\n{idx}. 频道：{channel['name']}")
-        print(f"   源：{channel['fastest_source'] or '无可用源'}")
-        print(f"   状态：{channel['response_time']}")
-    generate_m3u8_playlist(final_result)
-    print("\n=== 任务完成 ===")
+    if not txt_path.exists():
+        print(f"❌ 未找到 {txt_path.name}，已自动创建模板文件，请填写链接后重试")
+        template = "# 每行填写1个公开IPTV m3u8源链接（http/https开头）\n# 示例：https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u\n# 可添加注释（以#开头），空行会自动跳过\n# 支持多个源，脚本会自动合并并测速选优\n"
+        txt_path.write_text(template, encoding="utf-8")
+        return valid_urls
 
-if __name__ == "__main__":
     try:
-        import requests
-    except ImportError:
-        print("❌ 请先安装依赖：pip install requests")
-    else:
-        main()
+        lines = txt_path.read_text(encoding="utf-8").splitlines()
+        for line_num, line in enumerate(lines, 1):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            # 验证链接并去重
+            if line.startswith(("http://", "https://")) and line not in valid_urls:
+                valid_urls.append(line)
+            else:
+                print(f"⚠️  第{line_num}行无效（非http链接），已跳过：{line}")
+        print(f"✅ 读取完成：共 {len(valid_urls)} 个有效IPTV源\n")
+    except Exception as e:
+        print(f"❌ 读取文件失败：{e}")
+    return valid_urls
+
+def crawl_and_select_top3(session):
+    """爬取源并筛选每个频道的前三最优源（核心修改函数）"""
+    all_channels = {}  # 最终存储：{标准频道名: [url1, url2, url3]} 按延迟升序排列
+    alias_map = build_alias_map()
+    source_urls = read_iptv_sources_from_txt()
+
+    if not source_urls:
+        return all_channels
+
+    # 第一步：爬取所有源，收集所有频道的原始播放地址
+    raw_channels = {}  # 临时存储：{标准频道名: [所有播放url]}
+    for source_url in source_urls:
+        print(f"🔍 正在爬取源：{source_url}")
+        try:
+            response = session.get(source_url, timeout=CONFIG["TEST_TIMEOUT"] + 2)
+            response.encoding = "utf-8"
+            lines = response.text.splitlines()
+            current_ch = None
+
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                # 解析频道名
+                if line.startswith("#EXTINF:"):
+                    ch_match = re.search(r",(.*)$", line)
+                    current_ch = ch_match.group(1).strip() if ch_match else None
+                # 解析播放地址
+                elif line.startswith(("http://", "https://")) and current_ch:
+                    std_ch = alias_map.get(current_ch, current_ch)
+                    if std_ch not in raw_channels:
+                        raw_channels[std_ch] = []
+                    if line not in raw_channels[std_ch]:  # 去重
+                        raw_channels[std_ch].append(line)
+            print(f"✅ 该源爬取完成，累计收集 {len(raw_channels)} 个频道\n")
+        except Exception as e:
+            print(f"❌ 爬取失败：{e}\n")
+            continue
+
+    if not raw_channels:
+        print("❌ 未爬取到任何频道数据")
+        return all_channels
+
+    # 第二步：对每个频道的地址并发测速，筛选前三最优源
+    print(f"🚀 开始并发测速（共{len(raw_channels)}个频道，最大并发数：{CONFIG['MAX_WORKERS']}）")
+    valid_channel_count = 0
+    top_k = CONFIG["TOP_K"]
+
+    for ch_name, urls in raw_channels.items():
+        if len(urls) == 0:
+            print(f"⏭️  {ch_name}：无播放地址，已跳过")
+            continue
+
+        # 测速所有地址
+        latency_dict = test_urls_concurrent(urls)
+        if not latency_dict:
+            print(f"⏭️  {ch_name}：所有地址均无效，已跳过")
+            continue
+
+        # 按延迟升序排序，取前top_k个
+        sorted_urls = sorted(latency_dict.items(), key=lambda x: x[1])
+        top3_urls = [url for url, _ in sorted_urls[:top_k]]  # 只保留前3个
+
+        all_channels[ch_name] = top3_urls
+        valid_channel_count += 1
+
+        # 打印详细日志，展示前三结果
+        latency_str = " | ".join([f"{url}({latency}s)" for url, latency in sorted_urls[:top_k]])
+        print(f"✅ {ch_name}：保留前三最优源 → {latency_str}")
+
+    print(f"\n🎯 测速完成：共筛选出 {valid_channel_count} 个有效频道（原{len(raw_channels)}个），每个频道保留最多{top_k}个源")
+    return all_channels
+
+def generate_iptv_playlist(top3_channels):
+    """生成前三最优源的m3u8文件（格式兼容+标记优化）"""
+    if not top3_channels:
+        print("❌ 无有效频道，无法生成播放列表")
+        return
+
+    output_path = Path(CONFIG["OUTPUT_FILE"])
+    beijing_now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
+    playlist_content = [
+        f"更新时间: {beijing_now}（北京时间）",
+        "",
+        "更新时间,#genre#",
+        f"{beijing_now},{CONFIG['IPTV_DISCLAIMER']}",
+        ""
+    ]
+    top_k = CONFIG["TOP_K"]
+    # 源优先级标记
+    rank_tags = ["$最优", "$次优", "$三优"]
+
+    # 按分类写入，每个频道的前三源分多行写入
+    for category, ch_list in CHANNEL_CATEGORIES.items():
+        playlist_content.append(f"{category},#genre#")
+        for std_ch in ch_list:
+            if std_ch not in top3_channels:
+                continue
+            # 获取该频道的前三源列表
+            urls = top3_channels[std_ch]
+            # 遍历每个源，按优先级标记写入
+            for idx, url in enumerate(urls):
+                if idx >= top_k:
+                    break  # 最多保留3个
+                tag = rank_tags[idx] if idx < len(rank_tags) else f"$第{idx+1}优"
+                playlist_content.append(f"{std_ch},{url}{tag}")
+        playlist_content.append("")
+
+    # 写入未分类频道
+    uncategorized = [ch for ch in top3_channels.keys() if not any(ch in clist for clist in CHANNEL_CATEGORIES.values())]
+    if uncategorized:
+        playlist_content.append("未分类频道,#genre#")
+        for std_ch in uncategorized:
+            urls = top3_channels[std_ch]
+            for idx, url in enumerate(urls):
+                if idx >= top_k:
+                    break
+                tag = rank_tags[idx] if idx < len(rank_tags) else f"$第{idx+1}优"
+                playlist_content.append(f"{std_ch},{url}{tag}")
+        playlist_content.append("")
+
+    # 保存文件
+    try:
+        output_path.write_text("\n".join(playlist_content).rstrip("\n"), encoding="utf-8")
+        print(f"\n🎉 成功生成最优播放列表：{output_path.name}")
+        print(f"📂 路径：{output_path.absolute()}")
+        print(f"💡 说明：每个频道保留最多{top_k}个源，分别标记$最优/$次优/$三优，播放器可直接切换")
+    except Exception as e:
+        print(f"❌ 生成文件失败：{e}")
+
+# ===============================
+# 主执行逻辑
+# ===============================
+if __name__ == "__main__":
+    print("="*60)
+    print("📺 IPTV直播源爬取 + 前三最优源筛选工具（马年最终版）")
+    print("="*60)
+    # 1. 创建请求会话
+    session = get_requests_session()
+    # 2. 爬取源并筛选前三最优源
+    top3_channels = crawl_and_select_top3(session)
+    # 3. 生成m3u8文件
+    generate_iptv_playlist(top3_channels)
+    print("\n✨ 任务完成！生成的文件已支持多源切换，播放更稳定流畅")
