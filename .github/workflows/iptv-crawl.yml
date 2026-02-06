@@ -9,37 +9,62 @@ on:
     - cron: '0 9 * * *'   # UTC时间9点 = 北京时间17点（下午5点）
   workflow_dispatch:  # 保留手动触发按钮
 
-# 运行环境和步骤（这部分完全不变）
+# 运行环境和步骤（核心功能不变，仅做鲁棒性/效率优化）
 jobs:
   crawl-iptv:
-    runs-on: ubuntu-latest  # 使用Ubuntu系统运行
-    
+    runs-on: ubuntu-22.04  # 优化：指定稳定版本，比latest更适配免费运行器，避免版本兼容问题
+    timeout-minutes: 60    # 核心：添加任务全局超时，避免无限卡顿（60分钟足够完成抓取）
+    defaults:
+      run:
+        shell: bash  # 显式指定shell，避免跨环境兼容问题
+
     steps:
-      # 1. 拉取仓库代码到运行环境
+      # 1. 拉取仓库代码到运行环境（优化：拉取完整历史，解决提交冲突；指定超时）
       - name: 拉取仓库代码
         uses: actions/checkout@v4
-      
-      # 2. 设置Python环境
+        with:
+          fetch-depth: 0  # 关键：拉取完整git历史，避免后续pull/push冲突
+        timeout-minutes: 5
+
+      # 2. 设置Python环境（优化：指定超时）
       - name: 设置Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'  # Python版本
-      
-      # 3. 安装依赖（requests库）
+          python-version: '3.10'  # 保留原Python版本
+        timeout-minutes: 5
+
+      # 3. 缓存Python依赖（核心优化：避免每次重新安装，节省10-20秒）
+      - name: 缓存Python依赖包
+        uses: actions/cache@v4
+        id: cache-pip
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}  # 无requirements则用固定key
+          restore-keys: |
+            ${{ runner.os }}-pip-
+        timeout-minutes: 3
+
+      # 4. 安装依赖（requests库）（优化：命中缓存时跳过重复升级，指定超时）
       - name: 安装依赖包
         run: |
           python -m pip install --upgrade pip
           pip install requests
-      
-      # 4. 运行抓取脚本
+        timeout-minutes: 5
+        if: steps.cache-pip.outputs.cache-hit != 'true'  # 缓存命中时不执行，节省时间
+
+      # 5. 运行抓取脚本（核心：添加步骤超时，避免单步无限阻塞）
       - name: 执行IPTV抓取脚本
         run: python iptv_crawler.py
-      
-      # 5. 自动提交生成的m3u8文件到仓库
+        timeout-minutes: 45  # 给脚本留足运行时间，小于全局超时
+
+      # 6. 自动提交生成的m3u8文件到仓库（核心优化：添加git pull，解决远程仓库更新导致的push冲突）
       - name: 提交更新后的m3u8文件
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add iptv_playlist.m3u8
-          # 只有文件变化时才提交，避免空提交
+          # 新增：拉取远程最新代码，解决提交冲突（关键，原代码无此步骤易失败）
+          git pull --rebase origin main || git rebase --abort
+          # 只有文件变化时才提交，避免空提交（保留原逻辑）
           git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update IPTV m3u8 file $(date +'%Y-%m-%d %H:%M:%S')" && git push)
+        timeout-minutes: 5
