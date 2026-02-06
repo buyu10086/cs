@@ -1,71 +1,53 @@
-# name: 自动抓取IPTV源并生成m3u8
-name: 自动抓取IPTV源并生成m3u8
+name: Run ITVlist Script
 
-# 定时触发：每天早上5点、下午5点各一次（适配北京时间，UTC时区换算）
-# 手动触发按钮保留
 on:
   schedule:
-    - cron: '0 21 * * *'  # UTC21点 = 北京时间次日5点（早）
-    - cron: '0 9 * * *'   # UTC9点 = 北京时间17点（下午）
-  workflow_dispatch:  # 手动触发
+    # 北京时间 9 点、21 点（UTC 1 点、13 点）
+    - cron: "0 1,13 * * *"
+  workflow_dispatch:  # 支持手动触发
 
 jobs:
-  crawl-iptv:
-    runs-on: ubuntu-22.04  # 稳定版本，适配免费运行器
-    timeout-minutes: 60    # 全局超时兜底，避免无限卡顿
-    defaults:
-      run:
-        shell: bash
-
+  run-itvlist:
+    runs-on: ubuntu-latest
     steps:
-      # 1. 拉取仓库代码（完整历史，避免Git操作冲突）
-      - name: 拉取仓库代码
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 关键：拉取完整Git历史
-        timeout-minutes: 5
+          fetch-depth: 0
 
-      # 2. 设置Python3.10环境
-      - name: 设置Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-        timeout-minutes: 5
+          python-version: "3.11"
+          cache: "pip"  # 缓存 pip 依赖，加速后续运行
+          cache-dependency-path: "requirements.txt"  # 指定依赖文件路径，精准缓存
 
-      # 3. 缓存Python依赖（避免重复安装，节省时间）
-      - name: 缓存Python依赖包
-        uses: actions/cache@v4
-        id: cache-pip
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-iptv  # 固定缓存key，适配无requirements.txt
-          restore-keys: |
-            ${{ runner.os }}-pip-
-        timeout-minutes: 3
-
-      # 4. 安装依赖（缓存命中时跳过）
-      - name: 安装依赖包
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
-        timeout-minutes: 5
-        if: steps.cache-pip.outputs.cache-hit != 'true'
+          pip install -r requirements.txt  # 从 requirements.txt 安装依赖
+        # 可选：仅当 requirements.txt 内容变更时才重新安装（进一步提速）
+        # if: hashFiles('requirements.txt') != hashFiles('/tmp/requirements.txt')
 
-      # 5. 运行抓取脚本（单独步骤超时，核心执行）
-      - name: 执行IPTV抓取脚本
-        run: python iptv_crawler.py
-        timeout-minutes: 45
-
-      # 6. 提交m3u8文件（修复冲突，先同步远程再提交）
-      - name: 提交更新后的m3u8文件
+      - name: Run iptv_crawler.py
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          # 核心修复：先强制同步远程最新代码，保证工作区干净
-          git fetch origin main
-          git reset --hard origin/main
-          # 重新添加生成的文件
+          echo "=== Starting iptv_crawler.py ==="
+          python iptv_crawler.py
+          echo "=== Finished iptv_crawler.py ==="
+        continue-on-error: false
+
+      - name: Commit and push results
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # 检查文件是否有变更
           git add iptv_playlist.m3u8
-          # 仅文件变化时提交，避免空提交
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update IPTV m3u8 file $(date +'%Y-%m-%d %H:%M:%S')" && git push)
-        timeout-minutes: 5
+          if git diff --cached --quiet; then
+            echo "No changes to iptv_playlist.m3u8, skipping commit"
+            exit 0
+          fi
+          
+          git commit -m "自动更新：iptv_playlist.m3u8 $(date +'%Y-%m-%d %H:%M:%S')"
+          git push origin HEAD:${{ github.ref }}
+        if: success()
