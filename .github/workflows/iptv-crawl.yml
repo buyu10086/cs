@@ -1,4 +1,4 @@
-name: Run ITVlist Script
+name: 名著目录更新
 
 on:
   schedule:
