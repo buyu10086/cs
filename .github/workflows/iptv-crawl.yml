@@ -1,70 +1,71 @@
 # name: 自动抓取IPTV源并生成m3u8
 name: 自动抓取IPTV源并生成m3u8
 
-# 定时触发：每天早上5点、下午5点各一次（适配北京时间，已做UTC时区换算）
-# 也可以手动触发（workflow_dispatch）
+# 定时触发：每天早上5点、下午5点各一次（适配北京时间，UTC时区换算）
+# 手动触发按钮保留
 on:
   schedule:
-    - cron: '0 21 * * *'  # UTC时间21点 = 北京时间次日5点（早上5点）
-    - cron: '0 9 * * *'   # UTC时间9点 = 北京时间17点（下午5点）
-  workflow_dispatch:  # 保留手动触发按钮
+    - cron: '0 21 * * *'  # UTC21点 = 北京时间次日5点（早）
+    - cron: '0 9 * * *'   # UTC9点 = 北京时间17点（下午）
+  workflow_dispatch:  # 手动触发
 
-# 运行环境和步骤（核心功能不变，仅做鲁棒性/效率优化）
 jobs:
   crawl-iptv:
-    runs-on: ubuntu-22.04  # 优化：指定稳定版本，比latest更适配免费运行器，避免版本兼容问题
-    timeout-minutes: 60    # 核心：添加任务全局超时，避免无限卡顿（60分钟足够完成抓取）
+    runs-on: ubuntu-22.04  # 稳定版本，适配免费运行器
+    timeout-minutes: 60    # 全局超时兜底，避免无限卡顿
     defaults:
       run:
-        shell: bash  # 显式指定shell，避免跨环境兼容问题
+        shell: bash
 
     steps:
-      # 1. 拉取仓库代码到运行环境（优化：拉取完整历史，解决提交冲突；指定超时）
+      # 1. 拉取仓库代码（完整历史，避免Git操作冲突）
       - name: 拉取仓库代码
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 关键：拉取完整git历史，避免后续pull/push冲突
+          fetch-depth: 0  # 关键：拉取完整Git历史
         timeout-minutes: 5
 
-      # 2. 设置Python环境（优化：指定超时）
+      # 2. 设置Python3.10环境
       - name: 设置Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'  # 保留原Python版本
+          python-version: '3.10'
         timeout-minutes: 5
 
-      # 3. 缓存Python依赖（核心优化：避免每次重新安装，节省10-20秒）
+      # 3. 缓存Python依赖（避免重复安装，节省时间）
       - name: 缓存Python依赖包
         uses: actions/cache@v4
         id: cache-pip
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}  # 无requirements则用固定key
+          key: ${{ runner.os }}-pip-iptv  # 固定缓存key，适配无requirements.txt
           restore-keys: |
             ${{ runner.os }}-pip-
         timeout-minutes: 3
 
-      # 4. 安装依赖（requests库）（优化：命中缓存时跳过重复升级，指定超时）
+      # 4. 安装依赖（缓存命中时跳过）
       - name: 安装依赖包
         run: |
           python -m pip install --upgrade pip
           pip install requests
         timeout-minutes: 5
-        if: steps.cache-pip.outputs.cache-hit != 'true'  # 缓存命中时不执行，节省时间
+        if: steps.cache-pip.outputs.cache-hit != 'true'
 
-      # 5. 运行抓取脚本（核心：添加步骤超时，避免单步无限阻塞）
+      # 5. 运行抓取脚本（单独步骤超时，核心执行）
       - name: 执行IPTV抓取脚本
         run: python iptv_crawler.py
-        timeout-minutes: 45  # 给脚本留足运行时间，小于全局超时
+        timeout-minutes: 45
 
-      # 6. 自动提交生成的m3u8文件到仓库（核心优化：添加git pull，解决远程仓库更新导致的push冲突）
+      # 6. 提交m3u8文件（修复冲突，先同步远程再提交）
       - name: 提交更新后的m3u8文件
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          # 核心修复：先强制同步远程最新代码，保证工作区干净
+          git fetch origin main
+          git reset --hard origin/main
+          # 重新添加生成的文件
           git add iptv_playlist.m3u8
-          # 新增：拉取远程最新代码，解决提交冲突（关键，原代码无此步骤易失败）
-          git pull --rebase origin main || git rebase --abort
-          # 只有文件变化时才提交，避免空提交（保留原逻辑）
+          # 仅文件变化时提交，避免空提交
           git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update IPTV m3u8 file $(date +'%Y-%m-%d %H:%M:%S')" && git push)
         timeout-minutes: 5
