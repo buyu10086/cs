@@ -18,10 +18,10 @@ CONFIG = {
         "Connection": "close"  # 关闭长连接，减少资源占用
     },
     # 测速配置
-    "TEST_TIMEOUT": 4,  # 单链接超时时间（秒），网络差可改为8
+    "TEST_TIMEOUT": 3,  # 单链接超时时间（秒），网络差可改为8
     "MAX_WORKERS": 40,  # 并发线程数，带宽高可设30-50
     "RETRY_TIMES": 1,  # 网络请求重试次数
-    "TOP_K": 2,  # 每个频道保留前三最优源
+    "TOP_K": 3,  # 每个频道保留前三最优源
     "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
     # zubo源特殊配置（目标源格式标记）
     "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"  # 用于识别zubo格式源
