@@ -18,9 +18,9 @@ CONFIG = {
         "Connection": "close"  # 关闭长连接，减少资源占用
     },
     # 测速配置
-    "TEST_TIMEOUT": 5,  # 单链接超时时间（秒），网络差可改为8
-    "MAX_WORKERS": 30,  # 并发线程数，带宽高可设30-50
-    "RETRY_TIMES": 2,  # 网络请求重试次数
+    "TEST_TIMEOUT": 3,  # 单链接超时时间（秒），网络差可改为8
+    "MAX_WORKERS": 40,  # 并发线程数，带宽高可设30-50
+    "RETRY_TIMES": 1,  # 网络请求重试次数
     "TOP_K": 3,  # 每个频道保留前三最优源
     "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
     # zubo源特殊配置（目标源格式标记）
@@ -504,4 +504,3 @@ if __name__ == "__main__":
     # 4. 生成m3u8播放列表
     generate_iptv_playlist(top3_channels)
     print("\n✨ 任务完成！生成的文件兼容PotPlayer、Kodi、火星直播等所有播放器")
-优化这个程序运行效率
