@@ -12,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # ===============================
 CONFIG = {
     "SOURCE_TXT_FILE": "iptv_sources.txt",  # IPTV源链接文件路径
+    "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接归档文件
     "OUTPUT_FILE": "iptv_playlist.m3u8",    # 爬虫输出的播放列表文件
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -123,7 +124,7 @@ CHANNEL_MAPPING = {
 }
 
 # ===============================
-# 核心功能：链接有效性检查与清理
+# 核心功能：链接有效性检查与清理（新增归档逻辑）
 # ===============================
 def create_requests_session():
     """创建带重试机制的requests会话，提升链接检查稳定性"""
@@ -155,8 +156,28 @@ def check_url_validity(url):
         # 超时、连接错误、DNS解析失败等均视为无效
         return url, False
 
+def archive_invalid_urls(invalid_urls):
+    """将失效链接归档到old_sources.txt，标注删除时间"""
+    if not invalid_urls:
+        return
+    
+    # 获取当前时间（格式：YYYY-MM-DD HH:MM:SS）
+    delete_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    old_file = Path(CONFIG["OLD_SOURCES_FILE"])
+    
+    # 构造归档内容（每行：[删除时间] 失效链接）
+    archive_content = []
+    for url in invalid_urls:
+        archive_content.append(f"[{delete_time}] {url}")
+    
+    # 追加写入（不存在则自动创建）
+    with open(old_file, "a", encoding="utf-8") as f:
+        f.write("\n".join(archive_content) + "\n")
+    
+    print(f"📝 已将 {len(invalid_urls)} 个失效链接归档到 {old_file.name}")
+
 def clean_invalid_sources():
-    """自动清理iptv_sources.txt中的失效链接"""
+    """自动清理iptv_sources.txt中的失效链接，并归档到old_sources.txt"""
     source_file = Path(CONFIG["SOURCE_TXT_FILE"])
     
     # 检查文件是否存在
@@ -177,6 +198,7 @@ def clean_invalid_sources():
     
     # 并发检查所有链接（提升效率）
     valid_urls = []
+    invalid_urls = []
     with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
         future_tasks = {executor.submit(check_url_validity, url): url for url in original_urls}
         for future in as_completed(future_tasks):
@@ -185,18 +207,21 @@ def clean_invalid_sources():
                 valid_urls.append(url)
                 print(f"✅ 有效: {url}")
             else:
+                invalid_urls.append(url)
                 print(f"❌ 失效: {url}")
     
     # 将有效链接写回原文件（覆盖）
     with open(source_file, "w", encoding="utf-8") as f:
         f.write("\n".join(valid_urls))
     
+    # 归档失效链接到old_sources.txt
+    archive_invalid_urls(invalid_urls)
+    
     # 输出清理结果
-    invalid_count = len(original_urls) - len(valid_urls)
     print(f"\n📊 链接清理完成 ───────────")
     print(f"   原始链接数：{len(original_urls)}")
     print(f"   有效链接数：{len(valid_urls)}")
-    print(f"   失效链接数：{invalid_count}")
+    print(f"   失效链接数：{len(invalid_urls)}")
     print(f"──────────────────────────\n")
 
 # ===============================
@@ -219,8 +244,8 @@ def run_iptv_crawler():
 # 程序入口
 # ===============================
 def main():
-    """主流程：先清理失效链接，再执行爬虫"""
-    # 第一步：清理失效链接（核心新增功能）
+    """主流程：先清理失效链接（归档），再执行爬虫"""
+    # 第一步：清理失效链接并归档
     clean_invalid_sources()
     
     # 第二步：执行原有爬虫逻辑
