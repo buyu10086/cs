@@ -1,141 +1,73 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+IPTV源链接爬虫工具（性能优化版）
+核心优化：协程异步测速 + 按域名限流 + 测速缓存 + 动态并发 + HEAD请求优先
+功能：清理失效链接+高性能并发测速+筛选最快6条+失效链接归档（最多10条）
+"""
 import re
-import requests
 import time
-from datetime import datetime, timezone, timedelta
+import asyncio
+import aiohttp
+from datetime import datetime
 from pathlib import Path
+from collections import defaultdict
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExecutor
 
 # ===============================
-# 全局配置区（可根据自身网络调整）
+# 全局配置（可根据实际需求调整）
 # ===============================
 CONFIG = {
-    "SOURCE_TXT_FILE": "iptv_sources.txt",  # IPTV源链接文件路径
-    "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接归档文件
-    "OUTPUT_FILE": "iptv_playlist.m3u8",    # 爬虫输出的播放列表文件
-    "MAX_OLD_RECORDS": 100,                  # 失效链接归档最大保留条数
-    "MAX_FAST_SOURCES": 6,                  # 选取速度最快的源链接数量
+    # 文件路径配置
+    "SOURCE_TXT_FILE": "iptv_sources.txt",    # 原始IPTV源链接文件
+    "OLD_SOURCES_FILE": "old_sources.txt",    # 失效链接归档文件
+    "OUTPUT_FILE": "iptv_playlist.m3u8",      # 最终生成的播放列表文件
+    # 核心规则配置
+    "MAX_OLD_RECORDS": 10,                    # 失效链接归档最多保留10条
+    "MAX_FAST_SOURCES": 6,                    # 选取速度最快的6条有效链接
+    # 网络请求配置（性能优化核心）
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Connection": "close"  # 关闭长连接，减少资源占用
+        "Connection": "keep-alive",           # 复用连接，减少握手开销
+        "Accept": "*/*"                       # 简化请求头，减少服务器处理开销
     },
-    # 链接检查/测速配置
-    "TEST_TIMEOUT": 3,        # 单链接超时时间（秒），网络差可改5-8
-    "MAX_WORKERS": 40,        # 并发检查/测速线程数，带宽低可改20
-    "RETRY_TIMES": 1,         # 网络请求重试次数
-    "TOP_K": 3,               # 每个频道保留最优源数量
-    "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
-    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"  # zubo源格式识别标记
+    "TEST_TIMEOUT_TOTAL": 3,                  # 单链接总超时时间（秒）
+    "TEST_TIMEOUT_CONNECT": 1,                # 连接超时（秒）：建立TCP连接的最大时间
+    "TEST_TIMEOUT_READ": 2,                   # 读取超时（秒）：读取响应头的最大时间
+    "BASE_MAX_CONCURRENT": 60,                # 基础最大并发数（协程）
+    "DOMAIN_MAX_CONCURRENT": 5,               # 单个域名最大并发数（避免封禁）
+    "CACHE_EXPIRE_SECONDS": 600,              # 测速缓存有效期（10分钟）
+    "RETRY_TIMES": 1,                         # 同步请求重试次数
+    # 爬虫辅助配置
+    "TOP_K": 3,                               # 每个频道保留最优源数量
+    "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有"
 }
 
+# 全局测速缓存（key=url, value=(测速时间戳, 响应时间ms)）
+SPEED_CACHE = {}
+
 # ===============================
-# 频道分类与别名映射（保持兼容）
+# 频道分类映射（按需扩展）
 # ===============================
 CHANNEL_CATEGORIES = {
-    "央视频道": [
-        "CCTV1", "CCTV2", "CCTV3", "CCTV4", "CCTV4欧洲", "CCTV4美洲", "CCTV5", "CCTV5+", "CCTV6", "CCTV7",
-        "CCTV8", "CCTV9", "CCTV10", "CCTV11", "CCTV12", "CCTV13", "CCTV14", "CCTV15", "CCTV16", "CCTV17", "CCTV4K", "CCTV8K",
-        "兵器科技", "风云音乐", "风云足球", "风云剧场", "怀旧剧场", "第一剧场", "女性时尚", "世界地理", "央视台球", "高尔夫网球",
-        "央视文化精品", "卫生健康", "电视指南", "中学生", "发现之旅", "书法频道", "国学频道", "环球奇观"
-    ],
-    "卫视频道": [
-        "湖南卫视", "浙江卫视", "江苏卫视", "东方卫视", "深圳卫视", "北京卫视", "广东卫视", "广西卫视", "东南卫视", "海南卫视",
-        "河北卫视", "河南卫视", "湖北卫视", "江西卫视", "四川卫视", "重庆卫视", "贵州卫视", "云南卫视", "天津卫视", "安徽卫视",
-        "山东卫视", "辽宁卫视", "黑龙江卫视", "吉林卫视", "内蒙古卫视", "宁夏卫视", "山西卫视", "陕西卫视", "甘肃卫视", "青海卫视",
-        "新疆卫视", "西藏卫视", "三沙卫视", "兵团卫视", "延边卫视", "安多卫视", "康巴卫视", "农林卫视", "厦门卫视", "山东教育卫视",
-        "中国教育1台", "中国教育2台", "中国教育3台", "中国教育4台", "早期教育"
-    ],
-    "数字频道": [
-        "CHC动作电影", "CHC家庭影院", "CHC影迷电影", "淘电影", "淘精彩", "淘剧场", "淘4K", "淘娱乐", "淘BABY", "淘萌宠", "重温经典",
-        "星空卫视", "CHANNEL[V]", "凤凰卫视中文台", "凤凰卫视资讯台", "凤凰卫视香港台", "凤凰卫视电影台", "求索纪录", "求索科学",
-        "求索生活", "求索动物", "纪实人文", "金鹰纪实", "纪实科教", "睛彩青少", "睛彩竞技", "睛彩篮球", "睛彩广场舞", "魅力足球", "五星体育",
-        "劲爆体育", "快乐垂钓", "茶频道", "先锋乒羽", "天元围棋", "汽摩", "梨园频道", "文物宝库", "武术世界", "哒啵赛事", "哒啵电竞", "黑莓电影", "黑莓动画", 
-        "乐游", "生活时尚", "都市剧场", "欢笑剧场", "游戏风云", "金色学堂", "动漫秀场", "新动漫", "卡酷少儿", "金鹰卡通", "优漫卡通", "哈哈炫动", "嘉佳卡通", 
-        "中国交通", "中国天气", "华数4K", "华数星影", "华数动作影院", "华数喜剧影院", "华数家庭影院", "华数经典电影", "华数热播剧场", "华数碟战剧场",
-        "华数军旅剧场", "华数城市剧场", "华数武侠剧场", "华数古装剧场", "华数魅力时尚", "华数少儿动画", "华数动画", "爱综艺", "爱体育", "爱电影", "爱大剧", "爱生活", "高清纪实", "IPTV谍战剧场", "IPTV相声小品", "IPTV野外", "音乐现场", "IPTV野外", "IPTV法治", "河南IPTV-导视", "网络棋牌", "好学生", "央视篮球"
-    ],
-    "湖北地方台": [
-        "湖北公共新闻", "湖北经视频道", "湖北综合频道", "湖北垄上频道", "湖北影视频道", "湖北生活频道", "湖北教育频道",
-        "武汉新闻综合", "武汉电视剧", "武汉科技生活", "武汉文体频道", "武汉教育频道", "阳新综合", "房县综合", "蔡甸综合"
-    ],
-    "河南省级": [
-        "河南卫视", "河南都市频道", "河南民生频道", "河南法治频道", "河南电视剧频道", "河南新闻频道", 
-        "河南乡村频道", "河南戏曲频道", "河南收藏天下", "河南中华功夫", "河南移动电视", "河南调解剧场", 
-        "河南移动戏曲", "河南睛彩中原", "大象新闻", "大剧院", "健康河南融媒", "体育赛事"
-    ],
-    "河南市县": [
-        "郑州1新闻综合", "郑州2商都频道", "郑州3文体旅游", "鄭州4豫剧频道", "郑州5妇女儿童", "郑州6都市生活",
-        "洛阳-1新闻综合", "洛阳-2科教频道", "洛阳-3文旅频道", "南阳1新闻综合", "南阳2公共频道", "南阳3科教频道",
-        "商丘1新闻综合", "商丘2公共频道", "商丘3文体科教", "周口公共频道", "周口教育频道", "周口新闻综合",
-        "开封1新闻综合", "开封2文化旅游", "新乡公共频道", "新乡新闻综合", "新乡综合频道", "焦作公共频道", 
-        "焦作综合频道", "漯河新闻综合", "信阳新闻综合", "信阳文旅频道", "许昌农业科教", "许昌综合频道",
-        "平顶山新闻综合", "平顶山城市频道", "平顶山公共频道", "平顶山教育台", "鹤壁新闻综合", "安阳新闻综合",
-        "安阳文旅频道", "三门峡新闻综合", "濮阳新闻综合", "濮阳公共频道", "济源-1", "永城新闻联播", 
-        "项城电视台", "禹州电视台", "邓州综合频道", "新密综合频道", "登封综合频道", "巩义综合频道", 
-        "荥阳综合频道", "新郑TV-1", "新县综合频道", "淅川电视台-1", "镇平新闻综合", "宝丰TV-1", 
-        "宝丰-1", "舞钢电视台-1", "嵩县综合新闻", "宜阳综合频道", "汝阳综合频道", "孟津综合综合", 
-        "灵宝综合频道", "渑池新闻综合", "义马综合频道", "内黄综合频道", "封丘1新闻综合", "延津电视台", 
-        "获嘉综合频道", "原阳电视台", "卫辉综合频道", "淇县电视台", "内黄综合频道", "郸城", 
-        "唐河TV-1", "上蔡-1", "舞阳新闻综合", "临颍综合频道", "杞县新闻综合", "光山综合频道",
-        "平煤安全环保", "浉河广电中心", "平桥广电中心", "新蔡TV", "叶县电视台-1", "郏县综合频道"
-    ]
-}
-
-CHANNEL_MAPPING = {
-    "CCTV1": ["CCTV-1", "CCTV-1 HD", "CCTV1 HD", "CCTV-1综合"],
-    "CCTV2": ["CCTV-2", "CCTV-2 HD", "CCTV2 HD", "CCTV-2财经"],
-    "CCTV3": ["CCTV-3", "CCTV-3 HD", "CCTV3 HD", "CCTV-3综艺"],
-    "CCTV4": ["CCTV-4", "CCTV-4 HD", "CCTV4 HD", "CCTV-4中文国际"],
-    "CCTV4欧洲": ["CCTV-4欧洲", "CCTV-4欧洲", "CCTV4欧洲 HD", "CCTV-4 欧洲", "CCTV-4中文国际欧洲", "CCTV4中文欧洲"],
-    "CCTV4美洲": ["CCTV-4美洲", "CCTV-4北美", "CCTV4美洲 HD", "CCTV-4 美洲", "CCTV-4中文国际美洲", "CCTV4中文美洲"],
-    "CCTV5": ["CCTV-5", "CCTV-5 HD", "CCTV5 HD", "CCTV-5体育"],
-    "CCTV5+": ["CCTV-5+", "CCTV-5+ HD", "CCTV5+ HD", "CCTV-5+体育赛事"],
-    "CCTV6": ["CCTV-6", "CCTV-6 HD", "CCTV6 HD", "CCTV-6电影"],
-    "CCTV7": ["CCTV-7", "CCTV-7 HD", "CCTV7 HD", "CCTV-7国防军事"],
-    "CCTV8": ["CCTV-8", "CCTV-8 HD", "CCTV8 HD", "CCTV-8电视剧"],
-    "CCTV9": ["CCTV-9", "CCTV-9 HD", "CCTV9 HD", "CCTV-9纪录"],
-    "CCTV10": ["CCTV-10", "CCTV-10 HD", "CCTV10 HD", "CCTV-10科教"],
-    "CCTV11": ["CCTV-11", "CCTV-11 HD", "CCTV11 HD", "CCTV-11戏曲"],
-    "CCTV12": ["CCTV-12", "CCTV-12 HD", "CCTV12 HD", "CCTV-12社会与法"],
-    "CCTV13": ["CCTV-13", "CCTV-13 HD", "CCTV13 HD", "CCTV-13新闻"],
-    "CCTV14": ["CCTV-14", "CCTV-14 HD", "CCTV14 HD", "CCTV-14少儿"],
-    "CCTV15": ["CCTV15", "CCTV-15 HD", "CCTV15 HD", "CCTV-15音乐"],
-    "CCTV16": ["CCTV16", "CCTV-16 HD", "CCTV-16 4K", "CCTV-16奥林匹克", "CCTV16 4K", "CCTV16奥林匹克4K"],
-    "CCTV17": ["CCTV17", "CCTV-17 HD", "CCTV17 HD", "CCTV17农业农村"],
-    "CCTV4K": ["CCTV4K超高清", "CCTV-4K超高清", "CCTV-4K 超高清", "CCTV 4K"],
-    "CCTV8K": ["CCTV8K超高清", "CCTV-8K超高清", "CCTV-8K 超高清", "CCTV 8K"],
-    "兵器科技": ["CCTV-兵器科技", "CCTV兵器科技"],
-    "风云音乐": ["CCTV-风云音乐", "CCTV风云音乐"],
-    "第一剧场": ["CCTV-第一剧场", "CCTV第一剧场"],
-    "风云足球": ["CCTV-风云足球", "CCTV风云足球"],
-    "风云剧场": ["CCTV-风云剧场", "CCTV风云剧场"],
-    "怀旧剧场": ["CCTV-怀旧剧场", "CCTV怀旧剧场"],
-    "女性时尚": ["CCTV-女性时尚", "CCTV女性时尚"],
-    "世界地理": ["CCTV-世界地理", "CCTV世界地理"],
-    "央视台球": ["CCTV-央视台球", "CCTV央视台球"],
-    "高尔夫网球": ["CCTV-高尔夫网球", "CCTV高尔夫网球", "CCTV央视高网", "CCTV-高尔夫·网球", "央视高网"],
-    "央视文化精品": ["CCTV-央视文化精品", "CCTV央视文化精品", "CCTV文化精品", "CCTV-文化精品", "文化精品"],
-    "卫生健康": ["CCTV-卫生健康", "CCTV卫生健康"],
-    "电视指南": ["CCTV-电视指南", "CCTV电视指南"],
-    "农林卫视": ["陕西农林卫视"],
-    "三沙卫视": ["海南三沙卫视"],
-    "兵团卫视": ["新疆兵团卫视"],
-    "延边卫视": ["吉林延边卫视"],
-    "安多卫视": ["青海安多卫视"],
+    "央视频道": ["CCTV1", "CCTV2", "CCTV3", "CCTV4", "CCTV5", "CCTV5+", "CCTV6", "CCTV7", "CCTV8", "CCTV9", "CCTV10", "CCTV11", "CCTV12", "CCTV13", "CCTV14", "CCTV15", "CCTV16", "CCTV17"],
+    "卫视频道": ["湖南卫视", "浙江卫视", "江苏卫视", "东方卫视", "北京卫视", "广东卫视", "河南卫视", "湖北卫视", "四川卫视", "重庆卫视"],
+    "地方频道": ["湖北公共新闻", "武汉新闻综合", "郑州1新闻综合", "洛阳-1新闻综合"]
 }
 
 # ===============================
-# 核心工具函数
+# 同步工具函数（仅用于链接有效性检查）
 # ===============================
-def create_requests_session():
-    """创建带重试机制的requests会话，提升链接检查/测速稳定性"""
+def create_stable_session():
+    """创建带重试机制的稳定requests会话（同步，仅用于链接有效性检查）"""
     session = requests.Session()
     retry_strategy = Retry(
         total=CONFIG["RETRY_TIMES"],
         backoff_factor=0.1,
         status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=["GET"]
+        allowed_methods=["GET", "HEAD"]
     )
     adapter = HTTPAdapter(max_retries=retry_strategy)
     session.mount("https://", adapter)
@@ -144,237 +76,339 @@ def create_requests_session():
     return session
 
 def check_url_validity(url):
-    """检查单个URL是否有效（2xx状态码视为有效）"""
-    session = create_requests_session()
+    """检查单个URL是否有效（同步HEAD请求，轻量高效）"""
+    session = create_stable_session()
     try:
         response = session.head(
             url,
-            timeout=CONFIG["TEST_TIMEOUT"],
-            allow_redirects=True
+            timeout=CONFIG["TEST_TIMEOUT_TOTAL"],
+            allow_redirects=True,
+            verify=False
         )
-        return url, response.status_code >= 200 and response.status_code < 300
+        return url, 200 <= response.status_code < 300
     except Exception:
         return url, False
 
-def test_url_speed(url):
-    """测试单个URL的响应速度，返回(URL, 响应时间/None)"""
-    session = create_requests_session()
+def extract_domain(url):
+    """提取URL的域名（用于按域名限流）"""
     try:
-        start_time = time.time()
-        # 下载少量数据（前1024字节）测试速度，避免下载完整文件
-        response = session.get(
-            url,
-            timeout=CONFIG["TEST_TIMEOUT"],
-            allow_redirects=True,
-            stream=True
-        )
-        # 读取前1024字节触发实际请求
-        response.raw.read(1024, decode_content=False)
-        end_time = time.time()
-        response_time = round((end_time - start_time) * 1000, 2)  # 转换为毫秒
-        return url, response_time
+        if not url.startswith(("http://", "https://")):
+            url = f"http://{url}"
+        domain = url.split("//")[1].split("/")[0]
+        # 去除端口号（如xxx.com:8080 → xxx.com）
+        if ":" in domain:
+            domain = domain.split(":")[0]
+        return domain.lower()
     except Exception:
-        return url, None
-
-def parse_old_record(line):
-    """解析old_sources.txt中的单行记录，返回(时间对象, 链接)"""
-    try:
-        match = re.match(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] (.*)", line.strip())
-        if match:
-            time_str = match.group(1)
-            url = match.group(2)
-            record_time = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S")
-            return (record_time, url)
-    except Exception:
-        pass
-    return None
+        return "unknown_domain"
 
 # ===============================
-# 失效链接归档逻辑
+# 异步核心函数（性能优化重点）
+# ===============================
+async def create_async_session():
+    """创建高性能异步会话（带连接池、精细化超时、禁用Cookie）"""
+    # 精细化超时配置
+    timeout = aiohttp.ClientTimeout(
+        connect=CONFIG["TEST_TIMEOUT_CONNECT"],
+        sock_read=CONFIG["TEST_TIMEOUT_READ"],
+        total=CONFIG["TEST_TIMEOUT_TOTAL"]
+    )
+    # 连接池配置：轻量、高效、避免端口耗尽
+    connector = aiohttp.TCPConnector(
+        limit=CONFIG["BASE_MAX_CONCURRENT"] * 2,  # 连接池大小（略大于并发数）
+        limit_per_host=CONFIG["DOMAIN_MAX_CONCURRENT"],  # 单个域名默认连接数
+        ttl_dns_cache=300,  # DNS缓存5分钟，减少重复解析
+        use_tcp_cork=True,  # 启用TCP Cork，减少小包传输
+        fast_open=True      # 启用TCP快速打开（需系统支持）
+    )
+    # 禁用Cookie（IPTV源无需登录，减少开销）
+    session = aiohttp.ClientSession(
+        timeout=timeout,
+        connector=connector,
+        headers=CONFIG["HEADERS"],
+        cookie_jar=aiohttp.DummyCookieJar(),
+        trust_env=True
+    )
+    return session
+
+async def test_single_url_speed_async(url, semaphore):
+    """
+    异步测速单个URL（核心优化）
+    策略：1. 先查缓存 2. HEAD请求优先 3. 失败则降级GET读取1字节 4. 结果缓存
+    """
+    # 1. 检查缓存（未过期则直接返回）
+    now = time.time()
+    if url in SPEED_CACHE:
+        cache_time, cache_rt = SPEED_CACHE[url]
+        if now - cache_time < CONFIG["CACHE_EXPIRE_SECONDS"]:
+            print(f"📌 缓存复用 | {url} | 响应时间：{cache_rt}ms")
+            return url, cache_rt
+
+    # 2. 信号量限流（按域名/全局）
+    async with semaphore:
+        start_time = time.time()
+        response_time = None
+        try:
+            async with await create_async_session() as session:
+                # 3. 优先使用HEAD请求（最轻量）
+                try:
+                    async with session.head(
+                        url,
+                        allow_redirects=True,
+                        ssl=False  # 忽略SSL证书错误
+                    ) as resp:
+                        if 200 <= resp.status < 300:
+                            response_time = round((time.time() - start_time) * 1000, 2)
+                except Exception:
+                    # 4. HEAD失败则降级为GET（仅读取1字节，触发连接即可）
+                    async with session.get(
+                        url,
+                        allow_redirects=True,
+                        ssl=False,
+                        stream=True
+                    ) as resp:
+                        await resp.content.read(1)  # 仅读取1字节，避免下载大文件
+                        if 200 <= resp.status < 300:
+                            response_time = round((time.time() - start_time) * 1000, 2)
+            
+            # 5. 缓存有效测速结果
+            if response_time and response_time > 0:
+                SPEED_CACHE[url] = (now, response_time)
+                print(f"✅ 测速成功 | {url} | 响应时间：{response_time}ms")
+            else:
+                print(f"❌ 测速失败 | {url} | 原因：非2xx状态码")
+        
+        except Exception as e:
+            print(f"❌ 测速异常 | {url} | 错误：{str(e)[:50]}")
+        
+        return url, response_time
+
+async def dynamic_concurrent_speed_test(url_list):
+    """
+    动态并发测速（核心优化）
+    策略：1. 预热测试 2. 按成功率调整并发 3. 按域名限流 4. 异步批量处理
+    """
+    if not url_list:
+        return []
+    
+    speed_results = []
+    print(f"\n⚡ 开始高性能并发测速 | 待测速链接数：{len(url_list)} | 基础并发数：{CONFIG['BASE_MAX_CONCURRENT']}")
+
+    # ========== 步骤1：预热测试，动态调整并发数 ==========
+    warmup_size = max(10, len(url_list) // 10)  # 取10%或最少10条做预热
+    warmup_urls = url_list[:warmup_size]
+    warmup_sem = asyncio.Semaphore(CONFIG["BASE_MAX_CONCURRENT"] // 2)  # 预热并发减半
+    
+    # 执行预热测速
+    warmup_tasks = [test_single_url_speed_async(url, warmup_sem) for url in warmup_urls]
+    warmup_results = await asyncio.gather(*warmup_tasks)
+    
+    # 计算预热成功率，动态调整最终并发数
+    warmup_success = len([r for r in warmup_results if r[1] is not None and r[1] > 0])
+    success_rate = warmup_success / len(warmup_urls) if warmup_urls else 1.0
+    
+    if success_rate < 0.8:
+        final_max_concurrent = CONFIG["BASE_MAX_CONCURRENT"] // 2
+        print(f"⚠️  预热成功率{success_rate:.1%} < 80%，降低并发数至：{final_max_concurrent}")
+    else:
+        final_max_concurrent = CONFIG["BASE_MAX_CONCURRENT"]
+        print(f"✅ 预热成功率{success_rate:.1%} ≥ 80%，使用基础并发数：{final_max_concurrent}")
+
+    # ========== 步骤2：按域名分组，精细化限流 ==========
+    domain_groups = defaultdict(list)
+    for url in url_list:
+        domain = extract_domain(url)
+        domain_groups[domain].append(url)
+    
+    # 为每个域名创建独立信号量（避免对单一域名打满）
+    domain_semaphores = {
+        domain: asyncio.Semaphore(min(CONFIG["DOMAIN_MAX_CONCURRENT"], final_max_concurrent // 2))
+        for domain in domain_groups.keys()
+    }
+
+    # ========== 步骤3：批量执行异步测速 ==========
+    tasks = []
+    for domain, urls in domain_groups.items():
+        sem = domain_semaphores[domain]
+        for url in urls:
+            tasks.append(test_single_url_speed_async(url, sem))
+    
+    # 异步收集所有结果（高效批量处理）
+    all_results = await asyncio.gather(*tasks)
+
+    # ========== 步骤4：过滤有效结果并异步排序 ==========
+    valid_results = [(url, rt) for url, rt in all_results if rt is not None and rt > 0]
+    
+    # 异步排序（避免阻塞主线程）
+    def sort_results(results):
+        return sorted(results, key=lambda x: x[1])
+    
+    # 使用进程池执行排序（大数据量更高效）
+    loop = asyncio.get_running_loop()
+    with ProcessPoolExecutor(max_workers=1) as executor:
+        sorted_results = await loop.run_in_executor(executor, sort_results, valid_results)
+
+    print(f"\n📊 测速完成 | 成功{len(sorted_results)}条 | 失败{len(url_list)-len(sorted_results)}条")
+    return sorted_results
+
+# ===============================
+# 业务逻辑函数（保留原有核心功能）
 # ===============================
 def archive_invalid_urls(invalid_urls):
-    """将失效链接归档到old_sources.txt，仅保留最新的10条记录"""
+    """归档失效链接到old_sources.txt，仅保留最新10条"""
     if not invalid_urls:
         return
     
-    # 构造新记录
-    delete_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    new_records = [f"[{delete_time}] {url}" for url in invalid_urls]
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    new_records = [f"[{current_time}] {url}" for url in invalid_urls]
     
-    # 读取原有记录
     old_file = Path(CONFIG["OLD_SOURCES_FILE"])
     old_records = []
     if old_file.exists():
         with open(old_file, "r", encoding="utf-8") as f:
             old_records = [line.strip() for line in f.readlines() if line.strip()]
     
-    # 合并解析+去重+排序
+    # 合并+解析+去重+排序
     all_records = new_records + old_records
     parsed_records = []
+    pattern = re.compile(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] (.*)")
+    
     for record in all_records:
-        parsed = parse_old_record(record)
-        if parsed:
-            parsed_records.append(parsed)
+        match = pattern.match(record)
+        if match:
+            try:
+                record_time = datetime.strptime(match.group(1), "%Y-%m-%d %H:%M:%S")
+                url = match.group(2)
+                parsed_records.append((record_time, url))
+            except Exception:
+                continue
     
-    # 去重（保留同一链接最新记录）
-    unique_records = {}
-    for record_time, url in parsed_records:
-        if url not in unique_records or record_time > unique_records[url][0]:
-            unique_records[url] = (record_time, url)
+    # 去重：同一链接保留最新记录
+    unique_dict = {}
+    for rt, url in parsed_records:
+        if url not in unique_dict or rt > unique_dict[url][0]:
+            unique_dict[url] = (rt, url)
     
-    # 按时间降序排序+保留前10条
-    sorted_records = sorted(unique_records.values(), key=lambda x: x[0], reverse=True)
+    # 按时间降序排序，保留前10条
+    sorted_records = sorted(unique_dict.values(), key=lambda x: x[0], reverse=True)
     final_records = sorted_records[:CONFIG["MAX_OLD_RECORDS"]]
     
     # 写入文件
-    final_text = [f"[{rt.strftime('%Y-%m-%d %H:%M:%S')}] {url}" for rt, url in final_records]
     with open(old_file, "w", encoding="utf-8") as f:
-        f.write("\n".join(final_text) + "\n")
+        f.write("\n".join([f"[{rt.strftime('%Y-%m-%d %H:%M:%S')}] {url}" for rt, url in final_records]) + "\n")
     
-    print(f"📝 已将 {len(invalid_urls)} 个失效链接归档到 {old_file.name}")
-    print(f"   归档文件当前保留 {len(final_records)} 条最新失效链接记录（最多{CONFIG['MAX_OLD_RECORDS']}条）")
+    print(f"\n📝 失效链接归档完成 | 新增{len(invalid_urls)}条 | 归档文件保留{len(final_records)}/{CONFIG['MAX_OLD_RECORDS']}条")
 
-# ===============================
-# 链接清理+测速筛选逻辑
-# ===============================
 def clean_invalid_sources():
-    """自动清理iptv_sources.txt中的失效链接，并归档到old_sources.txt"""
+    """清理失效链接（同步并发），返回有效链接列表"""
     source_file = Path(CONFIG["SOURCE_TXT_FILE"])
     
-    # 检查文件是否存在
     if not source_file.exists():
-        print(f"⚠️  源文件 {source_file.name} 不存在，跳过链接清理")
+        print(f"⚠️  源文件 {source_file.name} 不存在，程序退出")
         return []
     
     # 读取并预处理链接
     with open(source_file, "r", encoding="utf-8") as f:
         raw_urls = [line.strip() for line in f.readlines()]
-    original_urls = list(set([url for url in raw_urls if url]))  # 去重+过滤空行
-    
+    original_urls = list(set([url for url in raw_urls if url]))  # 去重
     if not original_urls:
-        print(f"⚠️  源文件 {source_file.name} 中无有效链接，跳过清理")
+        print(f"⚠️  源文件 {source_file.name} 中无有效链接，程序退出")
         return []
     
-    print(f"🔍 开始检查 {len(original_urls)} 个IPTV源链接的有效性...")
+    print(f"🔍 开始检查 {len(original_urls)} 个IPTV源链接有效性...")
     
-    # 并发检查有效性
+    # 同步并发检查有效性
     valid_urls = []
     invalid_urls = []
-    with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
+    with ThreadPoolExecutor(max_workers=CONFIG["BASE_MAX_CONCURRENT"] // 2) as executor:
         future_tasks = {executor.submit(check_url_validity, url): url for url in original_urls}
         for future in as_completed(future_tasks):
             url, is_valid = future.result()
             if is_valid:
                 valid_urls.append(url)
-                print(f"✅ 有效: {url}")
             else:
                 invalid_urls.append(url)
-                print(f"❌ 失效: {url}")
     
-    # 写回有效链接到原文件
+    # 写回有效链接
     with open(source_file, "w", encoding="utf-8") as f:
         f.write("\n".join(valid_urls))
+    print(f"\n🧹 链接清理完成 | 原始{len(original_urls)}条 | 有效{len(valid_urls)}条 | 失效{len(invalid_urls)}条")
     
     # 归档失效链接
     archive_invalid_urls(invalid_urls)
     
-    # 输出清理结果
-    print(f"\n📊 链接清理完成 ───────────")
-    print(f"   原始链接数：{len(original_urls)}")
-    print(f"   有效链接数：{len(valid_urls)}")
-    print(f"   失效链接数：{len(invalid_urls)}")
-    print(f"──────────────────────────\n")
-    
     return valid_urls
 
-def get_fastest_sources(valid_urls):
-    """从有效链接中筛选前N条速度最快的（N=MAX_FAST_SOURCES）"""
-    if not valid_urls:
-        print(f"⚠️  无有效链接可测速，返回空列表")
-        return []
-    
-    # 如果有效链接数≤目标数，直接返回所有
-    if len(valid_urls) <= CONFIG["MAX_FAST_SOURCES"]:
-        print(f"✅ 有效链接数({len(valid_urls)})≤{CONFIG['MAX_FAST_SOURCES']}，无需测速，直接使用所有有效链接")
-        return valid_urls
-    
-    print(f"⚡ 开始对 {len(valid_urls)} 个有效链接进行速度测试（选取最快{CONFIG['MAX_FAST_SOURCES']}条）...")
-    
-    # 并发测速
-    speed_results = []
-    with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
-        future_tasks = {executor.submit(test_url_speed, url): url for url in valid_urls}
-        for future in as_completed(future_tasks):
-            url, response_time = future.result()
-            if response_time is not None:
-                speed_results.append((url, response_time))
-                print(f"📶 {url} - 响应时间：{response_time}ms")
-            else:
-                print(f"❌ {url} - 测速失败（超时/错误）")
-    
-    # 按响应时间升序排序（越快越靠前）
-    speed_results.sort(key=lambda x: x[1])
-    
-    # 选取前N条最快的
-    fastest_urls = [item[0] for item in speed_results[:CONFIG["MAX_FAST_SOURCES"]]]
-    
-    # 输出测速结果
-    print(f"\n🏆 速度测试完成 ───────────")
-    print(f"   成功测速链接数：{len(speed_results)}")
-    print(f"   选取最快{CONFIG['MAX_FAST_SOURCES']}条链接：")
-    for i, url in enumerate(fastest_urls, 1):
-        print(f"   {i}. {url}")
-    print(f"──────────────────────────\n")
-    
-    return fastest_urls
-
-# ===============================
-# 爬虫主逻辑（替换为你的实际代码）
-# ===============================
-def run_iptv_crawler(fastest_sources):
-    """IPTV爬虫主逻辑，仅使用筛选后的最快链接"""
-    print("🚀 开始执行IPTV爬虫程序（仅使用最快的源链接）...")
-    if not fastest_sources:
-        print("⚠️  无可用的源链接，爬虫程序跳过执行")
+def generate_iptv_playlist(fastest_urls):
+    """基于最快的6条链接生成M3U8播放列表"""
+    if not fastest_urls:
+        print("\n⚠️  无可用链接，无法生成播放列表")
         return
     
-    # --------------------------
-    # 以下替换为你原有的爬虫代码
-    # 示例逻辑：使用fastest_sources列表中的链接进行爬取
-    # --------------------------
-    # 1. 遍历最快的源链接
-    for i, source_url in enumerate(fastest_sources, 1):
-        print(f"📥 正在爬取第{i}个源链接：{source_url}")
-        time.sleep(0.5)  # 模拟爬取延迟
+    print(f"\n📄 开始生成IPTV播放列表（基于{len(fastest_urls)}条最快链接）...")
+    m3u8_content = [
+        "#EXTM3U",
+        f"# 生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"# {CONFIG['IPTV_DISCLAIMER']}",
+        "#"
+    ]
     
-    # 2. 生成播放列表（示例）
+    for i, url in enumerate(fastest_urls, 1):
+        m3u8_content.append(f"#EXTINF:-1 group-title=\"IPTV源\" tvg-name=\"源{i}\",IPTV源_{i}")
+        m3u8_content.append(url)
+    
     with open(CONFIG["OUTPUT_FILE"], "w", encoding="utf-8") as f:
-        f.write(f"#EXTM3U\n# 生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"# 数据源：选取的{CONFIG['MAX_FAST_SOURCES']}条最快链接\n")
-        for url in fastest_sources:
-            f.write(f"#EXTINF:-1,IPTV源_{fastest_sources.index(url)+1}\n{url}\n")
+        f.write("\n".join(m3u8_content))
     
-    print("✅ IPTV爬虫程序执行完成！")
-    print(f"📄 播放列表已生成：{CONFIG['OUTPUT_FILE']}")
+    print(f"✅ 播放列表生成完成 | 路径：{CONFIG['OUTPUT_FILE']}")
 
 # ===============================
-# 程序入口
+# 主流程（整合同步+异步逻辑）
 # ===============================
-def main():
-    """主流程：清理失效链接 → 测速筛选最快6条 → 执行爬虫"""
-    # 第一步：清理失效链接，获取所有有效链接
-    valid_urls = clean_invalid_sources()
+async def main_async():
+    """异步主流程：清理→动态并发测速→筛选→生成播放列表"""
+    print("="*60)
+    print("🎬 IPTV源链接爬虫工具（性能优化版 v2.0）")
+    print(f"🕒 运行时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("="*60)
     
-    # 第二步：从有效链接中筛选最快的6条
-    fastest_sources = get_fastest_sources(valid_urls)
-    
-    # 第三步：执行爬虫逻辑（仅使用最快的链接）
-    run_iptv_crawler(fastest_sources)
-
-if __name__ == "__main__":
     try:
-        main()
+        # 步骤1：同步清理失效链接，获取有效链接
+        valid_urls = clean_invalid_sources()
+        if not valid_urls:
+            return
+        
+        # 步骤2：高性能异步测速+筛选最快6条
+        if len(valid_urls) <= CONFIG["MAX_FAST_SOURCES"]:
+            print(f"\n✅ 有效链接数({len(valid_urls)})≤{CONFIG['MAX_FAST_SOURCES']}，无需测速，直接使用所有有效链接")
+            fastest_urls = valid_urls
+        else:
+            # 执行动态并发测速
+            sorted_speed_results = await dynamic_concurrent_speed_test(valid_urls)
+            # 选取前6条最快的链接
+            fastest_urls = [item[0] for item in sorted_speed_results[:CONFIG["MAX_FAST_SOURCES"]]]
+            # 输出排名
+            print(f"\n🏆 最快{CONFIG['MAX_FAST_SOURCES']}条链接排名：")
+            for i, (url, rt) in enumerate(sorted_speed_results[:CONFIG["MAX_FAST_SOURCES"]], 1):
+                print(f"   {i}. {url} | {rt}ms")
+        
+        # 步骤3：生成播放列表
+        generate_iptv_playlist(fastest_urls)
+        
+        print("\n🎉 所有任务执行完成！")
+    
     except KeyboardInterrupt:
         print("\n⚠️  程序被用户手动中断")
     except Exception as e:
-        print(f"\n❌ 程序执行出错: {str(e)}")
+        print(f"\n❌ 程序执行出错：{str(e)}")
+
+def main():
+    """程序入口（适配异步逻辑）"""
+    # 解决Windows下asyncio的事件循环问题
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(main_async())
+
+if __name__ == "__main__":
+    import sys
+    main()
