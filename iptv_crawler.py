@@ -14,13 +14,15 @@ CONFIG = {
     "SOURCE_TXT_FILE": "iptv_sources.txt",  # IPTV源链接文件路径
     "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接归档文件
     "OUTPUT_FILE": "iptv_playlist.m3u8",    # 爬虫输出的播放列表文件
+    "MAX_OLD_RECORDS": 100,                  # 失效链接归档最大保留条数
+    "MAX_FAST_SOURCES": 6,                  # 选取速度最快的源链接数量
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Connection": "close"  # 关闭长连接，减少资源占用
     },
-    # 链接检查配置
+    # 链接检查/测速配置
     "TEST_TIMEOUT": 3,        # 单链接超时时间（秒），网络差可改5-8
-    "MAX_WORKERS": 40,        # 并发检查线程数，带宽低可改20
+    "MAX_WORKERS": 40,        # 并发检查/测速线程数，带宽低可改20
     "RETRY_TIMES": 1,         # 网络请求重试次数
     "TOP_K": 3,               # 每个频道保留最优源数量
     "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
@@ -124,10 +126,10 @@ CHANNEL_MAPPING = {
 }
 
 # ===============================
-# 核心功能：链接有效性检查与清理（新增归档逻辑）
+# 核心工具函数
 # ===============================
 def create_requests_session():
-    """创建带重试机制的requests会话，提升链接检查稳定性"""
+    """创建带重试机制的requests会话，提升链接检查/测速稳定性"""
     session = requests.Session()
     retry_strategy = Retry(
         total=CONFIG["RETRY_TIMES"],
@@ -145,37 +147,96 @@ def check_url_validity(url):
     """检查单个URL是否有效（2xx状态码视为有效）"""
     session = create_requests_session()
     try:
-        # 使用HEAD请求仅检查响应头，不下载完整内容，效率更高
         response = session.head(
             url,
             timeout=CONFIG["TEST_TIMEOUT"],
-            allow_redirects=True  # 跟随重定向，避免误判
+            allow_redirects=True
         )
         return url, response.status_code >= 200 and response.status_code < 300
     except Exception:
-        # 超时、连接错误、DNS解析失败等均视为无效
         return url, False
 
+def test_url_speed(url):
+    """测试单个URL的响应速度，返回(URL, 响应时间/None)"""
+    session = create_requests_session()
+    try:
+        start_time = time.time()
+        # 下载少量数据（前1024字节）测试速度，避免下载完整文件
+        response = session.get(
+            url,
+            timeout=CONFIG["TEST_TIMEOUT"],
+            allow_redirects=True,
+            stream=True
+        )
+        # 读取前1024字节触发实际请求
+        response.raw.read(1024, decode_content=False)
+        end_time = time.time()
+        response_time = round((end_time - start_time) * 1000, 2)  # 转换为毫秒
+        return url, response_time
+    except Exception:
+        return url, None
+
+def parse_old_record(line):
+    """解析old_sources.txt中的单行记录，返回(时间对象, 链接)"""
+    try:
+        match = re.match(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\] (.*)", line.strip())
+        if match:
+            time_str = match.group(1)
+            url = match.group(2)
+            record_time = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S")
+            return (record_time, url)
+    except Exception:
+        pass
+    return None
+
+# ===============================
+# 失效链接归档逻辑
+# ===============================
 def archive_invalid_urls(invalid_urls):
-    """将失效链接归档到old_sources.txt，标注删除时间"""
+    """将失效链接归档到old_sources.txt，仅保留最新的10条记录"""
     if not invalid_urls:
         return
     
-    # 获取当前时间（格式：YYYY-MM-DD HH:MM:SS）
+    # 构造新记录
     delete_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    new_records = [f"[{delete_time}] {url}" for url in invalid_urls]
+    
+    # 读取原有记录
     old_file = Path(CONFIG["OLD_SOURCES_FILE"])
+    old_records = []
+    if old_file.exists():
+        with open(old_file, "r", encoding="utf-8") as f:
+            old_records = [line.strip() for line in f.readlines() if line.strip()]
     
-    # 构造归档内容（每行：[删除时间] 失效链接）
-    archive_content = []
-    for url in invalid_urls:
-        archive_content.append(f"[{delete_time}] {url}")
+    # 合并解析+去重+排序
+    all_records = new_records + old_records
+    parsed_records = []
+    for record in all_records:
+        parsed = parse_old_record(record)
+        if parsed:
+            parsed_records.append(parsed)
     
-    # 追加写入（不存在则自动创建）
-    with open(old_file, "a", encoding="utf-8") as f:
-        f.write("\n".join(archive_content) + "\n")
+    # 去重（保留同一链接最新记录）
+    unique_records = {}
+    for record_time, url in parsed_records:
+        if url not in unique_records or record_time > unique_records[url][0]:
+            unique_records[url] = (record_time, url)
+    
+    # 按时间降序排序+保留前10条
+    sorted_records = sorted(unique_records.values(), key=lambda x: x[0], reverse=True)
+    final_records = sorted_records[:CONFIG["MAX_OLD_RECORDS"]]
+    
+    # 写入文件
+    final_text = [f"[{rt.strftime('%Y-%m-%d %H:%M:%S')}] {url}" for rt, url in final_records]
+    with open(old_file, "w", encoding="utf-8") as f:
+        f.write("\n".join(final_text) + "\n")
     
     print(f"📝 已将 {len(invalid_urls)} 个失效链接归档到 {old_file.name}")
+    print(f"   归档文件当前保留 {len(final_records)} 条最新失效链接记录（最多{CONFIG['MAX_OLD_RECORDS']}条）")
 
+# ===============================
+# 链接清理+测速筛选逻辑
+# ===============================
 def clean_invalid_sources():
     """自动清理iptv_sources.txt中的失效链接，并归档到old_sources.txt"""
     source_file = Path(CONFIG["SOURCE_TXT_FILE"])
@@ -183,20 +244,20 @@ def clean_invalid_sources():
     # 检查文件是否存在
     if not source_file.exists():
         print(f"⚠️  源文件 {source_file.name} 不存在，跳过链接清理")
-        return
+        return []
     
-    # 读取并预处理链接（去重、过滤空行）
+    # 读取并预处理链接
     with open(source_file, "r", encoding="utf-8") as f:
         raw_urls = [line.strip() for line in f.readlines()]
     original_urls = list(set([url for url in raw_urls if url]))  # 去重+过滤空行
     
     if not original_urls:
         print(f"⚠️  源文件 {source_file.name} 中无有效链接，跳过清理")
-        return
+        return []
     
     print(f"🔍 开始检查 {len(original_urls)} 个IPTV源链接的有效性...")
     
-    # 并发检查所有链接（提升效率）
+    # 并发检查有效性
     valid_urls = []
     invalid_urls = []
     with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
@@ -210,11 +271,11 @@ def clean_invalid_sources():
                 invalid_urls.append(url)
                 print(f"❌ 失效: {url}")
     
-    # 将有效链接写回原文件（覆盖）
+    # 写回有效链接到原文件
     with open(source_file, "w", encoding="utf-8") as f:
         f.write("\n".join(valid_urls))
     
-    # 归档失效链接到old_sources.txt
+    # 归档失效链接
     archive_invalid_urls(invalid_urls)
     
     # 输出清理结果
@@ -223,33 +284,92 @@ def clean_invalid_sources():
     print(f"   有效链接数：{len(valid_urls)}")
     print(f"   失效链接数：{len(invalid_urls)}")
     print(f"──────────────────────────\n")
+    
+    return valid_urls
+
+def get_fastest_sources(valid_urls):
+    """从有效链接中筛选前N条速度最快的（N=MAX_FAST_SOURCES）"""
+    if not valid_urls:
+        print(f"⚠️  无有效链接可测速，返回空列表")
+        return []
+    
+    # 如果有效链接数≤目标数，直接返回所有
+    if len(valid_urls) <= CONFIG["MAX_FAST_SOURCES"]:
+        print(f"✅ 有效链接数({len(valid_urls)})≤{CONFIG['MAX_FAST_SOURCES']}，无需测速，直接使用所有有效链接")
+        return valid_urls
+    
+    print(f"⚡ 开始对 {len(valid_urls)} 个有效链接进行速度测试（选取最快{CONFIG['MAX_FAST_SOURCES']}条）...")
+    
+    # 并发测速
+    speed_results = []
+    with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
+        future_tasks = {executor.submit(test_url_speed, url): url for url in valid_urls}
+        for future in as_completed(future_tasks):
+            url, response_time = future.result()
+            if response_time is not None:
+                speed_results.append((url, response_time))
+                print(f"📶 {url} - 响应时间：{response_time}ms")
+            else:
+                print(f"❌ {url} - 测速失败（超时/错误）")
+    
+    # 按响应时间升序排序（越快越靠前）
+    speed_results.sort(key=lambda x: x[1])
+    
+    # 选取前N条最快的
+    fastest_urls = [item[0] for item in speed_results[:CONFIG["MAX_FAST_SOURCES"]]]
+    
+    # 输出测速结果
+    print(f"\n🏆 速度测试完成 ───────────")
+    print(f"   成功测速链接数：{len(speed_results)}")
+    print(f"   选取最快{CONFIG['MAX_FAST_SOURCES']}条链接：")
+    for i, url in enumerate(fastest_urls, 1):
+        print(f"   {i}. {url}")
+    print(f"──────────────────────────\n")
+    
+    return fastest_urls
 
 # ===============================
-# 原有爬虫逻辑（替换为你的实际爬虫代码）
+# 爬虫主逻辑（替换为你的实际代码）
 # ===============================
-def run_iptv_crawler():
-    """IPTV爬虫主逻辑（此处为占位，替换为你的原有代码）"""
-    print("🚀 开始执行IPTV爬虫程序...")
+def run_iptv_crawler(fastest_sources):
+    """IPTV爬虫主逻辑，仅使用筛选后的最快链接"""
+    print("🚀 开始执行IPTV爬虫程序（仅使用最快的源链接）...")
+    if not fastest_sources:
+        print("⚠️  无可用的源链接，爬虫程序跳过执行")
+        return
+    
     # --------------------------
     # 以下替换为你原有的爬虫代码
-    # 示例逻辑（仅演示）：
-    # 1. 读取清理后的iptv_sources.txt
-    # 2. 爬取每个链接的频道信息
-    # 3. 筛选最优源并生成m3u8文件
+    # 示例逻辑：使用fastest_sources列表中的链接进行爬取
     # --------------------------
-    time.sleep(2)  # 模拟爬虫执行时间
+    # 1. 遍历最快的源链接
+    for i, source_url in enumerate(fastest_sources, 1):
+        print(f"📥 正在爬取第{i}个源链接：{source_url}")
+        time.sleep(0.5)  # 模拟爬取延迟
+    
+    # 2. 生成播放列表（示例）
+    with open(CONFIG["OUTPUT_FILE"], "w", encoding="utf-8") as f:
+        f.write(f"#EXTM3U\n# 生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"# 数据源：选取的{CONFIG['MAX_FAST_SOURCES']}条最快链接\n")
+        for url in fastest_sources:
+            f.write(f"#EXTINF:-1,IPTV源_{fastest_sources.index(url)+1}\n{url}\n")
+    
     print("✅ IPTV爬虫程序执行完成！")
+    print(f"📄 播放列表已生成：{CONFIG['OUTPUT_FILE']}")
 
 # ===============================
 # 程序入口
 # ===============================
 def main():
-    """主流程：先清理失效链接（归档），再执行爬虫"""
-    # 第一步：清理失效链接并归档
-    clean_invalid_sources()
+    """主流程：清理失效链接 → 测速筛选最快6条 → 执行爬虫"""
+    # 第一步：清理失效链接，获取所有有效链接
+    valid_urls = clean_invalid_sources()
     
-    # 第二步：执行原有爬虫逻辑
-    run_iptv_crawler()
+    # 第二步：从有效链接中筛选最快的6条
+    fastest_sources = get_fastest_sources(valid_urls)
+    
+    # 第三步：执行爬虫逻辑（仅使用最快的链接）
+    run_iptv_crawler(fastest_sources)
 
 if __name__ == "__main__":
     try:
