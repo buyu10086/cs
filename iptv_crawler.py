@@ -9,7 +9,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from datetime import datetime, timezone, timedelta
 from collections import defaultdict
-from tqdm import tqdm  # 新增：进度条库
+from tqdm import tqdm  # 进度条库
 
 # ===============================
 # 1. 日志系统配置（替换所有print）
@@ -30,8 +30,15 @@ def init_logger():
 logger = init_logger()
 
 # ===============================
-# 2. 全局配置区（新增优化相关配置）
+# 2. 全局配置区（修复超时参数类型错误）
 # ===============================
+# 初始化aiohttp超时配置（核心修复点）
+AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
+    connect=2,  # 连接超时2秒
+    sock_read=5,  # 读取超时5秒
+    total=10  # 总超时10秒（兜底）
+)
+
 CONFIG = {
     # 原有核心配置
     "SOURCE_TXT_FILE": "iptv_sources.txt",
@@ -40,7 +47,6 @@ CONFIG = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Connection": "close"
     },
-    "TEST_TIMEOUT": (2, 5),  # 拆分超时：连接2秒，读取5秒（优化点）
     "MAX_WORKERS": 40,
     "RETRY_TIMES": 1,
     "TOP_K": 3,
@@ -49,11 +55,12 @@ CONFIG = {
     
     # 新增优化配置
     "CACHE_FILE": "iptv_speed_cache.json",  # 测速缓存文件
-    "CACHE_EXPIRE_SECONDS": 600,  # 缓存有效期10分钟（优化点）
+    "CACHE_EXPIRE_SECONDS": 600,  # 缓存有效期10分钟
     "ASYNC_MAX_CONCURRENT": 50,  # 异步最大并发数
-    "DOMAIN_CONCURRENT_LIMIT": 5,  # 单域名最大并发数（优化点）
+    "DOMAIN_CONCURRENT_LIMIT": 5,  # 单域名最大并发数
     "STREAM_SUFFIXES": [".m3u8", ".ts", ".mp4", ".flv"],  # 有效流媒体后缀
-    "BAD_KEYWORDS": ["ad", "advertising", "spam", "play", "track"]  # 垃圾链接关键词
+    "BAD_KEYWORDS": ["ad", "advertising", "spam", "play", "track"],  # 垃圾链接关键词
+    "AIOHTTP_TIMEOUT": AIOHTTP_TIMEOUT  # 修复后的超时配置
 }
 
 # ===============================
@@ -227,7 +234,7 @@ RANK_TAGS = ["$最优", "$次优", "$三优"]
 # 5. 核心优化工具函数
 # ===============================
 def load_speed_cache():
-    """加载本地测速缓存（优化点）"""
+    """加载本地测速缓存"""
     cache_file = Path(CONFIG["CACHE_FILE"])
     if not cache_file.exists():
         return {}
@@ -247,7 +254,7 @@ def save_speed_cache(cache_data):
         logger.error(f"保存缓存失败：{e}")
 
 def is_url_valid(url):
-    """过滤无效/垃圾链接（优化点）"""
+    """过滤无效/垃圾链接"""
     # 检查流媒体后缀
     if not any(url.lower().endswith(suffix) for suffix in CONFIG["STREAM_SUFFIXES"]):
         return False
@@ -257,7 +264,7 @@ def is_url_valid(url):
     return True
 
 def detect_source_format(content, url):
-    """自动识别源格式（优化点：txt/m3u/m3u8/json）"""
+    """自动识别源格式（txt/m3u/m3u8/json）"""
     # 先按后缀判断
     url_lower = url.lower()
     if fnmatch.fnmatch(url_lower, "*.txt") or CONFIG["ZUBO_SOURCE_MARKER"] in url:
@@ -292,7 +299,7 @@ def build_alias_map():
     return GLOBAL_ALIAS_MAP
 
 async def test_single_url_async(url, session, cache_data):
-    """异步测速（优化点：轻量GET替代HEAD + 缓存）"""
+    """异步测速（轻量GET替代HEAD + 缓存）"""
     # 检查缓存
     if url in cache_data:
         cache_info = cache_data[url]
@@ -301,10 +308,10 @@ async def test_single_url_async(url, session, cache_data):
     
     try:
         start_time = time.time()
-        # 轻量GET：只读取前1024字节（优化点：替代HEAD）
+        # 轻量GET：只读取前1024字节（修复超时参数引用）
         async with session.get(
             url,
-            timeout=CONFIG["TEST_TIMEOUT"],
+            timeout=CONFIG["AIOHTTP_TIMEOUT"],  # 核心修复点：使用ClientTimeout对象
             allow_redirects=True,
             headers=CONFIG["HEADERS"]
         ) as response:
@@ -321,11 +328,11 @@ async def test_single_url_async(url, session, cache_data):
         return (url, float('inf'))
 
 async def test_urls_async(urls, cache_data):
-    """异步批量测速（优化点：aiohttp + 限制同域名并发）"""
+    """异步批量测速（aiohttp + 限制同域名并发）"""
     if not urls:
         return {}
     
-    # 全局去重 + 过滤无效链接（优化点：全局去重提前）
+    # 全局去重 + 过滤无效链接
     unique_urls = list(set([url for url in urls if is_url_valid(url)]))
     if not unique_urls:
         return {}
@@ -337,7 +344,7 @@ async def test_urls_async(urls, cache_data):
         domain_groups[domain].append(url)
     
     result_dict = {}
-    # 创建aiohttp会话，限制单域名并发（优化点）
+    # 创建aiohttp会话，限制单域名并发
     connector = aiohttp.TCPConnector(
         limit=CONFIG["ASYNC_MAX_CONCURRENT"],
         limit_per_host=CONFIG["DOMAIN_CONCURRENT_LIMIT"]
@@ -374,7 +381,7 @@ def read_iptv_sources_from_txt():
             if not line or line.startswith("#"):
                 continue
             if line.startswith(("http://", "https://")):
-                valid_urls_set.add(line)  # 全局去重（优化点）
+                valid_urls_set.add(line)  # 全局去重
             else:
                 logger.warning(f"第{line_num}行无效（非http链接）：{line}")
         
@@ -477,7 +484,7 @@ def parse_json_source(content):
     return json_channels
 
 async def crawl_and_merge_sources():
-    """异步爬取所有源并合并"""
+    """异步爬取所有源并合并（修复超时参数引用）"""
     all_raw_channels = defaultdict(set)
     source_urls = read_iptv_sources_from_txt()
     if not source_urls:
@@ -491,13 +498,13 @@ async def crawl_and_merge_sources():
             try:
                 async with session.get(
                     source_url,
-                    timeout=CONFIG["TEST_TIMEOUT"],
+                    timeout=CONFIG["AIOHTTP_TIMEOUT"],  # 核心修复点：使用ClientTimeout对象
                     headers=CONFIG["HEADERS"]
                 ) as response:
                     response.encoding = "utf-8"
                     content = await response.text()
                 
-                # 自动识别源格式（优化点）
+                # 自动识别源格式
                 source_format = detect_source_format(content, source_url)
                 logger.info(f"检测到{source_format}格式源，使用对应解析逻辑")
                 
@@ -530,7 +537,7 @@ async def crawl_and_merge_sources():
     return result
 
 async def crawl_and_select_top3():
-    """爬取所有源并筛选前三最优源（新增进度条）"""
+    """爬取所有源并筛选前三最优源（带进度条）"""
     all_channels = {}
     raw_channels = await crawl_and_merge_sources()
     if not raw_channels:
@@ -541,14 +548,14 @@ async def crawl_and_select_top3():
     top_k = CONFIG["TOP_K"]
     cache_data = load_speed_cache()
 
-    # 新增：创建测速进度条，显示当前处理的频道和进度
+    # 创建测速进度条
     pbar = tqdm(
         raw_channels.items(), 
         total=len(raw_channels),
         desc="📡 频道测速中",
         unit="频道",
-        ncols=100,  # 进度条宽度
-        colour="green"  # 进度条颜色
+        ncols=100,
+        colour="green"
     )
 
     for ch_name, urls in pbar:
@@ -559,7 +566,7 @@ async def crawl_and_select_top3():
             logger.info(f"{ch_name}：无播放地址，跳过")
             continue
 
-        # 异步测速（优化点：aiohttp替代线程池）
+        # 异步测速
         latency_dict = await test_urls_async(urls, cache_data)
         if not latency_dict:
             logger.info(f"{ch_name}：所有地址均无效，跳过")
@@ -645,7 +652,6 @@ if __name__ == "__main__":
     
     # 运行异步主逻辑
     try:
-        # 修复：原代码重复调用的问题
         top3_channels = asyncio.run(crawl_and_select_top3())
         generate_iptv_playlist(top3_channels)
         logger.info("✨ 任务完成！")
