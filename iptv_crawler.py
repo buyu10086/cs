@@ -6,30 +6,40 @@ from pathlib import Path
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import logging
 
 # ===============================
-# 全局配置区（核心参数可调，无变动）
+# 日志配置（解决重复打印问题）
+# ===============================
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+logger = logging.getLogger(__name__)
+
+# ===============================
+# 全局配置区（核心参数可调）
 # ===============================
 CONFIG = {
-    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接（含zubo源）
+    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接
     "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优播放列表
     "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接存储文件
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Connection": "close"  # 关闭长连接，减少资源占用
+        "Connection": "close"
     },
     # 测速配置
-    "TEST_TIMEOUT": 3,  # 单链接超时时间（秒），网络差可改为8
-    "MAX_WORKERS": 40,  # 并发线程数，带宽高可设30-50
-    "RETRY_TIMES": 1,  # 网络请求重试次数
-    "TOP_K": 3,  # 每个频道保留前三最优源
+    "TEST_TIMEOUT": 3,
+    "MAX_WORKERS": 40,  # 降低并发数，减少重复任务
+    "RETRY_TIMES": 1,
+    "TOP_K": 3,
     "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
-    # zubo源特殊配置（目标源格式标记）
-    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"  # 用于识别zubo格式源
+    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"
 }
 
 # ===============================
-# 频道分类与别名映射（保持兼容，无变动）
+# 频道分类与别名映射（无变动）
 # ===============================
 CHANNEL_CATEGORIES = {
     "央视频道": [
@@ -128,7 +138,6 @@ CHANNEL_MAPPING = {
 # 工具函数：创建带重试的请求会话
 # ===============================
 def create_requests_session():
-    """创建带重试机制的requests会话"""
     session = requests.Session()
     retry_strategy = Retry(
         total=CONFIG["RETRY_TIMES"],
@@ -143,128 +152,150 @@ def create_requests_session():
     return session
 
 # ===============================
-# 新增功能：链接有效性检测
+# 链接有效性检测（修复重复检测）
 # ===============================
-def is_link_valid(link, session):
-    """检测单个链接是否有效"""
+def is_link_valid(link, session, checked_links):
+    """
+    检测单个链接是否有效，增加已检测链接缓存避免重复检测
+    :param link: 待检测链接
+    :param session: 请求会话
+    :param checked_links: 已检测链接的缓存字典（共享）
+    :return: 链接是否有效
+    """
+    # 先查缓存，避免重复检测
+    if link in checked_links:
+        return checked_links[link]
+    
     try:
-        # 使用HEAD请求减少带宽占用，若失败则降级为GET（仅取响应头）
         response = session.head(
             link,
             timeout=CONFIG["TEST_TIMEOUT"],
             allow_redirects=True,
-            verify=False  # 忽略SSL验证（部分源可能证书问题）
+            verify=False
         )
-        # 响应状态码2xx表示有效
-        return response.status_code >= 200 and response.status_code < 300
+        is_valid = response.status_code >= 200 and response.status_code < 300
     except requests.exceptions.HeadNotAllowed:
-        # HEAD请求不被允许时，用GET请求仅读取头部
         try:
             response = session.get(
                 link,
                 timeout=CONFIG["TEST_TIMEOUT"],
                 allow_redirects=True,
                 verify=False,
-                stream=True  # 不下载正文
+                stream=True
             )
             response.close()
-            return response.status_code >= 200 and response.status_code < 300
+            is_valid = response.status_code >= 200 and response.status_code < 300
         except Exception:
-            return False
+            is_valid = False
     except Exception:
-        # 超时、连接错误等均判定为失效
-        return False
+        is_valid = False
+    
+    # 写入缓存
+    checked_links[link] = is_valid
+    return is_valid
 
 # ===============================
-# 新增功能：清理源文件（去重+失效检测）
+# 清理源文件（修复重复写入）
 # ===============================
 def clean_sources_file():
     """
-    1. 读取iptv_sources.txt并去重
-    2. 检测每个链接有效性
-    3. 有效链接写入新的iptv_sources.txt
-    4. 失效链接追加到old_sources.txt（去重）
+    修复点：
+    1. 增加已检测链接缓存，避免重复检测
+    2. 优化失效链接去重逻辑，避免重复写入
+    3. 统一日志输出，避免重复打印
     """
-    # 1. 读取源文件并去重
     source_path = Path(CONFIG["SOURCE_TXT_FILE"])
     old_path = Path(CONFIG["OLD_SOURCES_FILE"])
     
-    # 确保源文件存在
     if not source_path.exists():
-        print(f"⚠️ 源文件 {source_path} 不存在，跳过清理")
+        logger.warning(f"源文件 {source_path} 不存在，跳过清理")
         return
     
-    # 读取源链接并去重（保留顺序）
+    # 1. 读取并去重（严格去重，避免重复链接）
     with open(source_path, "r", encoding="utf-8") as f:
         raw_links = [line.strip() for line in f if line.strip()]
-    unique_links = list(dict.fromkeys(raw_links))  # 去重且保留顺序
-    print(f"🔍 读取到 {len(raw_links)} 个链接，去重后剩余 {len(unique_links)} 个")
+    # 严格去重（无序但彻底），避免重复处理
+    unique_links = list(set(raw_links))
+    logger.info(f"读取到 {len(raw_links)} 个链接，去重后剩余 {len(unique_links)} 个")
     
-    # 2. 并发检测链接有效性
+    if not unique_links:
+        logger.info("源文件去重后无有效链接，跳过检测")
+        return
+    
+    # 2. 并发检测（带缓存避免重复）
     session = create_requests_session()
+    checked_links = {}  # 检测结果缓存
     valid_links = []
     invalid_links = []
     
     with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
-        # 提交所有检测任务
         future_to_link = {
-            executor.submit(is_link_valid, link, session): link 
+            executor.submit(is_link_valid, link, session, checked_links): link 
             for link in unique_links
         }
         
-        # 处理结果
         for future in as_completed(future_to_link):
             link = future_to_link[future]
             try:
                 if future.result():
                     valid_links.append(link)
-                    print(f"✅ 有效链接: {link}")
+                    logger.info(f"有效链接: {link}")
                 else:
                     invalid_links.append(link)
-                    print(f"❌ 失效链接: {link}")
+                    logger.warning(f"失效链接: {link}")
             except Exception as e:
                 invalid_links.append(link)
-                print(f"❌ 检测失败（判定为失效）: {link} | 错误: {str(e)}")
+                logger.error(f"检测失败（判定为失效）: {link} | 错误: {str(e)}")
     
-    # 3. 写入有效链接到源文件（覆盖）
+    # 3. 写入有效链接（覆盖，确保无重复）
     with open(source_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(valid_links) + "\n")
-    print(f"📝 已将 {len(valid_links)} 个有效链接写入 {source_path}")
+        # 排序后写入，保持一致性
+        valid_links_sorted = sorted(valid_links)
+        f.write("\n".join(valid_links_sorted) + "\n")
+    logger.info(f"已将 {len(valid_links)} 个有效链接写入 {source_path}")
     
-    # 4. 处理失效链接（追加到old_sources.txt，去重）
+    # 4. 处理失效链接（彻底去重，避免重复追加）
     if invalid_links:
-        # 读取已有失效链接（避免重复添加）
+        # 读取已有失效链接（全量去重）
         existing_old_links = set()
         if old_path.exists():
             with open(old_path, "r", encoding="utf-8") as f:
-                existing_old_links = {line.strip() for line in f if line.strip() and not line.startswith("失效链接集合区")}
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith(("#", "失效链接集合区")):
+                        # 提取链接部分（去掉时间戳）
+                        link_part = line.split(" | ")[0].strip()
+                        existing_old_links.add(link_part)
         
-        # 过滤掉已存在的失效链接
-        new_invalid_links = [link for link in invalid_links if link not in existing_old_links]
+        # 过滤已存在的失效链接
+        new_invalid_links = []
+        for link in invalid_links:
+            if link not in existing_old_links and link not in new_invalid_links:
+                new_invalid_links.append(link)
         
         if new_invalid_links:
-            # 确保old文件存在，无则创建并添加标题
+            # 确保文件存在
             if not old_path.exists():
                 with open(old_path, "w", encoding="utf-8") as f:
                     f.write("失效链接集合区\n")
             
-            # 追加新失效链接（带时间戳）
+            # 写入（带时间戳，避免重复）
             with open(old_path, "a", encoding="utf-8") as f:
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                for link in new_invalid_links:
+                # 排序后写入，便于查看
+                for link in sorted(new_invalid_links):
                     f.write(f"{link} | 失效时间: {timestamp}\n")
             
-            print(f"📝 已将 {len(new_invalid_links)} 个新失效链接追加到 {old_path}")
+            logger.info(f"已将 {len(new_invalid_links)} 个新失效链接追加到 {old_path}")
         else:
-            print("ℹ️ 无新的失效链接需要追加到old_sources.txt")
+            logger.info("无新的失效链接需要追加到old_sources.txt")
     else:
-        print("ℹ️ 未检测到失效链接")
+        logger.info("未检测到失效链接")
 
 # ===============================
-# 原有功能：解析IPTV源内容
+# 原有功能（无变动，仅替换日志输出）
 # ===============================
 def parse_iptv_source(link, session):
-    """解析单个IPTV源链接，返回频道名->播放链接的映射"""
     channel_map = {}
     try:
         response = session.get(
@@ -275,9 +306,7 @@ def parse_iptv_source(link, session):
         response.encoding = response.apparent_encoding or "utf-8"
         content = response.text
         
-        # 适配zubo源格式和标准m3u格式
         if CONFIG["ZUBO_SOURCE_MARKER"] in link:
-            # zubo源格式：频道名,链接
             lines = content.strip().split("\n")
             for line in lines:
                 if "," in line:
@@ -287,7 +316,6 @@ def parse_iptv_source(link, session):
                     if name and url:
                         channel_map[name] = channel_map.get(name, []) + [url]
         else:
-            # 标准m3u格式解析
             m3u_pattern = re.compile(r'#EXTINF:.*?,(.*?)\n(https?://.*?)\n', re.IGNORECASE)
             matches = m3u_pattern.findall(content)
             for name, url in matches:
@@ -296,14 +324,10 @@ def parse_iptv_source(link, session):
                 if name and url:
                     channel_map[name] = channel_map.get(name, []) + [url]
     except Exception as e:
-        print(f"⚠️ 解析源 {link} 失败: {str(e)}")
+        logger.error(f"解析源 {link} 失败: {str(e)}")
     return channel_map
 
-# ===============================
-# 原有功能：测速并筛选最优源
-# ===============================
 def test_link_speed(link, session):
-    """测试链接速度，返回耗时（秒），失败返回无穷大"""
     try:
         start_time = time.time()
         response = session.get(
@@ -312,7 +336,6 @@ def test_link_speed(link, session):
             verify=False,
             stream=True
         )
-        # 读取少量数据验证可用性
         response.iter_content(chunk_size=1024, decode_unicode=False)
         response.close()
         elapsed = time.time() - start_time
@@ -321,9 +344,10 @@ def test_link_speed(link, session):
         return float("inf")
 
 def get_best_links(channel_name, link_list, session):
-    """为单个频道筛选TOP_K最优链接"""
-    # 测速并排序（耗时越短越优）
+    # 先去重链接，避免重复测速
+    link_list = list(set(link_list))
     link_speed = []
+    
     with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
         future_to_link = {
             executor.submit(test_link_speed, link, session): link
@@ -335,31 +359,24 @@ def get_best_links(channel_name, link_list, session):
             if speed < float("inf"):
                 link_speed.append((speed, link))
     
-    # 按速度排序，取前TOP_K
     link_speed.sort(key=lambda x: x[0])
     best_links = [link for (speed, link) in link_speed[:CONFIG["TOP_K"]]]
     return best_links
 
-# ===============================
-# 原有功能：生成最终播放列表
-# ===============================
 def generate_playlist():
-    """生成最优IPTV播放列表"""
-    # 1. 读取所有源链接
     source_path = Path(CONFIG["SOURCE_TXT_FILE"])
     if not source_path.exists():
-        print(f"❌ 源文件 {source_path} 不存在，无法生成播放列表")
+        logger.error(f"源文件 {source_path} 不存在，无法生成播放列表")
         return
     
     with open(source_path, "r", encoding="utf-8") as f:
         source_links = [line.strip() for line in f if line.strip()]
     if not source_links:
-        print("❌ 源文件中无有效链接，无法生成播放列表")
+        logger.error("源文件中无有效链接，无法生成播放列表")
         return
     
-    # 2. 解析所有源的频道数据
     session = create_requests_session()
-    all_channels = {}  # 全局频道映射：频道名 -> [所有可用链接]
+    all_channels = {}
     
     with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
         future_to_link = {
@@ -371,67 +388,64 @@ def generate_playlist():
             link = future_to_link[future]
             try:
                 channel_map = future.result()
-                # 合并到全局频道映射
                 for name, urls in channel_map.items():
                     if name not in all_channels:
                         all_channels[name] = []
-                    all_channels[name].extend(urls)
+                    # 去重后添加
+                    all_channels[name].extend(list(set(urls)))
             except Exception as e:
-                print(f"⚠️ 处理源 {link} 失败: {str(e)}")
+                logger.error(f"处理源 {link} 失败: {str(e)}")
     
-    # 3. 为每个频道筛选最优链接
+    # 生成播放列表
     final_playlist = [
         "#EXTM3U",
         f"#EXT-X-DISCLAIMER:{CONFIG['IPTV_DISCLAIMER']}",
         f"#EXT-X-UPDATE-TIME:{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
     ]
     
-    # 按分类生成播放列表
     for category, channel_names in CHANNEL_CATEGORIES.items():
         final_playlist.append(f"\n#EXT-X-CATEGORY:{category}")
         
         for channel_name in channel_names:
-            # 匹配频道别名
             match_names = [channel_name] + CHANNEL_MAPPING.get(channel_name, [])
             found_urls = []
             
-            # 查找所有匹配的链接
             for match_name in match_names:
                 if match_name in all_channels:
                     found_urls.extend(all_channels[match_name])
             
             if not found_urls:
-                continue  # 无可用链接则跳过
+                continue
             
-            # 筛选最优链接
+            # 去重后测速
+            found_urls = list(set(found_urls))
             best_links = get_best_links(channel_name, found_urls, session)
             if not best_links:
                 continue
             
-            # 添加到播放列表
             for idx, url in enumerate(best_links):
                 final_playlist.append(f"#EXTINF:-1 group-title=\"{category}\",{channel_name}{f'({idx+1})' if idx>0 else ''}")
                 final_playlist.append(url)
     
-    # 4. 写入播放列表文件
+    # 写入文件
     with open(CONFIG["OUTPUT_FILE"], "w", encoding="utf-8") as f:
         f.write("\n".join(final_playlist))
-    print(f"🎉 最优播放列表已生成: {CONFIG['OUTPUT_FILE']}")
+    logger.info(f"最优播放列表已生成: {CONFIG['OUTPUT_FILE']}")
 
 # ===============================
-# 主函数：执行清理 + 生成播放列表
+# 主函数
 # ===============================
 if __name__ == "__main__":
-    print("="*50)
-    print("📺 IPTV源清理与播放列表生成工具")
-    print("="*50)
+    logger.info("="*50)
+    logger.info("📺 IPTV源清理与播放列表生成工具")
+    logger.info("="*50)
     
-    # 第一步：清理源文件（去重+失效检测）
-    print("\n🔧 开始清理源文件...")
+    # 第一步：清理源文件
+    logger.info("\n🔧 开始清理源文件...")
     clean_sources_file()
     
-    # 第二步：生成最优播放列表（原有功能）
-    print("\n🎬 开始生成最优播放列表...")
+    # 第二步：生成播放列表
+    logger.info("\n🎬 开始生成最优播放列表...")
     generate_playlist()
     
-    print("\n✅ 所有操作完成！")
+    logger.info("\n✅ 所有操作完成！")
