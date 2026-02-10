@@ -30,13 +30,13 @@ def init_logger():
 logger = init_logger()
 
 # ===============================
-# 2. 全局配置区（修复超时参数类型错误）
+# 2. 全局配置区（核心修改：放宽限制，适配CCTV源）
 # ===============================
-# 初始化aiohttp超时配置（核心修复点）
+# 初始化aiohttp超时配置（放宽超时，适配CCTV源）
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=3,  # 连接超时3秒
-    sock_read=4,  # 读取超时4秒
-    total=8  # 总超时8秒（兜底）
+    connect=5,  # 连接超时从3→5秒（CCTV源跨运营商，连接耗时更长）
+    sock_read=6,  # 读取超时从4→6秒
+    total=10  # 总超时从8→10秒（兜底）
 )
 
 CONFIG = {
@@ -53,14 +53,15 @@ CONFIG = {
     "IPTV_DISCLAIMER": "个人自用，请勿用于商业用途",
     "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",
     
-    # 新增优化配置
-    "CACHE_FILE": "iptv_speed_cache.json",  # 测速缓存文件
-    "CACHE_EXPIRE_SECONDS": 1800,  # 缓存有效期30分钟
-    "ASYNC_MAX_CONCURRENT": 50,  # 异步最大并发数
-    "DOMAIN_CONCURRENT_LIMIT": 5,  # 单域名最大并发数
-    "STREAM_SUFFIXES": [".m3u8", ".ts", ".mp4", ".flv"],  # 有效流媒体后缀
-    "BAD_KEYWORDS": ["ad", "advertising", "spam", "play", "track"],  # 垃圾链接关键词
-    "AIOHTTP_TIMEOUT": AIOHTTP_TIMEOUT  # 修复后的超时配置
+    # 新增优化配置（核心修改：放宽限制）
+    "CACHE_FILE": "iptv_speed_cache.json",
+    "CACHE_EXPIRE_SECONDS": 1800,
+    "ASYNC_MAX_CONCURRENT": 80,  # 全局并发从50→80，提升CCTV源请求效率
+    "DOMAIN_CONCURRENT_LIMIT": 15,  # 单域名并发从5→15（适配CCTV源集中在少数域名）
+    "STREAM_SUFFIXES": [".m3u8", ".ts", ".mp4", ".flv"],  # 保留但不再强制过滤
+    # 关键修改：移除play/track（CCTV源URL含play，避免误过滤）
+    "BAD_KEYWORDS": ["ad", "advertising", "spam"],  
+    "AIOHTTP_TIMEOUT": AIOHTTP_TIMEOUT
 }
 
 # ===============================
@@ -216,7 +217,7 @@ CHANNEL_MAPPING = {
 }
 
 # ===============================
-# 4. 预加载优化（新增缓存/格式识别相关）
+# 4. 预加载优化（保持不变）
 # ===============================
 ZUBO_SKIP_PATTERN = re.compile(r"^(更新时间|.*,#genre#|http://kakaxi\.indevs\.in/LOGO/)")
 ZUBO_CHANNEL_PATTERN = re.compile(r"^([^,]+),(http://.+?)(\$.*)?$")
@@ -231,7 +232,7 @@ for category_ch_list in CHANNEL_CATEGORIES.values():
 RANK_TAGS = ["$最优", "$次优", "$三优"]
 
 # ===============================
-# 5. 核心优化工具函数
+# 5. 核心优化工具函数（核心修改：放宽过滤+适配HEAD请求）
 # ===============================
 def load_speed_cache():
     """加载本地测速缓存"""
@@ -253,19 +254,17 @@ def save_speed_cache(cache_data):
     except Exception as e:
         logger.error(f"保存缓存失败：{e}")
 
+# 核心修改1：大幅放宽链接过滤规则（仅过滤明显垃圾链接，不再限制后缀）
 def is_url_valid(url):
-    """过滤无效/垃圾链接"""
-    # 检查流媒体后缀
-    if not any(url.lower().endswith(suffix) for suffix in CONFIG["STREAM_SUFFIXES"]):
-        return False
-    # 检查垃圾关键词
+    """放宽过滤：仅过滤含广告/垃圾关键词的链接，不再限制流媒体后缀"""
+    # 仅保留垃圾关键词过滤（已移除play/track）
     if any(keyword in url.lower() for keyword in CONFIG["BAD_KEYWORDS"]):
         return False
+    # 移除流媒体后缀限制（CCTV源很多无后缀）
     return True
 
 def detect_source_format(content, url):
-    """自动识别源格式（txt/m3u/m3u8/json）"""
-    # 先按后缀判断
+    """自动识别源格式（保持不变）"""
     url_lower = url.lower()
     if fnmatch.fnmatch(url_lower, "*.txt") or CONFIG["ZUBO_SOURCE_MARKER"] in url:
         return "txt"
@@ -274,7 +273,6 @@ def detect_source_format(content, url):
     elif fnmatch.fnmatch(url_lower, "*.json"):
         return "json"
     
-    # 按内容特征判断
     if M3U_HEADER_PATTERN.match(content):
         return "m3u8"
     elif JSON_START_PATTERN.match(content):
@@ -298,9 +296,9 @@ def build_alias_map():
     GLOBAL_ALIAS_MAP = alias_map
     return GLOBAL_ALIAS_MAP
 
+# 核心修改2：改用HEAD请求（和第二个代码一致），仅读取响应头，适配CCTV源
 async def test_single_url_async(url, session, cache_data):
-    """异步测速（轻量GET替代HEAD + 缓存）"""
-    # 检查缓存
+    """异步测速：改用HEAD请求（仅读响应头），适配CCTV源"""
     if url in cache_data:
         cache_info = cache_data[url]
         if time.time() - cache_info["timestamp"] < CONFIG["CACHE_EXPIRE_SECONDS"]:
@@ -308,14 +306,13 @@ async def test_single_url_async(url, session, cache_data):
     
     try:
         start_time = time.time()
-        # 轻量GET：只读取前1024字节（修复超时参数引用）
-        async with session.get(
+        # 改用HEAD请求（仅读响应头，不读取内容），适配CCTV源服务器
+        async with session.head(
             url,
-            timeout=CONFIG["AIOHTTP_TIMEOUT"],  # 核心修复点：使用ClientTimeout对象
-            allow_redirects=True,
+            timeout=CONFIG["AIOHTTP_TIMEOUT"],
+            allow_redirects=True,  # 跟随重定向（CCTV源多为重定向链接）
             headers=CONFIG["HEADERS"]
         ) as response:
-            await response.content.read(1024)  # 只读少量数据
             latency = round(time.time() - start_time, 2)
             # 更新缓存
             cache_data[url] = {
@@ -328,30 +325,29 @@ async def test_single_url_async(url, session, cache_data):
         return (url, float('inf'))
 
 async def test_urls_async(urls, cache_data):
-    """异步批量测速（aiohttp + 限制同域名并发）"""
+    """异步批量测速（放宽单域名并发，适配CCTV源）"""
     if not urls:
         return {}
     
-    # 全局去重 + 过滤无效链接
+    # 全局去重 + 放宽过滤（仅过滤垃圾关键词）
     unique_urls = list(set([url for url in urls if is_url_valid(url)]))
     if not unique_urls:
         return {}
     
-    # 按域名分组，限制单域名并发
+    # 按域名分组，放宽单域名并发限制
     domain_groups = defaultdict(list)
     for url in unique_urls:
         domain = urlparse(url).netloc
         domain_groups[domain].append(url)
     
     result_dict = {}
-    # 创建aiohttp会话，限制单域名并发
+    # 创建aiohttp会话，放宽全局+单域名并发
     connector = aiohttp.TCPConnector(
         limit=CONFIG["ASYNC_MAX_CONCURRENT"],
         limit_per_host=CONFIG["DOMAIN_CONCURRENT_LIMIT"]
     )
     
     async with aiohttp.ClientSession(connector=connector) as session:
-        # 逐个域名异步测速
         for domain, domain_urls in domain_groups.items():
             tasks = [test_single_url_async(url, session, cache_data) for url in domain_urls]
             results = await asyncio.gather(*tasks)
@@ -359,12 +355,11 @@ async def test_urls_async(urls, cache_data):
                 if latency < float('inf'):
                     result_dict[url] = latency
     
-    # 保存缓存
     save_speed_cache(cache_data)
     return result_dict
 
 def read_iptv_sources_from_txt():
-    """读取源链接（全局去重提前）"""
+    """读取源链接（保持不变）"""
     txt_path = Path(CONFIG["SOURCE_TXT_FILE"])
     valid_urls_set = set()
 
@@ -381,7 +376,7 @@ def read_iptv_sources_from_txt():
             if not line or line.startswith("#"):
                 continue
             if line.startswith(("http://", "https://")):
-                valid_urls_set.add(line)  # 全局去重
+                valid_urls_set.add(line)
             else:
                 logger.warning(f"第{line_num}行无效（非http链接）：{line}")
         
@@ -394,7 +389,7 @@ def read_iptv_sources_from_txt():
     return valid_urls
 
 def parse_zubo_source(content):
-    """解析txt源"""
+    """解析txt源（保持不变）"""
     zubo_channels = {}
     alias_map = build_alias_map()
     lines = content.splitlines()
@@ -428,7 +423,7 @@ def parse_zubo_source(content):
     return zubo_channels
 
 def parse_standard_m3u8(content):
-    """解析m3u8源"""
+    """解析m3u8源（保持不变）"""
     m3u8_channels = {}
     alias_map = build_alias_map()
     lines = content.splitlines()
@@ -457,12 +452,11 @@ def parse_standard_m3u8(content):
     return m3u8_channels
 
 def parse_json_source(content):
-    """解析JSON格式源"""
+    """解析JSON格式源（保持不变）"""
     json_channels = {}
     alias_map = build_alias_map()
     try:
         data = json.loads(content)
-        # 兼容常见JSON格式：[{"name": "频道名", "url": "播放链接"}, ...]
         if isinstance(data, list):
             for item in data:
                 if not isinstance(item, dict) or "name" not in item or "url" not in item:
@@ -475,7 +469,6 @@ def parse_json_source(content):
                 if std_ch not in json_channels:
                     json_channels[std_ch] = set()
                 json_channels[std_ch].add(play_url)
-        # 转换为列表
         for std_ch, url_set in json_channels.items():
             json_channels[std_ch] = list(url_set)
         logger.info(f"JSON源解析完成：共获取 {len(json_channels)} 个频道")
@@ -484,13 +477,12 @@ def parse_json_source(content):
     return json_channels
 
 async def crawl_and_merge_sources():
-    """异步爬取所有源并合并（修复超时参数引用）"""
+    """异步爬取所有源并合并（保持不变）"""
     all_raw_channels = defaultdict(set)
     source_urls = read_iptv_sources_from_txt()
     if not source_urls:
         return all_raw_channels
 
-    # 创建aiohttp会话
     connector = aiohttp.TCPConnector(limit=CONFIG["ASYNC_MAX_CONCURRENT"])
     async with aiohttp.ClientSession(connector=connector) as session:
         for source_url in source_urls:
@@ -498,13 +490,12 @@ async def crawl_and_merge_sources():
             try:
                 async with session.get(
                     source_url,
-                    timeout=CONFIG["AIOHTTP_TIMEOUT"],  # 核心修复点：使用ClientTimeout对象
+                    timeout=CONFIG["AIOHTTP_TIMEOUT"],
                     headers=CONFIG["HEADERS"]
                 ) as response:
                     response.encoding = "utf-8"
                     content = await response.text()
                 
-                # 自动识别源格式
                 source_format = detect_source_format(content, source_url)
                 logger.info(f"检测到{source_format}格式源，使用对应解析逻辑")
                 
@@ -518,7 +509,6 @@ async def crawl_and_merge_sources():
                     logger.warning(f"不支持的源格式：{source_format}，跳过")
                     continue
 
-                # 合并数据（全局去重）
                 for std_ch, urls in source_channels.items():
                     all_raw_channels[std_ch].update(urls)
                 
@@ -527,7 +517,6 @@ async def crawl_and_merge_sources():
                 logger.error(f"爬取失败 {source_url}：{e}")
                 continue
 
-    # 转换为列表
     result = {}
     for std_ch, url_set in all_raw_channels.items():
         result[std_ch] = list(url_set)
@@ -537,7 +526,7 @@ async def crawl_and_merge_sources():
     return result
 
 async def crawl_and_select_top3():
-    """爬取所有源并筛选前三最优源（带进度条）"""
+    """爬取所有源并筛选前三最优源（保持不变）"""
     all_channels = {}
     raw_channels = await crawl_and_merge_sources()
     if not raw_channels:
@@ -548,7 +537,6 @@ async def crawl_and_select_top3():
     top_k = CONFIG["TOP_K"]
     cache_data = load_speed_cache()
 
-    # 创建测速进度条
     pbar = tqdm(
         raw_channels.items(), 
         total=len(raw_channels),
@@ -559,20 +547,17 @@ async def crawl_and_select_top3():
     )
 
     for ch_name, urls in pbar:
-        # 更新进度条描述，显示当前处理的频道名
         pbar.set_postfix({"当前频道": ch_name[:15] + "..." if len(ch_name) > 15 else ch_name})
         
         if len(urls) == 0:
             logger.info(f"{ch_name}：无播放地址，跳过")
             continue
 
-        # 异步测速
         latency_dict = await test_urls_async(urls, cache_data)
         if not latency_dict:
             logger.info(f"{ch_name}：所有地址均无效，跳过")
             continue
 
-        # 按延迟排序
         sorted_items = sorted(latency_dict.items(), key=lambda x: x[1])
         top3_urls = [url for url, _ in sorted_items[:top_k]]
         all_channels[ch_name] = top3_urls
@@ -581,13 +566,12 @@ async def crawl_and_select_top3():
         result_str = " | ".join([f"{url}（延迟：{latency}s）" for url, latency in sorted_items[:top_k]])
         logger.info(f"{ch_name}：保留前三最优源 → {result_str}")
 
-    # 关闭进度条
     pbar.close()
     logger.info(f"测速完成：共筛选出 {valid_channel_count} 个有效频道（原{len(raw_channels)}个）")
     return all_channels
 
 def generate_iptv_playlist(top3_channels):
-    """生成m3u8播放列表"""
+    """生成m3u8播放列表（保持不变）"""
     if not top3_channels:
         logger.error("无有效频道，无法生成播放列表")
         return
@@ -603,7 +587,6 @@ def generate_iptv_playlist(top3_channels):
     ]
     top_k = CONFIG["TOP_K"]
 
-    # 按分类写入
     for category, ch_list in CHANNEL_CATEGORIES.items():
         playlist_content.append(f"{category},#genre#")
         for std_ch in ch_list:
@@ -617,7 +600,6 @@ def generate_iptv_playlist(top3_channels):
                 playlist_content.append(f"{std_ch},{url}{tag}")
         playlist_content.append("")
 
-    # 未分类频道
     other_channels = [ch for ch in top3_channels.keys() if ch not in ALL_CATEGORIZED_CHANNELS]
     if other_channels:
         playlist_content.append("其它频道,#genre#")
@@ -630,7 +612,6 @@ def generate_iptv_playlist(top3_channels):
                 playlist_content.append(f"{std_ch},{url}{tag}")
         playlist_content.append("")
 
-    # 保存文件
     try:
         output_path.write_text("\n".join(playlist_content).rstrip("\n"), encoding="utf-8")
         logger.info(f"成功生成最优播放列表：{output_path.absolute()}")
@@ -639,18 +620,16 @@ def generate_iptv_playlist(top3_channels):
         logger.error(f"生成文件失败：{e}")
 
 # ===============================
-# 6. 主执行逻辑（异步入口）
+# 6. 主执行逻辑（保持不变）
 # ===============================
 if __name__ == "__main__":
     logger.info("="*70)
-    logger.info("📺 IPTV直播源爬取 + 多格式自动识别 + 异步测速优化版（带进度条）")
-    logger.info(f"🎯 支持txt/m3u/m3u8/json格式 | 异步aiohttp | 本地缓存 | 单域名并发限制 | 测速进度条")
+    logger.info("📺 IPTV直播源爬取 + 多格式自动识别 + 异步测速优化版（放宽限制适配CCTV）")
+    logger.info(f"🎯 支持txt/m3u/m3u8/json格式 | 异步aiohttp | 本地缓存 | 适配CCTV源 | 测速进度条")
     logger.info("="*70)
     
-    # 初始化别名映射
     build_alias_map()
     
-    # 运行异步主逻辑
     try:
         top3_channels = asyncio.run(crawl_and_select_top3())
         generate_iptv_playlist(top3_channels)
