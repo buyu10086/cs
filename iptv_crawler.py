@@ -12,7 +12,7 @@ from collections import defaultdict
 from tqdm import tqdm  # 进度条库
 
 # ===============================
-# 1. 日志系统配置（替换所有print）
+# 1. 日志系统配置
 # ===============================
 def init_logger():
     """初始化日志系统：输出到控制台+文件，带时间/级别/模块"""
@@ -36,7 +36,7 @@ logger = init_logger()
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
     connect=3,  # 连接超时3秒
     sock_read=4,  # 读取超时4秒
-    total=10  # 总超时10秒（兜底）
+    total=8  # 总超时8秒（兜底）
 )
 
 CONFIG = {
