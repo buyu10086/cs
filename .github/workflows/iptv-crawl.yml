@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install aiohttp
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # 从 requirements.txt 安装依赖
         # 可选：仅当 requirements.txt 内容变更时才重新安装（进一步提速）
