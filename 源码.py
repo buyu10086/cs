@@ -8,10 +8,10 @@ from urllib3.util.retry import Retry
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ===============================
-# 全局配置区（核心参数可调，无变动）
+# 全局配置区（核心参数可调）
 # ===============================
 CONFIG = {
-    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接（含zubo源）
+    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接
     "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优播放列表
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -22,9 +22,9 @@ CONFIG = {
     "MAX_WORKERS": 40,  # 并发线程数，带宽高可设30-50
     "RETRY_TIMES": 1,  # 网络请求重试次数
     "TOP_K": 3,  # 每个频道保留前三最优源
-    "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
-    # zubo源特殊配置（目标源格式标记）
-    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"  # 用于识别zubo格式源
+    "IPTV_DISCLAIMER": "个人自用，请勿用于商业用途",
+    # txt源特殊配置（目标源格式标记）
+    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"  # 用于识别txt格式源
 }
 
 # ===============================
@@ -180,7 +180,7 @@ CHANNEL_MAPPING = {
 }
 
 # ===============================
-# 预加载优化（新增/修改，提升效率核心）
+# 预加载优化
 # ===============================
 # 1. 提前编译正则（避免重复编译）
 ZUBO_SKIP_PATTERN = re.compile(r"^(更新时间|.*,#genre#|http://kakaxi\.indevs\.in/LOGO/)")
@@ -271,7 +271,7 @@ def read_iptv_sources_from_txt():
     if not txt_path.exists():
         print(f"❌ 未找到 {txt_path.name}，已自动创建模板文件，请填写链接后重试")
         # 模板中加入zubo源示例
-        template = f"# 每行填写1个IPTV源链接（支持标准m3u8和zubo格式）\n# 1. 标准m3u8源示例：https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/main/tv/iptv4.m3u\n# 2. zubo源示例：{CONFIG['ZUBO_SOURCE_MARKER']}对应的链接（本次目标源）\n{CONFIG['ZUBO_SOURCE_MARKER']}示例：https://gh-proxy.com/raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt\n# 可添加注释（以#开头），空行会自动跳过\n"
+        template = f"# 每行填写1个IPTV源链接（支持标准m3u8和txt格式）\n# 1. 标准m3u8源示例：https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/main/tv/iptv4.m3u\n# 2. zubo源示例：{CONFIG['ZUBO_SOURCE_MARKER']}对应的链接（本次目标源）\n{CONFIG['ZUBO_SOURCE_MARKER']}示例：https://gh-proxy.com/raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt\n# 可添加注释（以#开头），空行会自动跳过\n"
         txt_path.write_text(template, encoding="utf-8")
         return list(valid_urls_set)
 
@@ -287,7 +287,7 @@ def read_iptv_sources_from_txt():
                 print(f"⚠️  第{line_num}行无效（非http链接），已跳过：{line}")
         
         valid_urls = list(valid_urls_set)
-        print(f"✅ 读取完成：共 {len(valid_urls)} 个有效IPTV源（含标准m3u8和zubo源）\n")
+        print(f"✅ 读取完成：共 {len(valid_urls)} 个有效IPTV源（含标准m3u8和txt源）\n")
     except Exception as e:
         print(f"❌ 读取文件失败：{e}")
         valid_urls = []
@@ -295,7 +295,7 @@ def read_iptv_sources_from_txt():
     return valid_urls
 
 def parse_zubo_source(content):
-    """解析zubo源格式：优化1. 用预编译正则 2. 缓存别名映射（返回结果不变）"""
+    """解析txt源格式：优化1. 用预编译正则 2. 缓存别名映射（返回结果不变）"""
     zubo_channels = {}
     alias_map = build_alias_map()  # 复用缓存的别名映射
     lines = content.splitlines()
@@ -308,7 +308,7 @@ def parse_zubo_source(content):
         # 用预编译正则匹配，避免重复编译
         match = ZUBO_CHANNEL_PATTERN.match(line)
         if not match:
-            print(f"⚠️  zubo源第{line_num}行格式无效，已跳过：{line}")
+            print(f"⚠️  txt源第{line_num}行格式无效，已跳过：{line}")
             continue
         
         ch_name = match.group(1).strip()
@@ -323,7 +323,7 @@ def parse_zubo_source(content):
     for std_ch, url_set in zubo_channels.items():
         zubo_channels[std_ch] = list(url_set)
     
-    print(f"✅ zubo源解析完成：共获取 {len(zubo_channels)} 个频道\n")
+    print(f"✅ txt源解析完成：共获取 {len(zubo_channels)} 个频道\n")
     return zubo_channels
 
 def parse_standard_m3u8(content):
@@ -368,7 +368,7 @@ def crawl_and_merge_sources(session):
             content = response.text
 
             if CONFIG["ZUBO_SOURCE_MARKER"] in source_url:
-                print(f"ℹ️  检测到zubo格式源，使用专属解析逻辑")
+                print(f"ℹ️  检测到txt格式源，使用专属解析逻辑")
                 source_channels = parse_zubo_source(content)
             else:
                 print(f"ℹ️  检测到标准m3u8源，使用标准解析逻辑")
@@ -390,7 +390,7 @@ def crawl_and_merge_sources(session):
         all_raw_channels[std_ch] = list(url_set)
 
     if not all_raw_channels:
-        print("❌ 未爬取到任何频道数据（标准m3u8和zubo源均无有效数据）")
+        print("❌ 未爬取到任何频道数据（标准m3u8和txt源均无有效数据）")
     return all_raw_channels
 
 def crawl_and_select_top3(session):
@@ -483,7 +483,7 @@ def generate_iptv_playlist(top3_channels):
         output_path.write_text("\n".join(playlist_content).rstrip("\n"), encoding="utf-8")
         print(f"\n🎉 成功生成最优播放列表：{output_path.name}")
         print(f"📂 路径：{output_path.absolute()}")
-        print(f"💡 说明：1. 未分类频道已统一改为“其它频道”；2. 每个频道保留最多{top_k}个源，标记为$最优/$次优/$三优；3. zubo源的运营商信息已保留（如$上海市电信），方便按网络选择")
+        print(f"💡 说明：1. 未分类频道已统一改为“其它频道”；2. 每个频道保留最多{top_k}个源，标记为$最优/$次优/$三优；3. txt源的运营商信息已保留（如$上海市电信），方便按网络选择")
     except Exception as e:
         print(f"❌ 生成文件失败：{e}")
 
@@ -492,7 +492,7 @@ def generate_iptv_playlist(top3_channels):
 # ===============================
 if __name__ == "__main__":
     print("="*70)
-    print("📺 IPTV直播源爬取 + zubo格式支持 + 前三最优源筛选工具（优化版）")
+    print("📺 IPTV直播源爬取 + txt格式支持 + 前三最优源筛选工具")
     print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 未分类频道→其它频道 | 运行效率优化")
     print("="*70)
     # 1. 创建请求会话
@@ -503,4 +503,4 @@ if __name__ == "__main__":
     top3_channels = crawl_and_select_top3(session)
     # 4. 生成m3u8播放列表
     generate_iptv_playlist(top3_channels)
-    print("\n✨ 任务完成！生成的文件兼容PotPlayer、Kodi、火星直播等所有播放器")
+    print("\n✨ 任务完成！万事顺遂")
