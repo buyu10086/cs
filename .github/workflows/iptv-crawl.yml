@@ -24,6 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install tqdm
           pip install aiohttp
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # 从 requirements.txt 安装依赖
