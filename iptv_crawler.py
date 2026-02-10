@@ -13,6 +13,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 CONFIG = {
     "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接（含zubo源）
     "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优播放列表
+    "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接归档文件
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Connection": "close"  # 关闭长连接，减少资源占用
@@ -22,9 +23,11 @@ CONFIG = {
     "MAX_WORKERS": 40,  # 并发线程数，带宽高可设30-50
     "RETRY_TIMES": 1,  # 网络请求重试次数
     "TOP_K": 3,  # 每个频道保留前三最优源
+    "TOP_SOURCE_K": 6,  # 新增：iptv_sources.txt保留速度最优的6条源链接
     "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
     # zubo源特殊配置（目标源格式标记）
-    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"  # 用于识别zubo格式源
+    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",  # 用于识别zubo格式源
+    "OLD_SOURCES_MAX_COUNT": 100  # 新增：old_sources.txt最多保留100条最新失效链接
 }
 
 # ===============================
@@ -262,6 +265,136 @@ def test_urls_concurrent(urls, session):
     
     return result_dict
 
+# ===============================
+# 新增：源链接筛选与失效归档相关函数（新增去重逻辑）
+# ===============================
+def deduplicate_source_urls(raw_urls):
+    """源链接去重：保留首次出现的链接，后续重复的自动剔除"""
+    seen = set()
+    unique_urls = []
+    for url in raw_urls:
+        url_strip = url.strip()
+        if url_strip not in seen:
+            seen.add(url_strip)
+            unique_urls.append(url_strip)
+        else:
+            print(f"⚠️  检测到重复链接，已自动去重：{url_strip}")
+    return unique_urls
+
+def test_source_urls(session):
+    """测试iptv_sources.txt中的所有源链接，返回有效/失效链接及延迟（新增去重）"""
+    source_path = Path(CONFIG["SOURCE_TXT_FILE"])
+    if not source_path.exists():
+        print(f"❌ {source_path.name} 文件不存在，跳过源链接测试")
+        return {}, []
+    
+    # 读取源链接（过滤注释和空行）
+    raw_lines = source_path.read_text(encoding="utf-8").splitlines()
+    source_urls = []
+    comments = []  # 保留注释行
+    for line in raw_lines:
+        line_strip = line.strip()
+        if not line_strip:
+            continue
+        if line_strip.startswith("#"):
+            comments.append(line)
+            continue
+        if line_strip.startswith(("http://", "https://")):
+            source_urls.append(line_strip)
+    
+    # 新增：源链接去重
+    if len(source_urls) > 0:
+        source_urls = deduplicate_source_urls(source_urls)
+        print(f"ℹ️  源链接去重完成，剩余有效唯一链接：{len(source_urls)} 个")
+    
+    if not source_urls:
+        print(f"ℹ️ {source_path.name} 中无有效源链接，跳过测试")
+        return {}, []
+    
+    # 并发测试源链接
+    print(f"\n🚀 开始测试 {len(source_urls)} 个源链接的有效性（并发数：{CONFIG['MAX_WORKERS']}）")
+    latency_dict = test_urls_concurrent(source_urls, session)
+    valid_urls = sorted(latency_dict.items(), key=lambda x: x[1])  # 按延迟升序排序
+    invalid_urls = [url for url in source_urls if url not in latency_dict]
+    
+    print(f"✅ 有效源链接：{len(valid_urls)} 个 | ❌ 失效源链接：{len(invalid_urls)} 个")
+    return {
+        "valid": valid_urls,
+        "invalid": invalid_urls,
+        "comments": comments
+    }
+
+def archive_invalid_sources(invalid_urls):
+    """将失效链接归档到old_sources.txt，保留最新100条，记录失效时间"""
+    if not invalid_urls:
+        return
+    
+    old_path = Path(CONFIG["OLD_SOURCES_FILE"])
+    beijing_now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
+    
+    # 读取原有失效链接
+    old_lines = []
+    if old_path.exists():
+        old_lines = old_path.read_text(encoding="utf-8").splitlines()
+    
+    # 新增失效链接（带时间戳）
+    new_invalid_lines = [f"{url} | 失效时间：{beijing_now}" for url in invalid_urls]
+    all_lines = new_invalid_lines + old_lines
+    
+    # 保留最新100条，去重（避免重复归档同一链接）
+    unique_lines = []
+    seen_urls = set()
+    for line in all_lines:
+        if "|" in line:
+            url = line.split(" | ")[0].strip()
+        else:
+            url = line.strip()
+        if url not in seen_urls:
+            seen_urls.add(url)
+            unique_lines.append(line)
+        if len(unique_lines) >= CONFIG["OLD_SOURCES_MAX_COUNT"]:
+            break
+    
+    # 写入归档文件
+    old_path.write_text("\n".join(unique_lines[:CONFIG["OLD_SOURCES_MAX_COUNT"]]), encoding="utf-8")
+    print(f"\n📦 已将 {len(new_invalid_lines)} 个失效链接归档到 {old_path.name}，保留最新 {len(unique_lines)} 条")
+
+def update_source_file(valid_urls_with_latency, comments):
+    """更新iptv_sources.txt，保留最优的6条有效链接 + 原有注释（再次去重确保无重复）"""
+    source_path = Path(CONFIG["SOURCE_TXT_FILE"])
+    
+    # 取前6条最优有效链接
+    top_k = CONFIG["TOP_SOURCE_K"]
+    top_valid_urls = [url for url, _ in valid_urls_with_latency[:top_k]]
+    
+    # 再次去重（双重保障）
+    top_valid_urls = deduplicate_source_urls(top_valid_urls)
+    
+    # 构建新文件内容（注释 + 最优链接）
+    new_content = []
+    if comments:
+        new_content.extend(comments)
+        new_content.append("")  # 空行分隔注释和链接
+    new_content.extend(top_valid_urls)
+    
+    # 写入文件
+    source_path.write_text("\n".join(new_content), encoding="utf-8")
+    print(f"\n✅ 已更新 {source_path.name}：保留 {len(top_valid_urls)} 条速度最优的源链接（最多{top_k}条）")
+
+def process_source_urls(session):
+    """主流程：测试并筛选iptv_sources.txt中的源链接"""
+    test_result = test_source_urls(session)
+    valid_urls = test_result["valid"]
+    invalid_urls = test_result["invalid"]
+    comments = test_result["comments"]
+    
+    # 归档失效链接
+    if invalid_urls:
+        archive_invalid_sources(invalid_urls)
+    
+    # 更新源文件（保留最优6条）
+    update_source_file(valid_urls, comments)
+
 def read_iptv_sources_from_txt():
     """读取txt中的IPTV源链接：优化：用set去重，提升效率（返回结果不变）"""
     txt_path = Path(CONFIG["SOURCE_TXT_FILE"])
@@ -488,19 +621,28 @@ def generate_iptv_playlist(top3_channels):
         print(f"❌ 生成文件失败：{e}")
 
 # ===============================
-# 主执行逻辑（仅微调，传入session到测速函数）
+# 主执行逻辑（新增源链接筛选/归档步骤）
 # ===============================
 if __name__ == "__main__":
     print("="*70)
     print("📺 IPTV直播源爬取 + zubo格式支持 + 前三最优源筛选工具（优化版）")
     print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 未分类频道→其它频道 | 运行效率优化")
+    print(f"🆕 新增：源链接筛选（保留最优6条）+ 失效链接归档（保留最新100条）+ 自动去重重复链接")
     print("="*70)
+    
     # 1. 创建请求会话
     session = get_requests_session()
-    # 2. 提前构建别名映射（首次调用缓存）
+    
+    # 2. 新增：测试并筛选iptv_sources.txt中的源链接（含去重）
+    process_source_urls(session)
+    
+    # 3. 提前构建别名映射（首次调用缓存）
     build_alias_map()
-    # 3. 爬取所有源并筛选前三最优源
+    
+    # 4. 爬取所有源并筛选前三最优源
     top3_channels = crawl_and_select_top3(session)
-    # 4. 生成m3u8播放列表
+    
+    # 5. 生成m3u8播放列表
     generate_iptv_playlist(top3_channels)
+    
     print("\n✨ 任务完成！生成的文件兼容PotPlayer、Kodi、火星直播等所有播放器")
