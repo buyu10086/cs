@@ -8,10 +8,10 @@ from urllib3.util.retry import Retry
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ===============================
-# 全局配置区（核心参数可调，无变动）
+# 全局配置区（核心参数可调）
 # ===============================
 CONFIG = {
-    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接（含zubo源）
+    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接
     "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优播放列表
     "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接归档文件
     "HEADERS": {
@@ -24,14 +24,14 @@ CONFIG = {
     "RETRY_TIMES": 1,  # 网络请求重试次数
     "TOP_K": 3,  # 每个频道保留前三最优源
     "TOP_SOURCE_K": 6,  # 新增：iptv_sources.txt保留速度最优的6条源链接
-    "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
-    # zubo源特殊配置（目标源格式标记）
-    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",  # 用于识别zubo格式源
-    "OLD_SOURCES_MAX_COUNT": 100  # 新增：old_sources.txt最多保留100条最新失效链接
+    "IPTV_DISCLAIMER": "请勿用于商业用途，万事顺遂",
+    # txt源特殊配置（目标源格式标记）
+    "ZUBO_SOURCE_MARKER": "txt",  # 用于识别txt格式源
+    "OLD_SOURCES_MAX_COUNT": 100  # old_sources.txt最多保留100条最新失效链接
 }
 
 # ===============================
-# 频道分类与别名映射（保持兼容，无变动）
+# 频道分类与别名映射
 # ===============================
 CHANNEL_CATEGORIES = {
     "央视频道": [
@@ -645,4 +645,4 @@ if __name__ == "__main__":
     # 5. 生成m3u8播放列表
     generate_iptv_playlist(top3_channels)
     
-    print("\n✨ 任务完成！生成的文件兼容PotPlayer、Kodi、火星直播等所有播放器")
+    print("\n✨ 任务完成！大吉大利——雷")
