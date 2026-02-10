@@ -34,8 +34,8 @@ logger = init_logger()
 # ===============================
 # 初始化aiohttp超时配置（核心修复点）
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=2,  # 连接超时2秒
-    sock_read=5,  # 读取超时5秒
+    connect=3,  # 连接超时3秒
+    sock_read=4,  # 读取超时4秒
     total=10  # 总超时10秒（兜底）
 )
 
