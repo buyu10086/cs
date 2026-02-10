@@ -55,7 +55,7 @@ CONFIG = {
     
     # 新增优化配置
     "CACHE_FILE": "iptv_speed_cache.json",  # 测速缓存文件
-    "CACHE_EXPIRE_SECONDS": 600,  # 缓存有效期10分钟
+    "CACHE_EXPIRE_SECONDS": 1800,  # 缓存有效期30分钟
     "ASYNC_MAX_CONCURRENT": 50,  # 异步最大并发数
     "DOMAIN_CONCURRENT_LIMIT": 5,  # 单域名最大并发数
     "STREAM_SUFFIXES": [".m3u8", ".ts", ".mp4", ".flv"],  # 有效流媒体后缀
