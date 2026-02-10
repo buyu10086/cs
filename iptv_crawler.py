@@ -11,9 +11,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # 全局配置区（核心参数可调，无变动）
 # ===============================
 CONFIG = {
-    "SOURCE_TXT_FILE": "cs/iptv_sources.txt",  # 存储所有IPTV源链接（含zubo源）
-    "OUTPUT_FILE": "cs/iptv_playlist.m3u8",  # 生成的最优播放列表
-    "OLD_SOURCES_FILE": "cs/old_sources.txt",  # 失效链接存储文件
+    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接（含zubo源）
+    "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优播放列表
+    "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接存储文件
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Connection": "close"  # 关闭长连接，减少资源占用
