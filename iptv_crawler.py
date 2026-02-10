@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # 全局配置区（核心参数可调）
 # ===============================
 CONFIG = {
-    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接（含zubo源）
+    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接
     "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优播放列表
     "OLD_SOURCES_FILE": "old_sources.txt",  # 失效链接归档文件
     "HEADERS": {
@@ -26,7 +26,7 @@ CONFIG = {
     "TOP_SOURCE_K": 6,  # iptv_sources.txt保留速度最优的6条源链接
     "IPTV_DISCLAIMER": "本文件仅用于技术研究，请勿用于商业用途，相关版权归原作者所有",
     # zubo源特殊配置（目标源格式标记）
-    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",  # 用于识别zubo格式源
+    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",  # 用于识别txt格式源
     "OLD_SOURCES_MAX_COUNT": 100  # old_sources.txt最多保留100条最新失效链接
 }
 
@@ -194,7 +194,7 @@ for category_ch_list in CHANNEL_CATEGORIES.values():
 RANK_TAGS = ["$最优", "$次优", "$三优"]
 
 # ===============================
-# 核心工具函数（修复关键逻辑）
+# 核心工具函数
 # ===============================
 def get_requests_session():
     """创建带重试机制的requests会话"""
@@ -262,7 +262,7 @@ def test_urls_concurrent(urls, session):
     return result_dict
 
 # ===============================
-# 源链接处理核心函数（重点修复）
+# 源链接处理核心函数
 # ===============================
 def deduplicate_source_urls(raw_urls):
     """源链接去重：彻底剔除重复项，保留首次出现顺序"""
@@ -387,7 +387,7 @@ def update_source_file(valid_urls_with_latency, comments):
         new_content.append("")  # 空行分隔
     new_content.extend(top_valid_urls)
     
-    # 修复：强制覆盖写入（彻底删除失效/重复链接）
+    #强制覆盖写入（彻底删除失效/重复链接）
     try:
         source_path.write_text("\n".join(new_content), encoding="utf-8")
         print(f"✅ 更新{source_path.name}：保留{len(top_valid_urls)}条最优有效链接（最多{top_k}条）")
@@ -514,7 +514,7 @@ def crawl_and_merge_sources(session):
             content = response.text
 
             if CONFIG["ZUBO_SOURCE_MARKER"] in source_url:
-                print(f"ℹ️  解析zubo格式源")
+                print(f"ℹ️  解析txt格式源")
                 source_channels = parse_zubo_source(content)
             else:
                 print(f"ℹ️  解析标准m3u8源")
@@ -622,7 +622,7 @@ def generate_iptv_playlist(top3_channels):
 # ===============================
 if __name__ == "__main__":
     print("="*70)
-    print("📺 IPTV源爬取工具（修复版）| 强制去重+失效剔除+归档")
+    print("📺 IPTV源爬取工具| 强制去重+失效剔除+归档")
     print("="*70)
     
     # 1. 创建会话
