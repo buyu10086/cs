@@ -5,4 +5,5 @@ https://raw.githubusercontent.com/Tzwcard/ChinaTelecom-GuangdongIPTV-RTP-List/re
 https://raw.githubusercontent.com/zhi35/iptv/refs/heads/master/iptv.m3u
 http://iptv.cqshushu.com/jiekou.php?jk=m3u&token=688b3dffeaef6de8b1158c144079daff
 https://taoiptv.com/lives/41024.txt?token=a9a5225bdcd46a4a
+https://raw.githubusercontent.com/sln654360/sln654360.github.io/refs/heads/main/bingcha.m3u
 
