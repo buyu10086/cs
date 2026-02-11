@@ -2,54 +2,75 @@ name: 名著目录更新
 
 on:
   schedule:
-    # 北京时间 9 点、21 点（UTC 1 点、13 点）
-    - cron: "0 9,21 * * *"
+    # 北京时间 9 点、21 点 → UTC 时间为 1 点、13 点（UTC+8 时差）
+    - cron: "0 1,13 * * *"
   workflow_dispatch:  # 支持手动触发
 
 jobs:
   run-itvlist:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 授予提交代码的权限
     steps:
-      - name: Checkout repository
+      - name: 检出代码仓库
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 拉取完整历史，避免提交时冲突
 
-      - name: Set up Python
+      - name: 设置 Python 环境
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"  # 缓存 pip 依赖，加速后续运行
-          cache-dependency-path: "requirements.txt"  # 指定依赖文件路径，精准缓存
+          cache-dependency-path: "requirements.txt"  # 修正依赖文件路径（原路径是cs/下）
 
-      - name: Install dependencies
+      - name: 升级 pip 并安装依赖
         run: |
-          pip install tqdm
-          pip install aiohttp
+          echo "=== 升级 pip 版本 ==="
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # 从 requirements.txt 安装依赖
-        # 可选：仅当 requirements.txt 内容变更时才重新安装（进一步提速）
-        # if: hashFiles('requirements.txt') != hashFiles('/tmp/requirements.txt')
+          echo "=== 安装 requirements.txt 中的依赖 ==="
+          pip install -r requirements.txt
+          echo "=== 安装额外依赖（tqdm/aiohttp） ==="
+          pip install tqdm aiohttp
+        id: install_deps
 
-      - name: Run iptv_crawler.py
+      - name: 运行爬虫脚本 iptv_crawler.py
         run: |
-          echo "=== Starting iptv_crawler.py ==="
+          echo "=== 开始执行爬虫脚本 ==="
           python iptv_crawler.py
-          echo "=== Finished iptv_crawler.py ==="
-        continue-on-error: false
+          echo "=== 爬虫脚本执行完成 ==="
+        id: run_script
+        continue-on-error: false  # 脚本执行失败则终止流程
 
-      - name: Commit and push results
+      - name: 检查文件变更并提交
         run: |
+          # 配置 git 身份
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 检查文件是否有变更
+          # 添加目标文件
           git add iptv_playlist.m3u8
+          
+          # 检查是否有变更
           if git diff --cached --quiet; then
-            echo "No changes to iptv_playlist.m3u8, skipping commit"
+            echo "=== 无文件变更，跳过提交 ==="
             exit 0
           fi
           
+          # 提交并推送
+          echo "=== 提交变更到仓库 ==="
           git commit -m "自动更新：iptv_playlist.m3u8 $(date +'%Y-%m-%d %H:%M:%S')"
+          echo "=== 推送变更到远程分支 ==="
           git push origin HEAD:${{ github.ref }}
-        if: success()
+        id: commit_push
+        if: steps.run_script.outcome == 'success'  # 仅脚本执行成功时提交
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动注入的令牌，用于推送
+
+      - name: 执行结果汇总
+        run: |
+          echo "=== 流程执行完成 ==="
+          echo "依赖安装状态：${{ steps.install_deps.outcome }}"
+          echo "脚本执行状态：${{ steps.run_script.outcome }}"
+          echo "提交推送状态：${{ steps.commit_push.outcome }}"
+        if: always()  # 无论前面步骤是否成功，都输出汇总日志
