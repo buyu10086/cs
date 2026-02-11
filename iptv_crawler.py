@@ -34,9 +34,9 @@ logger = init_logger()
 # ===============================
 # 初始化aiohttp超时配置（放宽超时，适配CCTV源）
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=5,  # 连接超时从3→5秒（CCTV源跨运营商，连接耗时更长）
-    sock_read=6,  # 读取超时从4→6秒
-    total=10  # 总超时从8→10秒（兜底）
+    connect=4,  # 连接超时从3→5秒（CCTV源跨运营商，连接耗时更长）
+    sock_read=5,  # 读取超时从4→6秒
+    total=9  # 总超时从8→10秒（兜底）
 )
 
 CONFIG = {
