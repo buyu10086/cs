@@ -3,7 +3,7 @@ name: 名著目录更新
 on:
   schedule:
     # 北京时间 9 点、21 点 → UTC 时间为 1 点、13 点（UTC+8 时差）
-    - cron: "0 1,13 * * *"
+    - cron: "0 9,21 * * *"
   workflow_dispatch:  # 支持手动触发
 
 jobs:
