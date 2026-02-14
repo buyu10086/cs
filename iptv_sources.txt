@@ -2,6 +2,5 @@ https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt
 https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u
 https://raw.githubusercontent.com/Tzwcard/ChinaTelecom-GuangdongIPTV-RTP-List/refs/heads/master/GuangdongIPTV_rtp_all.m3u
 https://raw.githubusercontent.com/zhi35/iptv/refs/heads/master/iptv.m3u
-http://iptv.cqshushu.com/jiekou.php?jk=m3u&token=688b3dffeaef6de8b1158c144079daff
 https://raw.githubusercontent.com/sln654360/sln654360.github.io/refs/heads/main/bingcha.m3u
-
+http://iptv.cqshushu.com/jiekou.php?jk=m3u&token=080154bd7a479182893e3e724ca23024
