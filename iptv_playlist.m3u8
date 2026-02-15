@@ -1,12 +1,12 @@
-更新时间: 2026-02-15 07:31:57（北京时间）
+更新时间: 2026-02-15 08:16:31（北京时间）
 
 更新时间,#genre#
-2026-02-15 07:31:57,个人自用，请勿用于商业用途
+2026-02-15 08:16:31,个人自用，请勿用于商业用途
 
 央视频道,#genre#
-CCTV1,http://iptv.cqshushu.com/migu.php?pid=cctv1&token=688b3dffeaef6de8b1158c144079daff$最优
+CCTV1,http://iptv.cqshushu.com/migu.php?pid=cctv1&token=080154bd7a479182893e3e724ca23024$最优
 CCTV1,http://58.57.40.22:9901/tsfile/live/0001_1.m3u8$次优
-CCTV2,http://iptv.cqshushu.com/migu.php?pid=cctv2&token=688b3dffeaef6de8b1158c144079daff$最优
+CCTV2,http://iptv.cqshushu.com/migu.php?pid=cctv2&token=080154bd7a479182893e3e724ca23024$最优
 CCTV2,http://58.57.40.22:9901/tsfile/live/1001_1.m3u8$次优
 CCTV3,http://58.57.40.22:9901/tsfile/live/1002_1.m3u8$最优
 CCTV4,http://58.57.40.22:9901/tsfile/live/1003_1.m3u8$最优
@@ -38,45 +38,45 @@ CCTV17,http://58.57.40.22:9901/tsfile/live/0019_1.m3u8$最优
 电视指南,http://38.75.136.137:98/gslb/dsdqpub/dszn.m3u8?auth=testpub$最优
 中学生,https://migu.188766.xyz/订阅后播放/中学生$最优
 发现之旅,https://migu.188766.xyz/订阅后播放/发现之旅$最优
-发现之旅,http://iptv.cqshushu.com/migu.php?pid=%E5%8F%91%E7%8E%B0%E4%B9%8B%E6%97%85&token=688b3dffeaef6de8b1158c144079daff$次优
+发现之旅,http://iptv.cqshushu.com/migu.php?pid=%E5%8F%91%E7%8E%B0%E4%B9%8B%E6%97%85&token=080154bd7a479182893e3e724ca23024$次优
 
 卫视频道,#genre#
-湖南卫视,https://migu.188766.xyz/请使用订阅链接观看/湖南卫视4K$最优
-湖南卫视,https://migu.188766.xyz/要用订阅的地址/hnws$次优
-湖南卫视,https://txmov2.a.kwimgs.com/bs3/video-hls/5199687338554291078_hlsb.m3u8$三优
-浙江卫视,https://migu.188766.xyz/要用订阅的地址/z_jws$最优
-浙江卫视,https://migu.188766.xyz/请使用订阅链接观看/浙江卫视$次优
-浙江卫视,https://migu.188766.xyz/请使用订阅链接观看/浙江卫视4K$三优
+湖南卫视,https://migu.188766.xyz/要用订阅的地址/hnws$最优
+湖南卫视,https://migu.188766.xyz/请使用订阅链接观看/湖南卫视4K$次优
+湖南卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B9%96%E5%8D%97%E5%8D%AB%E8%A7%864k&token=080154bd7a479182893e3e724ca23024$三优
+浙江卫视,https://migu.188766.xyz/请使用订阅链接观看/浙江卫视4K$最优
+浙江卫视,https://migu.188766.xyz/要用订阅的地址/z_jws$次优
+浙江卫视,https://migu.188766.xyz/请使用订阅链接观看/浙江卫视$三优
 江苏卫视,https://migu.188766.xyz/订阅后播放/江苏卫视$最优
-江苏卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B1%9F%E8%8B%8F%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+江苏卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B1%9F%E8%8B%8F%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 江苏卫视,http://58.57.40.22:9901/tsfile/live/1031_1.m3u8$三优
 东方卫视,https://migu.188766.xyz/要用订阅的地址/dfws$最优
 东方卫视,https://migu.188766.xyz/订阅后播放/东方卫视$次优
-东方卫视,http://iptv.cqshushu.com/migu.php?pid=%E4%B8%9C%E6%96%B9%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$三优
+东方卫视,http://iptv.cqshushu.com/migu.php?pid=dfws&token=080154bd7a479182893e3e724ca23024$三优
 深圳卫视,https://migu.188766.xyz/请使用订阅链接观看/深圳卫视$最优
-深圳卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B7%B1%E5%9C%B3%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
-深圳卫视,http://58.57.40.22:9901/tsfile/live/1036_1.m3u8$三优
+深圳卫视,http://58.57.40.22:9901/tsfile/live/1036_1.m3u8$次优
+深圳卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B7%B1%E5%9C%B3%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$三优
 北京卫视,https://migu.188766.xyz/订阅后播放/北京卫视$最优
-北京卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+北京卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 北京卫视,http://58.57.40.22:9901/tsfile/live/1032_1.m3u8$三优
 广东卫视,https://migu.188766.xyz/订阅后播放/广东卫视$最优
-广东卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%B9%BF%E4%B8%9C%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+广东卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%B9%BF%E4%B8%9C%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 广东卫视,http://58.57.40.22:9901/tsfile/live/1039_1.m3u8$三优
 广西卫视,http://58.57.40.22:9901/tsfile/live/1049_1.m3u8$最优
 东南卫视,http://58.57.40.22:9901/tsfile/live/1037_1.m3u8$最优
-海南卫视,https://migu.188766.xyz/要用订阅的地址/hn_hnws$最优
-海南卫视,https://migu.188766.xyz/订阅后播放/海南卫视$次优
-海南卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B5%B7%E5%8D%97%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$三优
+海南卫视,https://migu.188766.xyz/订阅后播放/海南卫视$最优
+海南卫视,https://migu.188766.xyz/要用订阅的地址/hn_hnws$次优
+海南卫视,http://iptv.cqshushu.com/migu.php?pid=hn_hnws&token=080154bd7a479182893e3e724ca23024$三优
 河北卫视,http://58.57.40.22:9901/tsfile/live/1044_1.m3u8$最优
 河南卫视,https://migu.188766.xyz/订阅后播放/河南卫视高清$最优
-河南卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B2%B3%E5%8D%97%E5%8D%AB%E8%A7%86%E9%AB%98%E6%B8%85&token=688b3dffeaef6de8b1158c144079daff$次优
+河南卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B2%B3%E5%8D%97%E5%8D%AB%E8%A7%86%E9%AB%98%E6%B8%85&token=080154bd7a479182893e3e724ca23024$次优
 河南卫视,http://58.57.40.22:9901/tsfile/live/1048_1.m3u8$三优
 湖北卫视,https://migu.188766.xyz/订阅后播放/湖北卫视$最优
-湖北卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B9%96%E5%8C%97%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+湖北卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B9%96%E5%8C%97%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 湖北卫视,http://58.57.40.22:9901/tsfile/live/1038_1.m3u8$三优
 江西卫视,https://migu.188766.xyz/订阅后播放/江西卫视$最优
-江西卫视,http://58.57.40.22:9901/tsfile/live/1043_1.m3u8$次优
-江西卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B1%9F%E8%A5%BF%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$三优
+江西卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B1%9F%E8%A5%BF%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
+江西卫视,http://58.57.40.22:9901/tsfile/live/1043_1.m3u8$三优
 四川卫视,http://39.152.103.17:8089/tsfile/live/1044_1.m3u8$最优
 四川卫视,http://58.57.40.22:9901/tsfile/live/1046_1.m3u8$次优
 重庆卫视,http://23.237.228.134/live6/chongqing.m3u8$最优
@@ -86,33 +86,34 @@ CCTV17,http://58.57.40.22:9901/tsfile/live/0019_1.m3u8$最优
 安徽卫视,http://58.57.40.22:9901/tsfile/live/1033_1.m3u8$最优
 山东卫视,http://183.11.239.36:808/hls/43/index.m3u8$最优
 辽宁卫视,https://migu.188766.xyz/订阅后播放/辽宁卫视$最优
-辽宁卫视,http://iptv.cqshushu.com/migu.php?pid=%E8%BE%BD%E5%AE%81%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+辽宁卫视,http://iptv.cqshushu.com/migu.php?pid=%E8%BE%BD%E5%AE%81%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 辽宁卫视,http://58.57.40.22:9901/tsfile/live/1035_1.m3u8$三优
 黑龙江卫视,http://58.57.40.22:9901/tsfile/live/1040_1.m3u8$最优
 吉林卫视,https://migu.188766.xyz/订阅后播放/吉林卫视$最优
-吉林卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%90%89%E6%9E%97%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+吉林卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%90%89%E6%9E%97%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 吉林卫视,http://58.57.40.22:9901/tsfile/live/1050_1.m3u8$三优
 内蒙古卫视,https://migu.188766.xyz/请使用订阅链接观看/内蒙古卫视$最优
-内蒙古卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%86%85%E8%92%99%E5%8F%A4%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+内蒙古卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%86%85%E8%92%99%E5%8F%A4%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 内蒙古卫视,http://120.76.248.139/live/bfgd/4200000110.m3u8$三优
 宁夏卫视,https://migu.188766.xyz/订阅后播放/宁夏卫视$最优
-宁夏卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%AE%81%E5%A4%8F%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+宁夏卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%AE%81%E5%A4%8F%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 宁夏卫视,http://58.57.40.22:9901/tsfile/live/1054_1.m3u8$三优
 山西卫视,http://119.39.9.8:9901/tsfile/live/0118_1.m3u8$最优
 陕西卫视,https://migu.188766.xyz/订阅后播放/陕西卫视$最优
 陕西卫视,http://23.237.228.134/live6/sichuan.m3u8$次优
-陕西卫视,http://iptv.cqshushu.com/migu.php?pid=%E9%99%95%E8%A5%BF%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$三优
+陕西卫视,http://iptv.cqshushu.com/migu.php?pid=%E9%99%95%E8%A5%BF%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$三优
 甘肃卫视,http://58.57.40.22:9901/tsfile/live/1056_1.m3u8$最优
 青海卫视,https://migu.188766.xyz/订阅后播放/青海卫视$最优
-青海卫视,http://iptv.cqshushu.com/migu.php?pid=%E9%9D%92%E6%B5%B7%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+青海卫视,http://iptv.cqshushu.com/migu.php?pid=%E9%9D%92%E6%B5%B7%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 青海卫视,http://58.57.40.22:9901/tsfile/live/1057_1.m3u8$三优
 新疆卫视,http://58.57.40.22:9901/tsfile/live/1055_1.m3u8$最优
 西藏卫视,http://36.32.174.67:60080/newlive/live/hls/48/live.m3u8$最优
 三沙卫视,https://migu.188766.xyz/要用订阅的地址/hn_ssws$最优
-三沙卫视,http://iptv.cqshushu.com/migu.php?pid=hn_ssws&token=688b3dffeaef6de8b1158c144079daff$次优
+三沙卫视,http://iptv.cqshushu.com/migu.php?pid=hn_ssws&token=080154bd7a479182893e3e724ca23024$次优
 三沙卫视,https://srs.ssws.tv/video/sstv-10/index.m3u8$三优
 兵团卫视,https://migu.188766.xyz/订阅后播放/兵团卫视$最优
-兵团卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%85%B5%E5%9B%A2%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+兵团卫视,http://183.11.239.36:808/hls/7/index.m3u8$次优
+兵团卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%85%B5%E5%9B%A2%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$三优
 延边卫视,http://120.76.248.139/live/bfgd/4200000117.m3u8$最优
 延边卫视,https://srs.iyb983.cn/video/CYS/index.m3u8$次优
 安多卫视,https://liveout.xntv.tv/a65jur/96iln2.m3u8$最优
@@ -121,70 +122,69 @@ CCTV17,http://58.57.40.22:9901/tsfile/live/0019_1.m3u8$最优
 厦门卫视,http://183.11.239.36:808/hls/17/index.m3u8$最优
 厦门卫视,https://epg.pw/stream/aa65dd411565991ace44f9e5934bd018fdd52122e052d471a363b6ee839e1079.ctv$次优
 山东教育卫视,https://migu.188766.xyz/订阅后播放/山东教育$最优
-山东教育卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%B1%B1%E4%B8%9C%E6%95%99%E8%82%B2&token=688b3dffeaef6de8b1158c144079daff$次优
+山东教育卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%B1%B1%E4%B8%9C%E6%95%99%E8%82%B2&token=080154bd7a479182893e3e724ca23024$次优
 山东教育卫视,https://test1.live.sdetv.com.cn/live/dianshizhibo/playlist.m3u8$三优
 中国教育1台,https://migu.188766.xyz/订阅后播放/CETV1$最优
-中国教育1台,http://iptv.cqshushu.com/migu.php?pid=cetv1&token=688b3dffeaef6de8b1158c144079daff$次优
+中国教育1台,http://iptv.cqshushu.com/migu.php?pid=cetv1&token=080154bd7a479182893e3e724ca23024$次优
 中国教育2台,https://migu.188766.xyz/订阅后播放/CETV2$最优
-中国教育2台,http://iptv.cqshushu.com/migu.php?pid=cetv2&token=688b3dffeaef6de8b1158c144079daff$次优
+中国教育2台,http://iptv.cqshushu.com/migu.php?pid=cetv2&token=080154bd7a479182893e3e724ca23024$次优
 中国教育4台,https://migu.188766.xyz/订阅后播放/CETV4$最优
-中国教育4台,http://iptv.cqshushu.com/migu.php?pid=cetv4&token=688b3dffeaef6de8b1158c144079daff$次优
+中国教育4台,http://iptv.cqshushu.com/migu.php?pid=cetv4&token=080154bd7a479182893e3e724ca23024$次优
 
 数字频道,#genre#
 CHC动作电影,http://120.238.94.82:9901/tsfile/live/1052_1.m3u8$最优
 CHC家庭影院,http://61.162.52.6:8088/newlive/live/hls/60/live.m3u8$最优
 CHC影迷电影,https://migu.188766.xyz/订阅后播放/CHC影迷电影$最优
-CHC影迷电影,http://iptv.cqshushu.com/migu.php?pid=chc%E5%BD%B1%E8%BF%B7%E7%94%B5%E5%BD%B1&token=688b3dffeaef6de8b1158c144079daff$次优
+CHC影迷电影,http://iptv.cqshushu.com/migu.php?pid=chc%E5%BD%B1%E8%BF%B7%E7%94%B5%E5%BD%B1&token=080154bd7a479182893e3e724ca23024$次优
 重温经典,https://other.ottiptv.cc/cwjd.m3u8$最优
-重温经典,https://other.ottiptv.cc/cwjd.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
-凤凰卫视中文台,https://mgev.188766.xyz/必须用订阅地址/hk_fhzw$最优
-凤凰卫视中文台,https://mgev.188766.xyz/请使用订阅链接观看/fhzw$次优
-凤凰卫视中文台,http://iptv.cqshushu.com/migu.php?pid=fhzw&token=688b3dffeaef6de8b1158c144079daff$三优
-凤凰卫视资讯台,https://mgev.188766.xyz/请使用订阅链接观看/fhzx$最优
-凤凰卫视资讯台,https://mgev.188766.xyz/必须用订阅地址/hk_fhzx$次优
-凤凰卫视资讯台,http://iptv.cqshushu.com/migu.php?pid=fhzx&token=688b3dffeaef6de8b1158c144079daff$三优
+重温经典,https://other.ottiptv.cc/cwjd.m3u8?token=080154bd7a479182893e3e724ca23024$次优
+凤凰卫视中文台,https://mgev.188766.xyz/请使用订阅链接观看/fhzw$最优
+凤凰卫视中文台,https://mgev.188766.xyz/必须用订阅地址/hk_fhzw$次优
+凤凰卫视中文台,http://iptv.cqshushu.com/migu.php?pid=fhzw&token=080154bd7a479182893e3e724ca23024$三优
+凤凰卫视资讯台,https://mgev.188766.xyz/必须用订阅地址/hk_fhzx$最优
+凤凰卫视资讯台,https://mgev.188766.xyz/请使用订阅链接观看/fhzx$次优
+凤凰卫视资讯台,http://iptv.cqshushu.com/migu.php?pid=fhzx&token=080154bd7a479182893e3e724ca23024$三优
 凤凰卫视香港台,https://mgev.188766.xyz/请使用订阅链接观看/fhhk$最优
 凤凰卫视香港台,https://mgev.188766.xyz/必须用订阅地址/hk_fhhk$次优
-凤凰卫视香港台,http://iptv.cqshushu.com/migu.php?pid=hk_fhhk&token=688b3dffeaef6de8b1158c144079daff$三优
+凤凰卫视香港台,http://iptv.cqshushu.com/migu.php?pid=hk_fhhk&token=080154bd7a479182893e3e724ca23024$三优
 凤凰卫视电影台,http://iot-mqqt.111yao.cn:8080/live/diyp_fhdy.m3u8$最优
 纪实科教,https://migu.188766.xyz/订阅后播放/北京纪实科教$最优
-纪实科教,http://111.31.106.140/downflv.brtvcloud.com/8klive/8kliveok.m3u8$次优
-纪实科教,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E7%BA%AA%E5%AE%9E%E7%A7%91%E6%95%99&token=688b3dffeaef6de8b1158c144079daff$三优
+纪实科教,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E7%BA%AA%E5%AE%9E%E7%A7%91%E6%95%99&token=080154bd7a479182893e3e724ca23024$次优
+纪实科教,http://111.31.106.140/downflv.brtvcloud.com/8klive/8kliveok.m3u8$三优
 五星体育,https://migu.188766.xyz/请使用订阅链接观看/五星体育$最优
-五星体育,https://other.ottiptv.cc/wxty.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
+五星体育,http://iptv.cqshushu.com/migu.php?pid=%E4%BA%94%E6%98%9F%E4%BD%93%E8%82%B2&token=080154bd7a479182893e3e724ca23024$次优
 五星体育,https://other.ottiptv.cc/wxty.m3u8$三优
 快乐垂钓,https://migu.188766.xyz/订阅后播放/快乐垂钓$最优
-快乐垂钓,http://iptv.cqshushu.com/migu.php?pid=%E5%BF%AB%E4%B9%90%E5%9E%82%E9%92%93&token=688b3dffeaef6de8b1158c144079daff$次优
+快乐垂钓,http://iptv.cqshushu.com/migu.php?pid=%E5%BF%AB%E4%B9%90%E5%9E%82%E9%92%93&token=080154bd7a479182893e3e724ca23024$次优
 汽摩,http://120.76.248.139/live/bfgd/4200000168.m3u8$最优
 梨园频道,https://migu.188766.xyz/订阅后播放/梨园频道$最优
 梨园频道,https://dxtx.hntv.tv/live/lypd.m3u8?txSecret=10c771842a0be59e8b575d765173ec96&txTime=7B923E0A&wsSecret=41543190cdf375f1c73207222bb96542&wsTime=1769313549$次优
 文物宝库,https://migu.188766.xyz/订阅后播放/文物宝库$最优
-文物宝库,http://iptv.cqshushu.com/migu.php?pid=%E6%96%87%E7%89%A9%E5%AE%9D%E5%BA%93&token=688b3dffeaef6de8b1158c144079daff$次优
+文物宝库,http://iptv.cqshushu.com/migu.php?pid=%E6%96%87%E7%89%A9%E5%AE%9D%E5%BA%93&token=080154bd7a479182893e3e724ca23024$次优
 武术世界,https://migu.188766.xyz/订阅后播放/武术世界$最优
 都市剧场,https://satellitepull.cnr.cn/live/wxcqxwgb/playlist.m3u8$最优
 新动漫,https://migu.188766.xyz/订阅后播放/新动漫$最优
-新动漫,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E5%8A%A8%E6%BC%AB&token=688b3dffeaef6de8b1158c144079daff$次优
+新动漫,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E5%8A%A8%E6%BC%AB&token=080154bd7a479182893e3e724ca23024$次优
 卡酷少儿,https://migu.188766.xyz/订阅后播放/北京卡酷少儿$最优
-卡酷少儿,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E5%8D%A1%E9%85%B7%E5%B0%91%E5%84%BF&token=688b3dffeaef6de8b1158c144079daff$次优
+卡酷少儿,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E5%8D%A1%E9%85%B7%E5%B0%91%E5%84%BF&token=080154bd7a479182893e3e724ca23024$次优
 卡酷少儿,http://58.57.40.22:9901/tsfile/live/1060_1.m3u8$三优
 金鹰卡通,http://58.57.40.22:9901/tsfile/live/1059_1.m3u8$最优
 优漫卡通,https://migu.188766.xyz/订阅后播放/优漫卡通频道$最优
-优漫卡通,http://iptv.cqshushu.com/migu.php?pid=%E4%BC%98%E6%BC%AB%E5%8D%A1%E9%80%9A%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+优漫卡通,http://iptv.cqshushu.com/migu.php?pid=%E4%BC%98%E6%BC%AB%E5%8D%A1%E9%80%9A%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 哈哈炫动,https://migu.188766.xyz/要用订阅的地址/hhxd$最优
-哈哈炫动,http://iptv.cqshushu.com/migu.php?pid=hhxd&token=688b3dffeaef6de8b1158c144079daff$次优
+哈哈炫动,http://iptv.cqshushu.com/migu.php?pid=hhxd&token=080154bd7a479182893e3e724ca23024$次优
 嘉佳卡通,https://migu.188766.xyz/订阅后播放/嘉佳卡通$最优
 嘉佳卡通,https://hk.188766.xyz/要用订阅的地址/gd_jjkt$次优
-嘉佳卡通,http://iptv.cqshushu.com/migu.php?pid=gd_jjkt&token=688b3dffeaef6de8b1158c144079daff$三优
-音乐现场,http://satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m3u8$最优
+嘉佳卡通,http://iptv.cqshushu.com/migu.php?pid=%E5%98%89%E4%BD%B3%E5%8D%A1%E9%80%9A&token=080154bd7a479182893e3e724ca23024$三优
 
 湖北地方台,#genre#
 
 河南省级,#genre#
 河南卫视,https://migu.188766.xyz/订阅后播放/河南卫视高清$最优
-河南卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B2%B3%E5%8D%97%E5%8D%AB%E8%A7%86%E9%AB%98%E6%B8%85&token=688b3dffeaef6de8b1158c144079daff$次优
+河南卫视,http://iptv.cqshushu.com/migu.php?pid=%E6%B2%B3%E5%8D%97%E5%8D%AB%E8%A7%86%E9%AB%98%E6%B8%85&token=080154bd7a479182893e3e724ca23024$次优
 河南卫视,http://58.57.40.22:9901/tsfile/live/1048_1.m3u8$三优
 河南移动戏曲,https://migu.188766.xyz/订阅后播放/移动戏曲频道$最优
-河南移动戏曲,http://iptv.cqshushu.com/migu.php?pid=%E7%A7%BB%E5%8A%A8%E6%88%8F%E6%9B%B2%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+河南移动戏曲,http://iptv.cqshushu.com/migu.php?pid=%E7%A7%BB%E5%8A%A8%E6%88%8F%E6%9B%B2%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 
 河南市县,#genre#
 嵩县综合新闻,http://tvpull.dxhmt.cn:9081/tv/10325-1.m3u8?zhendhttp://wshls.live.migucloud.com/live/MZCYG799_C0/playlist.m3u8?zhend$最优
@@ -204,8 +204,9 @@ CGTN阿语,https://0472.org/hls/cgtna.m3u8$最优
 东森亚洲卫视,https://p2hs.vzan.com/slowlive/821481626725612419/live.m3u8$最优
 北京卫视4K超,http://183.215.134.239:19901/tsfile/live/0122_1.m3u8?key=txiptv&playlive=1&authid=0$最优
 苏州4K,https://tylive.kan0512.com/norecord/csztv4k_4k.m3u8$最优
-苏州4K,https://tylive.kan0512.com/norecord/csztv4k_4k.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
+苏州4K,https://tylive.kan0512.com/norecord/csztv4k_4k.m3u8?token=080154bd7a479182893e3e724ca23024$次优
 科幻电影,https://yylunbo.ottiptv.cc/yy/1355065896$最优
+无线星河,https://cdn6.101.qzz.io/163189/tvbxh$最优
 靖天戏剧,http://breezy-audrie-zspace-7524863c.koyeb.app/vipsir?token=leifeng&id=4gtv-4gtv058$最优
 靖天映画,http://breezy-audrie-zspace-7524863c.koyeb.app/vipsir?token=leifeng&id=4gtv-4gtv055$最优
 龙华电影,https://cdn8.163189.xyz/live/lhdy/stream.m3u8$最优
@@ -268,8 +269,8 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 小儛电影嘚啵嘚,https://goodiptv.club/douyu/8362978$最优
 岳云鹏宋小宝也来演电影了,https://yylunbo.ottiptv.cc/yy/1354926612$最优
 广东影视,https://hk.188766.xyz/要用订阅的地址/gd_gdys$最优
-广东影视,http://iptv.cqshushu.com/migu.php?pid=gd_gdys&token=688b3dffeaef6de8b1158c144079daff$次优
-广东影视,http://iptv.cqshushu.com/gdtv.php?id=gdys&token=688b3dffeaef6de8b1158c144079daff$三优
+广东影视,http://iptv.cqshushu.com/migu.php?pid=gd_gdys&token=080154bd7a479182893e3e724ca23024$次优
+广东影视,http://iptv.cqshushu.com/gdtv.php?id=gdys&token=080154bd7a479182893e3e724ca23024$三优
 强森电影,https://live.metshop.top/huya/21059581$最优
 影视小艺,https://yylunbo.ottiptv.cc/yy/1382737886$最优
 影视梗大叔,https://goodiptv.club/douyu/9480648$最优
@@ -377,10 +378,10 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 南国都市,https://tencentplay.gztv.com/live/nanguodushi.m3u8?txSecret=550af55c0ea34ce492748481415b6dfa&txTime=1903e7b17de$次优
 新视觉,http://120.76.248.139/live/bfgd/4200000249.m3u8$最优
 广东少儿,https://hk.188766.xyz/要用订阅的地址/gd_gdse$最优
-广东少儿,http://iptv.cqshushu.com/migu.php?pid=gd_gdse&token=688b3dffeaef6de8b1158c144079daff$次优
+广东少儿,http://iptv.cqshushu.com/migu.php?pid=gd_gdse&token=080154bd7a479182893e3e724ca23024$次优
 广东少儿,http://gmxw.7766.org:808/hls/175/index.m3u8$三优
 浙江少儿,https://ali-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8$最优
-浙江少儿,https://ali-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
+浙江少儿,https://ali-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$次优
 七龙珠,https://live.metshop.top/huya/11601966$最优
 中华小当家,https://live.iill.top/huya/11342413$最优
 动画大师姐,https://goodiptv.club/douyu/9742136$最优
@@ -1141,23 +1142,24 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 龙馍馍UP,https://goodiptv.club/douyu/1717648$最优
 𬙊缘老给给,https://goodiptv.club/douyu/9543413$最优
 广东珠江,https://hk.188766.xyz/要用订阅的地址/gd_gdzj$最优
-广东珠江,http://iptv.cqshushu.com/migu.php?pid=gd_gdzj&token=688b3dffeaef6de8b1158c144079daff$次优
+广东珠江,http://cdn2.163189.xyz/live/gdzj/stream.m3u8$次优
 广东珠江,http://cdn2.132.us.kg/live/gdzj/stream.m3u8$三优
 大湾区卫视,https://migu.188766.xyz/订阅后播放/大湾区卫视$最优
-大湾区卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%A4%A7%E6%B9%BE%E5%8C%BA%E5%8D%AB%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+大湾区卫视,http://iptv.cqshushu.com/migu.php?pid=%E5%A4%A7%E6%B9%BE%E5%8C%BA%E5%8D%AB%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 大湾区卫视,http://222.128.55.152:9080/live/dwq.m3u8$三优
 广东体育,https://migu.188766.xyz/必须用订阅地址/hk_gdty$最优
 广东体育,https://hk.188766.xyz/要用订阅的地址/gd_gdty$次优
-广东体育,http://iptv.cqshushu.com/migu.php?pid=gd_gdty&token=688b3dffeaef6de8b1158c144079daff$三优
+广东体育,http://iptv.cqshushu.com/migu.php?pid=gd_gdty&token=080154bd7a479182893e3e724ca23024$三优
 七台河新闻综合,http://live.qthnews.org.cn:1935/live/live1/800k/tzwj_video.m3u8$最优
 七台河民生社教,http://live.qthnews.org.cn:1935/live/live2/800k/tzwj_video.m3u8$最优
 万州三峡移民,http://123.146.162.24:8017/c2F0hmi/1000/live.m3u8$最优
 万荣综合,http://60.222.246.220:19433/hls1.m3u8$最优
 三明新闻综合,http://ls.qingting.fm/live/4885.m3u8$最优
 上海新闻综合,https://migu.188766.xyz/订阅后播放/上海新闻综合$最优
-上海新闻综合,http://iptv.cqshushu.com/migu.php?pid=%E4%B8%8A%E6%B5%B7%E6%96%B0%E9%97%BB%E7%BB%BC%E5%90%88&token=688b3dffeaef6de8b1158c144079daff$次优
+上海新闻综合,http://iptv.cqshushu.com/migu.php?pid=%E4%B8%8A%E6%B5%B7%E6%96%B0%E9%97%BB%E7%BB%BC%E5%90%88&token=080154bd7a479182893e3e724ca23024$次优
+上海新闻综合,https://mgtv.ottiptv.cc/migu/651632657.m3u8?migutoken=348c9164063c2b1df215dd2fa7cd92cb119d8a335ae0edfb5d615a6c714e71b669eee2f5ff1730afa92af7ca41d0aa96e3a280d7e5f2069eb8a3b852f3ebc270147489d7c8bfb08a7c4b9c4d80$三优
 上海第一财经,https://migu.188766.xyz/要用订阅的地址/dycj$最优
-上海第一财经,http://iptv.cqshushu.com/migu.php?pid=dycj&token=688b3dffeaef6de8b1158c144079daff$次优
+上海第一财经,http://iptv.cqshushu.com/migu.php?pid=dycj&token=080154bd7a479182893e3e724ca23024$次优
 上海第一财经,https://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8$三优
 上虞文化影院,http://l.cztvcloud.com/channels/lantian/SXshangyu2/720p.m3u8$最优
 上虞新商都,http://l.cztvcloud.com/channels/lantian/SXshangyu3/720p.m3u8$最优
@@ -1170,8 +1172,8 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 临夏州综合,http://play.kankanlive.com/live/1714096320293954.m3u8$最优
 临颍综合,http://live.dxhmt.cn:9081/tv/11122-1.m3u8$最优
 义马新闻综合,http://tvpull.dxhmt.cn:9081/tv/11281-1.m3u8$最优
-之江纪录,https://ali-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
-之江纪录,https://ali-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8$次优
+之江纪录,https://ali-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8$最优
+之江纪录,https://ali-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$次优
 乐至综合,http://175.155.106.72:89/live1/live1.m3u8$最优
 九台综合,http://stream10.jlntv.cn/jiutaitv/sd/live.m3u8$最优
 云南娱乐,https://hwapi.yntv.net/62hdvf/q9vs1b.m3u8$最优
@@ -1206,18 +1208,18 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 内黄综合,http://tvpull.dxhmt.cn:9081/tv/10527-1.m3u8$最优
 剑阁综合,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel105549/playlist.m3u8$最优
 北京新闻,https://migu.188766.xyz/订阅后播放/北京新闻$最优
-北京新闻,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E6%96%B0%E9%97%BB&token=688b3dffeaef6de8b1158c144079daff$次优
+北京新闻,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E6%96%B0%E9%97%BB&token=080154bd7a479182893e3e724ca23024$次优
 北京新闻,https://satellitepull.cnr.cn/live/wxbjxwgb/playlist.m3u8$三优
 北京科教,http://player.cntv.cn/standard/live_HLSDRM20180606.swf?ChannelID=btv3&P2PChannelID=pd://cctv_p2p_hdbtv3$最优
 北京青年,http://player.cntv.cn/standard/live_HLSDRM20180919.swf?v=180.171.5.8.9.6.3.9&ChannelID=btv8&videoTVChannel=btv8&P2PChannelID=pd://cctv_p2p_hdbtv8&tai=btv8&VideoName=btv8&channelID=btv8$最优
 南京教科,http://nklive.nbs.cn/hls/75b3c462-b831-4de7-a34b-5d3221db2069/index.m3u8$最优
 南京新闻综合,http://nklive.nbs.cn/hls/d511bc9d-a694-4453-b3a2-4fc842cc97a1/index.m3u8$最优
+南宁公共,http://hls.nntv.cn/nnlive/GGPD_24.m3u8$最优
 南通新闻综合,https://mgtv.ottiptv.cc/migu/955227985.m3u8?migutoken=03e9c85f19b5ac291f5863436507873a8f47ec3c677c7857c89bda5778edc8e38fc38b4270aa374c49eee39b39ffaf80a20b750130c27760df766c0cf7b5d437be8dc60c1ced9117d98f6c9b3e$最优
 卫辉综合,http://tvpull.dxhmt.cn:9081/tv/10781-1.m3u8$最优
 双辽综合,http://stream3.jlntv.cn:80/aac_slgb/playlist.m3u8$最优
 叙州新闻综合,http://pili-live-hls.ybcxjd.com/jdh-live/2108111201035597.m3u8?zsicd$最优
 句容影院,http://jrlive.jrntv.com/live/_definst_/yingshis/chunklist_w1994429382.m3u8?zjiangsd$最优
-可克达拉综合,http://file.loulannews.cn/nmip-media/channellive/channel103824/playlist.m3u8$最优
 叶县,http://tvpull.dxhmt.cn:9081/tv/10422-1.m3u8$最优
 合肥新闻,http://112.27.235.94:8000/hls/18/index.m3u8$最优
 吉林乡村,https://satellitepull.cnr.cn/live/wxjlxcgb/playlist.m3u8$最优
@@ -1235,7 +1237,7 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 嘉兴新闻综合,http://live.zohi.tv/video/s10001-fztv-1/index.m3u8$最优
 嘉峪关综合,http://play.kankanlive.com/live/1720583434627241.m3u8$最优
 四海钓鱼,https://migu.188766.xyz/订阅后播放/四海钓鱼$最优
-四海钓鱼,http://iptv.cqshushu.com/migu.php?pid=%E5%9B%9B%E6%B5%B7%E9%92%93%E9%B1%BC&token=688b3dffeaef6de8b1158c144079daff$次优
+四海钓鱼,http://iptv.cqshushu.com/migu.php?pid=%E5%9B%9B%E6%B5%B7%E9%92%93%E9%B1%BC&token=080154bd7a479182893e3e724ca23024$次优
 四海钓鱼,http://120.76.248.139/live/bfgd/4200000229.m3u8$三优
 固始综合,http://tvpull.dxhmt.cn:9081/tv/11525-1.m3u8$最优
 天祝综合,https://play.kankanlive.com/live/1656487214793905.m3u8$最优
@@ -1262,18 +1264,18 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 平湖民生休闲,http://l.cztvcloud.com/channels/lantian/SXpinghu2/720p.m3u8?zzhed$最优
 平遥新闻综合,https://tntgjhjb.live.sxmty.com/live/hls/3a4585ac11ec4e1bb07b419101b370c3/baf63e2b313440c2a25d7859f9b73b05-1.m3u8?zshanxd$最优
 广东新闻,https://hk.188766.xyz/要用订阅的地址/gd_gdxw$最优
-广东新闻,http://iptv.cqshushu.com/migu.php?pid=gd_gdxw&token=688b3dffeaef6de8b1158c144079daff$次优
-广东新闻,http://iptv.cqshushu.com/gdtv.php?id=gdxw&token=688b3dffeaef6de8b1158c144079daff$三优
+广东新闻,http://iptv.cqshushu.com/migu.php?pid=gd_gdxw&token=080154bd7a479182893e3e724ca23024$次优
+广东新闻,http://iptv.cqshushu.com/gdtv.php?id=gdxw&token=080154bd7a479182893e3e724ca23024$三优
 广东民生,https://hk.188766.xyz/要用订阅的地址/gd_gdms$最优
-广东民生,http://iptv.cqshushu.com/migu.php?pid=gd_gdms&token=688b3dffeaef6de8b1158c144079daff$次优
+广东民生,http://iptv.cqshushu.com/migu.php?pid=gd_gdms&token=080154bd7a479182893e3e724ca23024$次优
 广东民生,http://183.11.239.36:808/hls/18/index.m3u8$三优
 广元公共,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel101257/playlist.m3u8$最优
 广元综合,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel100999/playlist.m3u8$最优
 广安公共,http://live1.gatv.com.cn:85/live/GGPD.m3u8$最优
-广州新闻,http://iptv.cqshushu.com/gddf.php?id=gzxw&token=688b3dffeaef6de8b1158c144079daff$最优
+广州新闻,http://iptv.cqshushu.com/gddf.php?id=gzxw&token=080154bd7a479182893e3e724ca23024$最优
 广州新闻,http://tencentplay.gztv.com/live/xinwen.m3u8?txSecret=d2c2db0b598c02ec1b5623728434d367&txTime=18d57929bd3$次优
 广州竞赛,http://8.138.7.223/tv/gzjs.m3u8$最优
-广州综合,http://iptv.cqshushu.com/gddf.php?id=gzzh&token=688b3dffeaef6de8b1158c144079daff$最优
+广州综合,http://iptv.cqshushu.com/gddf.php?id=gzzh&token=080154bd7a479182893e3e724ca23024$最优
 广州综合,http://tencentplay.gztv.com/live/zonghes.m3u8?txSecret=c8dbe86d6f86eb1a21999ab479fd5667&txTime=18d3c4690e8$次优
 广西国际,https://hlscdn.liangtv.cn/live/0234c48e0bc24fe1b41b9999a253e581/1075ee38e04f490690f6a36a16e09c79.m3u8$最优
 广西新闻,https://tv.gxtv.cn/channel/channelivePlay_9dfd8600075811e9ba67e41f13b60c62.html$最优
@@ -1288,8 +1290,8 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 德惠综合,http://stream11.jlntv.cn/dehuitv/sd/live.m3u8$最优
 成县综合,https://play.kankanlive.com/live/1702454377323961.m3u8$最优
 扶沟综合,http://tvpull.dxhmt.cn:9081/tv/11621-1.m3u8$最优
-敦化一套,http://stream8.jlntv.cn/dhtv/playlist.m3u8$最优
-敦化一套,http://stream8.jlntv.cn/dhtv/playlist.m3u8?zjild$次优
+敦化一套,http://stream8.jlntv.cn/dhtv/playlist.m3u8?zjild$最优
+敦化一套,http://stream8.jlntv.cn/dhtv/playlist.m3u8$次优
 数码时代,http://ali-m-l.cztv.com/channels/lantian/channel12/720p.m3u8?zzhed$最优
 文山州公共,http://m3u8.channel.wsrtv.com.cn/cms/videos/nmip-media/channellive/channel8/playlist.m3u8$最优
 文山州新闻综合,http://m3u8.channel.wsrtv.com.cn/cms/videos/nmip-media/channellive/channel7/playlist.m3u8?zyund$最优
@@ -1350,34 +1352,34 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 济源电视一套,http://tvpull.dxhmt.cn:9081/tv/19001-1.m3u8$最优
 浙江休闲台,http://ali-m-l.cztv.com/channels/lantian/channel006/720p.m3u8$最优
 浙江公共新闻,https://ali-m-l.cztv.com/channels/lantian/channel007/1080p.m3u8$最优
-浙江国际,https://ali-m-l.cztv.com/channels/lantian/channel010/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
-浙江国际,https://ali-m-l.cztv.com/channels/lantian/channel010/1080p.m3u8$次优
+浙江国际,https://ali-m-l.cztv.com/channels/lantian/channel010/1080p.m3u8$最优
+浙江国际,https://ali-m-l.cztv.com/channels/lantian/channel010/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$次优
 浙江教科,http://ali-m-l.cztv.com/channels/lantian/channel004/1080p.m3u8$最优
-浙江教科,https://ali-m-l.cztv.com/channels/lantian/channel004/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
+浙江教科,https://ali-m-l.cztv.com/channels/lantian/channel004/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$次优
 浙江教科,https://ali-m-l.cztv.com/channels/lantian/channel004/1080p.m3u8$三优
 浙江教育,http://ali-m-l.cztv.com/channels/lantian/channel04/720p.m3u8$最优
 浙江数码时代,http://ali-m-l.cztv.com/channels/lantian/channel12/720p.m3u8$最优
-浙江新闻,https://ali-m-l.cztv.com/channels/lantian/channel007/1080p.m3u8$最优
-浙江新闻,https://ali-m-l.cztv.com/channels/lantian/channel007/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
+浙江新闻,https://ali-m-l.cztv.com/channels/lantian/channel007/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$最优
+浙江新闻,https://ali-m-l.cztv.com/channels/lantian/channel007/1080p.m3u8$次优
 浙江新闻,http://ali-xwl.cztv.com/live/channel071080Plxw.m3u8$三优
 浙江民生,http://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8$最优
-浙江民生,https://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
-浙江民生,https://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8$三优
+浙江民生,https://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8$次优
+浙江民生,https://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$三优
 浙江民生休闲,https://ali-m-l.cztv.com/channels/lantian/channel006/1080p.m3u8$最优
 浙江生活,http://ls.qingting.fm/live/1099.m3u8$最优
 浙江留学,http://ali-vl.cztv.com/channels/lantian/channel009/360p.m3u8$最优
 浙江经济,http://ali-m-l.cztv.com/channels/lantian/channel003/1080p.m3u8$最优
-浙江经济,https://ali-m-l.cztv.com/channels/lantian/channel003/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
+浙江经济,https://ali-m-l.cztv.com/channels/lantian/channel003/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$次优
 浙江经济,https://ali-m-l.cztv.com/channels/lantian/channel003/1080p.m3u8$三优
 浙江经济生活,http://ali-xwl.cztv.com/live/channel031080Plxw.m3u8$最优
 浙江经视,https://ali-m-l.cztv.com/channels/lantian/channel003/1080p.m3u8$最优
 浙江遂昌,http://l.cztvcloud.com/channels/lantian/SXsuichang1/720p.m3u8$最优
 浙江钱江,http://l.cztvcloud.com/channels/lantian/SXyuyao2/720p.m3u8$最优
-浙江钱江,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8$次优
-浙江钱江,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8?token=688b3dffeaef6de8b1158c144079daff$三优
+浙江钱江,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8?token=080154bd7a479182893e3e724ca23024$次优
+浙江钱江,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8$三优
 浙江钱江都市,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8$最优
 海南新闻,https://migu.188766.xyz/要用订阅的地址/hn_xwpd$最优
-海南新闻,http://iptv.cqshushu.com/migu.php?pid=hn_xwpd&token=688b3dffeaef6de8b1158c144079daff$次优
+海南新闻,http://iptv.cqshushu.com/migu.php?pid=hn_xwpd&token=080154bd7a479182893e3e724ca23024$次优
 海南新闻,http://ls.qingting.fm/live/1861.m3u8$三优
 海宁新闻综合,https://p2hs.vzan.com/slowlive/317913155078575177/live.m3u8$最优
 涟水电视台综合,https://lianshui-tv-hls.cm.jstv.com:443/lianshui-tv/lsxw.m3u8$最优
@@ -1393,13 +1395,15 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 灵宝新闻综合,http://tvpull.dxhmt.cn:9081/tv/11282-1.m3u8?zhend$最优
 玛纳斯综合,http://218.84.127.245:1026/hls/main1/playlist.m3u8?zxinjd,$最优
 环球旅游,https://migu.188766.xyz/订阅后播放/环球旅游$最优
-环球旅游,http://iptv.cqshushu.com/migu.php?pid=%E7%8E%AF%E7%90%83%E6%97%85%E6%B8%B8&token=688b3dffeaef6de8b1158c144079daff$次优
+环球旅游,http://iptv.cqshushu.com/migu.php?pid=%E7%8E%AF%E7%90%83%E6%97%85%E6%B8%B8&token=080154bd7a479182893e3e724ca23024$次优
 环球旅游,http://120.76.248.139/live/bfgd/4200000147.m3u8$三优
 瑞丽综合,http://live.ynurl.com/video/s10021-rltv/index.m3u8?zyund$最优
 甘南县综合,https://stream.hrbtv.net/zxpd/sd/live.m3u8$最优
 甘肃经济,https://satellitepull.cnr.cn/live/wxgshhzs/playlist.m3u8$最优
 甘肃都市,https://satellitepull.cnr.cn/live/wxgsdstb/playlist.m3u8$最优
 生态环境,http://120.76.248.139/live/bfgd/4200000149.m3u8$最优
+番禺综合,http://video.epaper.pybtv.cn:8080/live/rtmp_live_demo.flv$最优
+番禺综合,http://iptv.cqshushu.com/gddf.php?id=pyzh&token=080154bd7a479182893e3e724ca23024$次优
 登封综合,http://tvpull.dxhmt.cn:9081/tv/10185-1.m3u8$最优
 白银综合,https://play.kankanlive.com/live/1720408089419110.m3u8$最优
 盈江综合,http://live.ynurl.com/video/s10016-YJTV-2/index.m3u8?zyund$最优
@@ -1484,7 +1488,6 @@ xiaoxiao1004,https://goodiptv.club/douyu/2569874$最优
 陕西秦腔,http://112.46.105.20:8009/hls/22/index.m3u8$最优
 陕西都市青春,http://112.46.105.20:8009/hls/19/index.m3u8$最优
 陕西银龄,http://112.46.105.20:8009/hls/20/index.m3u8$最优
-雅安新闻综合,https://play.yunxya.com/channellive/xinwen.m3u8$最优
 青川综合,http://qcfile.qcrmt.com/nmip-media/channellive/channel100933/playlist.m3u8$最优
 青田电视台,http://l.cztvcloud.com/channels/lantian/SXqingtian1/720p.m3u8$最优
 靖宇综合,http://stream9.jlntv.cn:80/aac_jygb/playlist.m3u8$最优
@@ -1770,164 +1773,163 @@ yaoyao说,https://goodiptv.club/douyu/884073$最优
 黄花城水长城02,http://gctxyc.liveplay.myqcloud.com/gc/wgw02_1/index.m3u8$最优
 黄花城水长城03,https://gcalic.v.myalicdn.com/gc/wgw03_1/index.m3u8$最优
 2026-02-15 06:25:55,https://vd2.bdstatic.com/mda-rkaittufsdv0rnx6/sc/cae_h264/1762869859154419128/mda-rkaittufsdv0rnx6.mp4$最优
-2026-02-15 07:03:36,http://kakaxi.indevs.in/LOGO/Disclaimer.mp4$最优
 CCTV-1 综合,https://migu.188766.xyz/订阅后播放/CCTV1$最优
 CCTV-2 财经,https://migu.188766.xyz/订阅后播放/CCTV2$最优
 CCTV-3 综艺,https://migu.188766.xyz/订阅后播放/CCTV3$最优
-CCTV-3 综艺,http://iptv.cqshushu.com/migu.php?pid=cctv3&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-3 综艺,http://iptv.cqshushu.com/migu.php?pid=cctv3&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-4 中文国际,https://migu.188766.xyz/订阅后播放/CCTV4$最优
-CCTV-4 中文国际,http://iptv.cqshushu.com/migu.php?pid=cctv4&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-4 中文国际,http://iptv.cqshushu.com/migu.php?pid=cctv4&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-5 体育,https://migu.188766.xyz/订阅后播放/CCTV5$最优
-CCTV-5 体育,http://iptv.cqshushu.com/migu.php?pid=cctv5&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-5 体育,http://iptv.cqshushu.com/migu.php?pid=cctv5&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-5+ 体育赛事,https://migu.188766.xyz/订阅后播放/CCTV5p$最优
-CCTV-5+ 体育赛事,http://iptv.cqshushu.com/migu.php?pid=cctv5p&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-5+ 体育赛事,http://iptv.cqshushu.com/migu.php?pid=cctv5p&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-6 电影,https://migu.188766.xyz/订阅后播放/CCTV6$最优
-CCTV-6 电影,http://iptv.cqshushu.com/migu.php?pid=cctv6&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-6 电影,http://iptv.cqshushu.com/migu.php?pid=cctv6&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-7 国防军事,https://migu.188766.xyz/订阅后播放/CCTV7$最优
-CCTV-7 国防军事,http://iptv.cqshushu.com/migu.php?pid=cctv7&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-7 国防军事,http://iptv.cqshushu.com/migu.php?pid=cctv7&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-8 电视剧,https://migu.188766.xyz/订阅后播放/CCTV8$最优
-CCTV-8 电视剧,http://iptv.cqshushu.com/migu.php?pid=cctv8&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-8 电视剧,http://iptv.cqshushu.com/migu.php?pid=cctv8&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-9 纪录,https://migu.188766.xyz/订阅后播放/CCTV9$最优
-CCTV-9 纪录,http://iptv.cqshushu.com/migu.php?pid=cctv9&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-9 纪录,http://iptv.cqshushu.com/migu.php?pid=cctv9&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-10 科教,https://migu.188766.xyz/订阅后播放/CCTV10$最优
-CCTV-10 科教,http://iptv.cqshushu.com/migu.php?pid=cctv10&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-10 科教,http://iptv.cqshushu.com/migu.php?pid=cctv10&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-11 戏曲,https://migu.188766.xyz/订阅后播放/CCTV11$最优
-CCTV-11 戏曲,http://iptv.cqshushu.com/migu.php?pid=cctv11&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-11 戏曲,http://iptv.cqshushu.com/migu.php?pid=cctv11&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-12 社会与法,https://migu.188766.xyz/订阅后播放/CCTV12$最优
-CCTV-12 社会与法,http://iptv.cqshushu.com/migu.php?pid=cctv12&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-12 社会与法,http://iptv.cqshushu.com/migu.php?pid=cctv12&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-13 新闻,https://migu.188766.xyz/订阅后播放/CCTV13$最优
-CCTV-13 新闻,http://iptv.cqshushu.com/migu.php?pid=cctv13&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-13 新闻,http://iptv.cqshushu.com/migu.php?pid=cctv13&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-14 少儿,https://migu.188766.xyz/订阅后播放/CCTV14$最优
-CCTV-14 少儿,http://iptv.cqshushu.com/migu.php?pid=cctv14&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-14 少儿,http://iptv.cqshushu.com/migu.php?pid=cctv14&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-15 音乐,https://migu.188766.xyz/订阅后播放/CCTV15$最优
-CCTV-15 音乐,http://iptv.cqshushu.com/migu.php?pid=cctv15&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-15 音乐,http://iptv.cqshushu.com/migu.php?pid=cctv15&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-17 农业农村,https://migu.188766.xyz/订阅后播放/CCTV17$最优
-CCTV-17 农业农村,http://iptv.cqshushu.com/migu.php?pid=cctv17&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-17 农业农村,http://iptv.cqshushu.com/migu.php?pid=cctv17&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-4 中文国际 欧洲,https://migu.188766.xyz/订阅后播放/CCTV4欧洲$最优
-CCTV-4 中文国际 欧洲,http://iptv.cqshushu.com/migu.php?pid=cctv4oz&token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-4 中文国际 欧洲,http://iptv.cqshushu.com/migu.php?pid=cctv4oz&token=080154bd7a479182893e3e724ca23024$次优
 CCTV-4 中文国际 美洲,https://migu.188766.xyz/订阅后播放/CCTV4美洲$最优
-CCTV-4 中文国际 美洲,http://iptv.cqshushu.com/migu.php?pid=cctv4mz&token=688b3dffeaef6de8b1158c144079daff$次优
-河北4K,https://event.pull.hebtv.com:443/live/live101.m3u8$最优
-河北4K,https://event.pull.hebtv.com:443/live/live101.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
+CCTV-4 中文国际 美洲,http://iptv.cqshushu.com/migu.php?pid=cctv4mz&token=080154bd7a479182893e3e724ca23024$次优
+河北4K,https://event.pull.hebtv.com:443/live/live101.m3u8?token=080154bd7a479182893e3e724ca23024$最优
+河北4K,https://event.pull.hebtv.com:443/live/live101.m3u8$次优
 上视东方影视,https://migu.188766.xyz/订阅后播放/上视东方影视$最优
-上视东方影视,http://iptv.cqshushu.com/migu.php?pid=%E4%B8%8A%E8%A7%86%E4%B8%9C%E6%96%B9%E5%BD%B1%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+上视东方影视,http://iptv.cqshushu.com/migu.php?pid=%E4%B8%8A%E8%A7%86%E4%B8%9C%E6%96%B9%E5%BD%B1%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 新片放映厅,https://migu.188766.xyz/订阅后播放/新片放映厅$最优
-新片放映厅,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E7%89%87%E6%94%BE%E6%98%A0%E5%8E%85&token=688b3dffeaef6de8b1158c144079daff$次优
+新片放映厅,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E7%89%87%E6%94%BE%E6%98%A0%E5%8E%85&token=080154bd7a479182893e3e724ca23024$次优
 经典香港电影,https://migu.188766.xyz/订阅后播放/经典香港电影$最优
-经典香港电影,http://iptv.cqshushu.com/migu.php?pid=%E7%BB%8F%E5%85%B8%E9%A6%99%E6%B8%AF%E7%94%B5%E5%BD%B1&token=688b3dffeaef6de8b1158c144079daff$次优
+经典香港电影,http://iptv.cqshushu.com/migu.php?pid=%E7%BB%8F%E5%85%B8%E9%A6%99%E6%B8%AF%E7%94%B5%E5%BD%B1&token=080154bd7a479182893e3e724ca23024$次优
 抗战经典影片,https://migu.188766.xyz/订阅后播放/抗战经典影片$最优
-抗战经典影片,http://iptv.cqshushu.com/migu.php?pid=%E6%8A%97%E6%88%98%E7%BB%8F%E5%85%B8%E5%BD%B1%E7%89%87&token=688b3dffeaef6de8b1158c144079daff$次优
+抗战经典影片,http://iptv.cqshushu.com/migu.php?pid=%E6%8A%97%E6%88%98%E7%BB%8F%E5%85%B8%E5%BD%B1%E7%89%87&token=080154bd7a479182893e3e724ca23024$次优
 南方影视,https://migu.188766.xyz/订阅后播放/南方影视$最优
-南方影视,http://iptv.cqshushu.com/migu.php?pid=%E5%8D%97%E6%96%B9%E5%BD%B1%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+南方影视,http://iptv.cqshushu.com/migu.php?pid=%E5%8D%97%E6%96%B9%E5%BD%B1%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 和美乡途轮播台,https://migu.188766.xyz/订阅后播放/和美乡途轮播台$最优
 茶,https://migu.188766.xyz/订阅后播放/茶$最优
-茶,http://iptv.cqshushu.com/migu.php?pid=%E8%8C%B6&token=688b3dffeaef6de8b1158c144079daff$次优
+茶,http://iptv.cqshushu.com/migu.php?pid=%E8%8C%B6&token=080154bd7a479182893e3e724ca23024$次优
 赛事最经典,https://migu.188766.xyz/订阅后播放/赛事最经典$最优
-赛事最经典,http://iptv.cqshushu.com/migu.php?pid=%E8%B5%9B%E4%BA%8B%E6%9C%80%E7%BB%8F%E5%85%B8&token=688b3dffeaef6de8b1158c144079daff$次优
+赛事最经典,http://iptv.cqshushu.com/migu.php?pid=%E8%B5%9B%E4%BA%8B%E6%9C%80%E7%BB%8F%E5%85%B8&token=080154bd7a479182893e3e724ca23024$次优
 最强综艺趴,https://migu.188766.xyz/订阅后播放/最强综艺趴$最优
-最强综艺趴,http://iptv.cqshushu.com/migu.php?pid=%E6%9C%80%E5%BC%BA%E7%BB%BC%E8%89%BA%E8%B6%B4&token=688b3dffeaef6de8b1158c144079daff$次优
+最强综艺趴,http://iptv.cqshushu.com/migu.php?pid=%E6%9C%80%E5%BC%BA%E7%BB%BC%E8%89%BA%E8%B6%B4&token=080154bd7a479182893e3e724ca23024$次优
 经典动画大集合,https://migu.188766.xyz/订阅后播放/经典动画大集合$最优
-经典动画大集合,http://iptv.cqshushu.com/migu.php?pid=%E7%BB%8F%E5%85%B8%E5%8A%A8%E7%94%BB%E5%A4%A7%E9%9B%86%E5%90%88&token=688b3dffeaef6de8b1158c144079daff$次优
+经典动画大集合,http://iptv.cqshushu.com/migu.php?pid=%E7%BB%8F%E5%85%B8%E5%8A%A8%E7%94%BB%E5%A4%A7%E9%9B%86%E5%90%88&token=080154bd7a479182893e3e724ca23024$次优
 财富天下,https://migu.188766.xyz/订阅后播放/财富天下$最优
-财富天下,http://iptv.cqshushu.com/migu.php?pid=%E8%B4%A2%E5%AF%8C%E5%A4%A9%E4%B8%8B&token=688b3dffeaef6de8b1158c144079daff$次优
+财富天下,http://iptv.cqshushu.com/migu.php?pid=%E8%B4%A2%E5%AF%8C%E5%A4%A9%E4%B8%8B&token=080154bd7a479182893e3e724ca23024$次优
 体坛名栏汇,https://migu.188766.xyz/订阅后播放/体坛名栏汇$最优
-体坛名栏汇,http://iptv.cqshushu.com/migu.php?pid=%E4%BD%93%E5%9D%9B%E5%90%8D%E6%A0%8F%E6%B1%87&token=688b3dffeaef6de8b1158c144079daff$次优
+体坛名栏汇,http://iptv.cqshushu.com/migu.php?pid=%E4%BD%93%E5%9D%9B%E5%90%8D%E6%A0%8F%E6%B1%87&token=080154bd7a479182893e3e724ca23024$次优
 24小时城市联赛轮播台,https://migu.188766.xyz/订阅后播放/24小时城市联赛轮播台$最优
 老故事,https://migu.188766.xyz/订阅后播放/老故事$最优
-老故事,http://iptv.cqshushu.com/migu.php?pid=%E8%80%81%E6%95%85%E4%BA%8B&token=688b3dffeaef6de8b1158c144079daff$次优
+老故事,http://iptv.cqshushu.com/migu.php?pid=%E8%80%81%E6%95%85%E4%BA%8B&token=080154bd7a479182893e3e724ca23024$次优
 新动力量创一流,https://migu.188766.xyz/订阅后播放/新动力量创一流$最优
-新动力量创一流,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E5%8A%A8%E5%8A%9B%E9%87%8F%E5%88%9B%E4%B8%80%E6%B5%81&token=688b3dffeaef6de8b1158c144079daff$次优
+新动力量创一流,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E5%8A%A8%E5%8A%9B%E9%87%8F%E5%88%9B%E4%B8%80%E6%B5%81&token=080154bd7a479182893e3e724ca23024$次优
 北京影视,https://migu.188766.xyz/订阅后播放/北京影视$最优
-北京影视,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E5%BD%B1%E8%A7%86&token=688b3dffeaef6de8b1158c144079daff$次优
+北京影视,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E5%BD%B1%E8%A7%86&token=080154bd7a479182893e3e724ca23024$次优
 北京文艺,https://migu.188766.xyz/订阅后播放/北京文艺$最优
-北京文艺,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E6%96%87%E8%89%BA&token=688b3dffeaef6de8b1158c144079daff$次优
+北京文艺,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E6%96%87%E8%89%BA&token=080154bd7a479182893e3e724ca23024$次优
 北京财经,https://migu.188766.xyz/订阅后播放/北京财经$最优
-北京财经,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E8%B4%A2%E7%BB%8F&token=688b3dffeaef6de8b1158c144079daff$次优
+北京财经,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%AC%E8%B4%A2%E7%BB%8F&token=080154bd7a479182893e3e724ca23024$次优
 北京生活,https://migu.188766.xyz/订阅后播放/北京i生活$最优
-北京生活,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%ACi%E7%94%9F%E6%B4%BB&token=688b3dffeaef6de8b1158c144079daff$次优
+北京生活,http://iptv.cqshushu.com/migu.php?pid=%E5%8C%97%E4%BA%ACi%E7%94%9F%E6%B4%BB&token=080154bd7a479182893e3e724ca23024$次优
 河南新闻,https://migu.188766.xyz/订阅后播放/新闻频道$最优
-河南新闻,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E9%97%BB%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+河南新闻,http://iptv.cqshushu.com/migu.php?pid=%E6%96%B0%E9%97%BB%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 河南都市,https://migu.188766.xyz/订阅后播放/都市频道$最优
-河南都市,http://iptv.cqshushu.com/migu.php?pid=%E9%83%BD%E5%B8%82%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+河南都市,http://iptv.cqshushu.com/migu.php?pid=%E9%83%BD%E5%B8%82%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 河南民生,https://migu.188766.xyz/订阅后播放/民生频道$最优
-河南民生,http://iptv.cqshushu.com/migu.php?pid=%E6%B0%91%E7%94%9F%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+河南民生,http://iptv.cqshushu.com/migu.php?pid=%E6%B0%91%E7%94%9F%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 河南电视剧,https://migu.188766.xyz/订阅后播放/电视剧频道$最优
-河南电视剧,http://iptv.cqshushu.com/migu.php?pid=%E7%94%B5%E8%A7%86%E5%89%A7%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+河南电视剧,http://iptv.cqshushu.com/migu.php?pid=%E7%94%B5%E8%A7%86%E5%89%A7%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 河南公共,https://migu.188766.xyz/订阅后播放/公共频道$最优
-河南公共,http://iptv.cqshushu.com/migu.php?pid=%E5%85%AC%E5%85%B1%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+河南公共,http://iptv.cqshushu.com/migu.php?pid=%E5%85%AC%E5%85%B1%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 河南法治,https://migu.188766.xyz/订阅后播放/法治频道$最优
-河南法治,http://iptv.cqshushu.com/migu.php?pid=%E6%B3%95%E6%B2%BB%E9%A2%91%E9%81%93&token=688b3dffeaef6de8b1158c144079daff$次优
+河南法治,http://iptv.cqshushu.com/migu.php?pid=%E6%B3%95%E6%B2%BB%E9%A2%91%E9%81%93&token=080154bd7a479182893e3e724ca23024$次优
 河南武术,https://migu.188766.xyz/订阅后播放/武术频道$最优
 河南象视界,https://migu.188766.xyz/订阅后播放/象视界$最优
-河南象视界,http://iptv.cqshushu.com/migu.php?pid=%E8%B1%A1%E8%A7%86%E7%95%8C&token=688b3dffeaef6de8b1158c144079daff$次优
+河南象视界,http://iptv.cqshushu.com/migu.php?pid=%E8%B1%A1%E8%A7%86%E7%95%8C&token=080154bd7a479182893e3e724ca23024$次优
 岭南戏曲,https://hk.188766.xyz/要用订阅的地址/gd_lnxq$最优
-岭南戏曲,http://iptv.cqshushu.com/migu.php?pid=gd_lnxq&token=688b3dffeaef6de8b1158c144079daff$次优
-岭南戏曲,http://iptv.cqshushu.com/gdtv.php?id=lnxq&token=688b3dffeaef6de8b1158c144079daff$三优
+岭南戏曲,http://iptv.cqshushu.com/migu.php?pid=gd_lnxq&token=080154bd7a479182893e3e724ca23024$次优
+岭南戏曲,http://iptv.cqshushu.com/gdtv.php?id=lnxq&token=080154bd7a479182893e3e724ca23024$三优
 广东移动,https://hk.188766.xyz/要用订阅的地址/gd_gdyd$最优
-广东移动,http://iptv.cqshushu.com/migu.php?pid=gd_gdyd&token=688b3dffeaef6de8b1158c144079daff$次优
-广东移动,http://iptv.cqshushu.com/gdtv.php?id=gdyd&token=688b3dffeaef6de8b1158c144079daff$三优
+广东移动,http://iptv.cqshushu.com/migu.php?pid=gd_gdyd&token=080154bd7a479182893e3e724ca23024$次优
+广东移动,http://iptv.cqshushu.com/gdtv.php?id=gdyd&token=080154bd7a479182893e3e724ca23024$三优
 现代教育,https://hk.188766.xyz/要用订阅的地址/gd_xdjy$最优
-现代教育,http://iptv.cqshushu.com/migu.php?pid=gd_xdjy&token=688b3dffeaef6de8b1158c144079daff$次优
+现代教育,http://iptv.cqshushu.com/migu.php?pid=gd_xdjy&token=080154bd7a479182893e3e724ca23024$次优
 广东生活频道,https://hk.188766.xyz/要用订阅的地址/gd_gdsh$最优
-广东生活频道,http://iptv.cqshushu.com/migu.php?pid=gd_gdsh&token=688b3dffeaef6de8b1158c144079daff$次优
+广东生活频道,http://iptv.cqshushu.com/migu.php?pid=gd_gdsh&token=080154bd7a479182893e3e724ca23024$次优
 上海新纪实,https://migu.188766.xyz/要用订阅的地址/jsrw$最优
-上海新纪实,http://iptv.cqshushu.com/migu.php?pid=jsrw&token=688b3dffeaef6de8b1158c144079daff$次优
-上海都市,http://iptv.cqshushu.com/migu.php?pid=shds&token=688b3dffeaef6de8b1158c144079daff$最优
-上海都市,https://migu.188766.xyz/要用订阅的地址/shds$次优
+上海新纪实,http://iptv.cqshushu.com/migu.php?pid=jsrw&token=080154bd7a479182893e3e724ca23024$次优
+上海都市,https://migu.188766.xyz/要用订阅的地址/shds$最优
+上海都市,http://iptv.cqshushu.com/migu.php?pid=shds&token=080154bd7a479182893e3e724ca23024$次优
 上海魔都眼,https://migu.188766.xyz/要用订阅的地址/mdy$最优
-上海魔都眼,http://iptv.cqshushu.com/migu.php?pid=mdy&token=688b3dffeaef6de8b1158c144079daff$次优
+上海魔都眼,http://iptv.cqshushu.com/migu.php?pid=mdy&token=080154bd7a479182893e3e724ca23024$次优
 爱上海,https://migu.188766.xyz/要用订阅的地址/ash$最优
-爱上海,http://iptv.cqshushu.com/migu.php?pid=ash&token=688b3dffeaef6de8b1158c144079daff$次优
+爱上海,http://iptv.cqshushu.com/migu.php?pid=ash&token=080154bd7a479182893e3e724ca23024$次优
 海南文旅,https://migu.188766.xyz/要用订阅的地址/hn_wlpd$最优
-海南文旅,http://iptv.cqshushu.com/migu.php?pid=hn_wlpd&token=688b3dffeaef6de8b1158c144079daff$次优
+海南文旅,http://iptv.cqshushu.com/migu.php?pid=hn_wlpd&token=080154bd7a479182893e3e724ca23024$次优
 海南自贸,https://migu.188766.xyz/要用订阅的地址/hn_jjpd$最优
-海南自贸,http://iptv.cqshushu.com/migu.php?pid=hn_jjpd&token=688b3dffeaef6de8b1158c144079daff$次优
+海南自贸,http://iptv.cqshushu.com/migu.php?pid=hn_jjpd&token=080154bd7a479182893e3e724ca23024$次优
 海南公共,https://migu.188766.xyz/要用订阅的地址/hn_ggpd$最优
-海南公共,http://iptv.cqshushu.com/migu.php?pid=hn_ggpd&token=688b3dffeaef6de8b1158c144079daff$次优
+海南公共,http://iptv.cqshushu.com/migu.php?pid=hn_ggpd&token=080154bd7a479182893e3e724ca23024$次优
 海南少儿,https://migu.188766.xyz/要用订阅的地址/hn_sepd$最优
-海南少儿,http://iptv.cqshushu.com/migu.php?pid=hn_sepd&token=688b3dffeaef6de8b1158c144079daff$次优
+海南少儿,http://iptv.cqshushu.com/migu.php?pid=hn_sepd&token=080154bd7a479182893e3e724ca23024$次优
 内蒙古农牧,http://play1-qk.nmtv.cn:80/live/1686561299036179.m3u8$最优
-内蒙古农牧,http://play1-qk.nmtv.cn:80/live/1686561299036179.m3u8?token=688b3dffeaef6de8b1158c144079daff$次优
-内蒙古新闻综合,http://play1-qk.nmtv.cn/live/1686560423879174.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
+内蒙古农牧,http://play1-qk.nmtv.cn:80/live/1686561299036179.m3u8?token=080154bd7a479182893e3e724ca23024$次优
+内蒙古新闻综合,http://play1-qk.nmtv.cn/live/1686560423879174.m3u8?token=080154bd7a479182893e3e724ca23024$最优
 内蒙古新闻综合,http://play1-qk.nmtv.cn/live/1686560423879174.m3u8$次优
-内蒙古少儿,http://play1-qk.nmtv.cn/live/1686560464515368.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
-内蒙古少儿,http://play1-qk.nmtv.cn/live/1686560464515368.m3u8$次优
-内蒙古文体娱乐,http://play1-qk.nmtv.cn/live/1686561195713372.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
-内蒙古文体娱乐,http://play1-qk.nmtv.cn/live/1686561195713372.m3u8$次优
-内蒙古经济生活,http://play1-qk.nmtv.cn/live/1686562470947181.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
+内蒙古少儿,http://play1-qk.nmtv.cn/live/1686560464515368.m3u8$最优
+内蒙古少儿,http://play1-qk.nmtv.cn/live/1686560464515368.m3u8?token=080154bd7a479182893e3e724ca23024$次优
+内蒙古文体娱乐,http://play1-qk.nmtv.cn/live/1686561195713372.m3u8$最优
+内蒙古文体娱乐,http://play1-qk.nmtv.cn/live/1686561195713372.m3u8?token=080154bd7a479182893e3e724ca23024$次优
+内蒙古经济生活,http://play1-qk.nmtv.cn/live/1686562470947181.m3u8?token=080154bd7a479182893e3e724ca23024$最优
 内蒙古经济生活,http://play1-qk.nmtv.cn/live/1686562470947181.m3u8$次优
-内蒙古蒙语卫视,http://play1-qk.nmtv.cn/live/1686560387346365.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
-内蒙古蒙语卫视,http://play1-qk.nmtv.cn/live/1686560387346365.m3u8$次优
-内蒙古蒙语文化,http://play1-qk.nmtv.cn/live/1686561065304370.m3u8?token=688b3dffeaef6de8b1158c144079daff$最优
+内蒙古蒙语卫视,http://play1-qk.nmtv.cn/live/1686560387346365.m3u8$最优
+内蒙古蒙语卫视,http://play1-qk.nmtv.cn/live/1686560387346365.m3u8?token=080154bd7a479182893e3e724ca23024$次优
+内蒙古蒙语文化,http://play1-qk.nmtv.cn/live/1686561065304370.m3u8?token=080154bd7a479182893e3e724ca23024$最优
 内蒙古蒙语文化,http://play1-qk.nmtv.cn/live/1686561065304370.m3u8$次优
 翡翠台,https://mgev.188766.xyz/必须用订阅地址/hk_fct$最优
-翡翠台,http://iptv.cqshushu.com/migu.php?pid=hk_fct&token=688b3dffeaef6de8b1158c144079daff$次优
+翡翠台,http://iptv.cqshushu.com/migu.php?pid=hk_fct&token=080154bd7a479182893e3e724ca23024$次优
 翡翠台4K,https://mgev.188766.xyz/必须用订阅地址/hk_fct4k$最优
-翡翠台4K,http://iptv.cqshushu.com/migu.php?pid=hk_fct4k&token=688b3dffeaef6de8b1158c144079daff$次优
+翡翠台4K,http://iptv.cqshushu.com/migu.php?pid=hk_fct4k&token=080154bd7a479182893e3e724ca23024$次优
 无线新闻,https://mgev.188766.xyz/必须用订阅地址/hk_wxxw$最优
-无线新闻,http://iptv.cqshushu.com/migu.php?pid=hk_wxxw&token=688b3dffeaef6de8b1158c144079daff$次优
+无线新闻,http://iptv.cqshushu.com/migu.php?pid=hk_wxxw&token=080154bd7a479182893e3e724ca23024$次优
 Now新闻台,https://mgev.188766.xyz/必须用订阅地址/hk_now$最优
-Now新闻台,http://iptv.cqshushu.com/migu.php?pid=hk_now&token=688b3dffeaef6de8b1158c144079daff$次优
+Now新闻台,http://iptv.cqshushu.com/migu.php?pid=hk_now&token=080154bd7a479182893e3e724ca23024$次优
 TVB Plus,https://mgev.188766.xyz/必须用订阅地址/hk_tvbp$最优
-TVB Plus,http://iptv.cqshushu.com/migu.php?pid=hk_tvbp&token=688b3dffeaef6de8b1158c144079daff$次优
+TVB Plus,http://iptv.cqshushu.com/migu.php?pid=hk_tvbp&token=080154bd7a479182893e3e724ca23024$次优
 明珠台,https://mgev.188766.xyz/必须用订阅地址/hk_mzt$最优
-明珠台,http://iptv.cqshushu.com/migu.php?pid=hk_mzt&token=688b3dffeaef6de8b1158c144079daff$次优
+明珠台,http://iptv.cqshushu.com/migu.php?pid=hk_mzt&token=080154bd7a479182893e3e724ca23024$次优
 TVB星河,https://mgev.188766.xyz/必须用订阅地址/hk_tvbxh$最优
-TVB星河,http://iptv.cqshushu.com/migu.php?pid=hk_tvbxh&token=688b3dffeaef6de8b1158c144079daff$次优
+TVB星河,http://iptv.cqshushu.com/migu.php?pid=hk_tvbxh&token=080154bd7a479182893e3e724ca23024$次优
 TVB功夫,https://mgev.188766.xyz/必须用订阅地址/hk_yzwx$最优
-TVB功夫,http://iptv.cqshushu.com/migu.php?pid=hk_yzwx&token=688b3dffeaef6de8b1158c144079daff$次优
+TVB功夫,http://iptv.cqshushu.com/migu.php?pid=hk_yzwx&token=080154bd7a479182893e3e724ca23024$次优
 八度空间,https://mgev.188766.xyz/必须用订阅地址/hk_8tv$最优
-八度空间,http://iptv.cqshushu.com/migu.php?pid=hk_8tv&token=688b3dffeaef6de8b1158c144079daff$次优
+八度空间,http://iptv.cqshushu.com/migu.php?pid=hk_8tv&token=080154bd7a479182893e3e724ca23024$次优
 CHU,https://mgev.188766.xyz/必须用订阅地址/hk_chu$最优
-CHU,http://iptv.cqshushu.com/migu.php?pid=hk_chu&token=688b3dffeaef6de8b1158c144079daff$次优
+CHU,http://iptv.cqshushu.com/migu.php?pid=hk_chu&token=080154bd7a479182893e3e724ca23024$次优
 CH5,https://mgev.188766.xyz/必须用订阅地址/hk_ch5$最优
-CH5,http://iptv.cqshushu.com/migu.php?pid=hk_ch5&token=688b3dffeaef6de8b1158c144079daff$次优
+CH5,http://iptv.cqshushu.com/migu.php?pid=hk_ch5&token=080154bd7a479182893e3e724ca23024$次优
 CH8,https://mgev.188766.xyz/必须用订阅地址/hk_ch8$最优
-CH8,http://iptv.cqshushu.com/migu.php?pid=hk_ch8&token=688b3dffeaef6de8b1158c144079daff$次优
+CH8,http://iptv.cqshushu.com/migu.php?pid=hk_ch8&token=080154bd7a479182893e3e724ca23024$次优
 澳视澳门,https://mgev.188766.xyz/必须用订阅地址/hk_asam$最优
-澳视澳门,http://iptv.cqshushu.com/migu.php?pid=hk_asam&token=688b3dffeaef6de8b1158c144079daff$次优
+澳视澳门,http://iptv.cqshushu.com/migu.php?pid=hk_asam&token=080154bd7a479182893e3e724ca23024$次优
 HOY77,https://mgev.188766.xyz/必须用订阅地址/hk_hoy$最优
-HOY77,http://iptv.cqshushu.com/migu.php?pid=hk_hoy&token=688b3dffeaef6de8b1158c144079daff$次优
+HOY77,http://iptv.cqshushu.com/migu.php?pid=hk_hoy&token=080154bd7a479182893e3e724ca23024$次优
 CGTN英语,https://0472.org/hls/cgtn.m3u8$最优
 CGTN记录,https://0472.org/hls/cgtnd.m3u8$最优
 TVB翡翠台,http://ali.hlspull.yximgs.com/live/tboxprofhwwqpthqyqtqqqxcxbfhqqfqvhdtqdvbtvqsqxqfsqqcvbctvbfc.flv$最优
@@ -2015,33 +2017,35 @@ TVBS,http://tianhewan.top/ZIPP.php?url=http://211.72.65.236:8575/.m3u8$最优
 ❌河南焦作云台山红石峡,https://gcalic.v.myalicdn.com/gc/pts01_1/index.m3u8$最优
 ❌河南商丘永城市日月湖景区,https://gcalic.v.myalicdn.com/gc/hgsspzxdpb_1/index.m3u8$最优
 ❌河南鹤壁浚县古城景区北城门,https://gcalic.v.myalicdn.com/gc/hlzycc_1/index.m3u8$最优
-大湾区卫视(海外),http://iptv.cqshushu.com/gdtv.php?id=dwqws2&token=688b3dffeaef6de8b1158c144079daff$最优
-广东4K,http://iptv.cqshushu.com/gdtv.php?id=gd4k&token=688b3dffeaef6de8b1158c144079daff$最优
-广州法治,http://iptv.cqshushu.com/gddf.php?id=gzfz&token=688b3dffeaef6de8b1158c144079daff$最优
-4K南国都市,http://iptv.cqshushu.com/gddf.php?id=ngds&token=688b3dffeaef6de8b1158c144079daff$最优
-深圳都市,http://iptv.cqshushu.com/gddf.php?id=szds&token=688b3dffeaef6de8b1158c144079daff$最优
-深圳电视剧,http://iptv.cqshushu.com/gddf.php?id=szdsj&token=688b3dffeaef6de8b1158c144079daff$最优
-深圳财经,http://iptv.cqshushu.com/gddf.php?id=szcj&token=688b3dffeaef6de8b1158c144079daff$最优
-深圳少儿,http://iptv.cqshushu.com/gddf.php?id=szse&token=688b3dffeaef6de8b1158c144079daff$最优
-深圳移动,http://iptv.cqshushu.com/gddf.php?id=szyd&token=688b3dffeaef6de8b1158c144079daff$最优
-深圳宜和购物,http://iptv.cqshushu.com/gddf.php?id=szyhgw&token=688b3dffeaef6de8b1158c144079daff$最优
-深圳国际,http://iptv.cqshushu.com/gddf.php?id=szgj&token=688b3dffeaef6de8b1158c144079daff$最优
-东莞综合,http://iptv.cqshushu.com/gddf.php?id=dgzh&token=688b3dffeaef6de8b1158c144079daff$最优
-东莞生活,http://iptv.cqshushu.com/gddf.php?id=dgsh&token=688b3dffeaef6de8b1158c144079daff$最优
-江门综合,http://iptv.cqshushu.com/gddf.php?id=jmzh&token=688b3dffeaef6de8b1158c144079daff$最优
-云浮综合,http://iptv.cqshushu.com/gddf.php?id=yfzh&token=688b3dffeaef6de8b1158c144079daff$最优
-云浮文旅,http://iptv.cqshushu.com/gddf.php?id=yfwl&token=688b3dffeaef6de8b1158c144079daff$最优
-丰顺综合,http://iptv.cqshushu.com/gddf.php?id=fszh&token=688b3dffeaef6de8b1158c144079daff$最优
-五华综合,http://iptv.cqshushu.com/gddf.php?id=whzh&token=688b3dffeaef6de8b1158c144079daff$最优
-汕头综合,http://iptv.cqshushu.com/gddf.php?id=stzh&token=688b3dffeaef6de8b1158c144079daff$最优
-汕头生活,http://iptv.cqshushu.com/gddf.php?id=stsh&token=688b3dffeaef6de8b1158c144079daff$最优
-汕尾综合,http://iptv.cqshushu.com/gddf.php?id=swzh&token=688b3dffeaef6de8b1158c144079daff$最优
-汕尾生活,http://iptv.cqshushu.com/gddf.php?id=swsh&token=688b3dffeaef6de8b1158c144079daff$最优
-揭阳综合,http://iptv.cqshushu.com/gddf.php?id=jytv1&token=688b3dffeaef6de8b1158c144079daff$最优
-揭阳生活,http://iptv.cqshushu.com/gddf.php?id=jytv2&token=688b3dffeaef6de8b1158c144079daff$最优
-河源综合,http://iptv.cqshushu.com/gddf.php?id=hyzh&token=688b3dffeaef6de8b1158c144079daff$最优
-河源生活,http://iptv.cqshushu.com/gddf.php?id=hysh&token=688b3dffeaef6de8b1158c144079daff$最优
-清远综合,http://iptv.cqshushu.com/gddf.php?id=qyzh&token=688b3dffeaef6de8b1158c144079daff$最优
-肇庆综合,http://iptv.cqshushu.com/gddf.php?id=zqzh&token=688b3dffeaef6de8b1158c144079daff$最优
-肇庆生活,http://iptv.cqshushu.com/gddf.php?id=zqsh&token=688b3dffeaef6de8b1158c144079daff$最优
-纬来体育,http://iptv.cqshushu.com/wltv.php?id=wlty&token=688b3dffeaef6de8b1158c144079daff$最优
+2026-02-15 07:03:36,http://kakaxi.indevs.in/LOGO/Disclaimer.mp4$最优
+大湾区卫视(海外),http://iptv.cqshushu.com/gdtv.php?id=dwqws2&token=080154bd7a479182893e3e724ca23024$最优
+广东4K,http://iptv.cqshushu.com/gdtv.php?id=gd4k&token=080154bd7a479182893e3e724ca23024$最优
+广州法治,http://iptv.cqshushu.com/gddf.php?id=gzfz&token=080154bd7a479182893e3e724ca23024$最优
+4K南国都市,http://iptv.cqshushu.com/gddf.php?id=ngds&token=080154bd7a479182893e3e724ca23024$最优
+深圳都市,http://iptv.cqshushu.com/gddf.php?id=szds&token=080154bd7a479182893e3e724ca23024$最优
+深圳都市,http://iptv.cqshushu.com/gddf.php?id=szds2&token=080154bd7a479182893e3e724ca23024$次优
+深圳电视剧,http://iptv.cqshushu.com/gddf.php?id=szdsj&token=080154bd7a479182893e3e724ca23024$最优
+深圳财经,http://iptv.cqshushu.com/gddf.php?id=szcj&token=080154bd7a479182893e3e724ca23024$最优
+深圳少儿,http://iptv.cqshushu.com/gddf.php?id=szse&token=080154bd7a479182893e3e724ca23024$最优
+深圳移动,http://iptv.cqshushu.com/gddf.php?id=szyd&token=080154bd7a479182893e3e724ca23024$最优
+深圳宜和购物,http://iptv.cqshushu.com/gddf.php?id=szyhgw&token=080154bd7a479182893e3e724ca23024$最优
+深圳国际,http://iptv.cqshushu.com/gddf.php?id=szgj&token=080154bd7a479182893e3e724ca23024$最优
+东莞综合,http://iptv.cqshushu.com/gddf.php?id=dgzh&token=080154bd7a479182893e3e724ca23024$最优
+东莞生活,http://iptv.cqshushu.com/gddf.php?id=dgsh&token=080154bd7a479182893e3e724ca23024$最优
+江门综合,http://iptv.cqshushu.com/gddf.php?id=jmzh&token=080154bd7a479182893e3e724ca23024$最优
+云浮综合,http://iptv.cqshushu.com/gddf.php?id=yfzh&token=080154bd7a479182893e3e724ca23024$最优
+云浮文旅,http://iptv.cqshushu.com/gddf.php?id=yfwl&token=080154bd7a479182893e3e724ca23024$最优
+丰顺综合,http://iptv.cqshushu.com/gddf.php?id=fszh&token=080154bd7a479182893e3e724ca23024$最优
+五华综合,http://iptv.cqshushu.com/gddf.php?id=whzh&token=080154bd7a479182893e3e724ca23024$最优
+汕头综合,http://iptv.cqshushu.com/gddf.php?id=stzh&token=080154bd7a479182893e3e724ca23024$最优
+汕头生活,http://iptv.cqshushu.com/gddf.php?id=stsh&token=080154bd7a479182893e3e724ca23024$最优
+汕尾综合,http://iptv.cqshushu.com/gddf.php?id=swzh&token=080154bd7a479182893e3e724ca23024$最优
+汕尾生活,http://iptv.cqshushu.com/gddf.php?id=swsh&token=080154bd7a479182893e3e724ca23024$最优
+揭阳综合,http://iptv.cqshushu.com/gddf.php?id=jytv1&token=080154bd7a479182893e3e724ca23024$最优
+揭阳生活,http://iptv.cqshushu.com/gddf.php?id=jytv2&token=080154bd7a479182893e3e724ca23024$最优
+河源综合,http://iptv.cqshushu.com/gddf.php?id=hyzh&token=080154bd7a479182893e3e724ca23024$最优
+河源生活,http://iptv.cqshushu.com/gddf.php?id=hysh&token=080154bd7a479182893e3e724ca23024$最优
+清远综合,http://iptv.cqshushu.com/gddf.php?id=qyzh&token=080154bd7a479182893e3e724ca23024$最优
+肇庆综合,http://iptv.cqshushu.com/gddf.php?id=zqzh&token=080154bd7a479182893e3e724ca23024$最优
+肇庆生活,http://iptv.cqshushu.com/gddf.php?id=zqsh&token=080154bd7a479182893e3e724ca23024$最优
+纬来体育,http://iptv.cqshushu.com/wltv.php?id=wlty&token=080154bd7a479182893e3e724ca23024$最优
