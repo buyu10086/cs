@@ -35,16 +35,16 @@ logger = init_logger()
 # 核心优化：TCP连接器参数调优，禁用DNS缓存，提升连接速度
 TCP_CONNECTOR_CONFIG = {
     "limit": 200,  # 全局并发连接数（从80→200，提升批量请求效率）
-    "limit_per_host": 30,  # 单域名并发（从15→30，适配CCTV等集中域名）
+    "limit_per_host": 25,  # 单域名并发（从15→30，适配CCTV等集中域名）
     "ttl_dns_cache": 0,  # 禁用DNS缓存，避免解析延迟
     "ssl": False,  # 跳过SSL验证（非敏感请求，大幅提升速度）
 }
 
 # 超时配置优化：区分连接/读取超时，减少无效等待
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=3,  # 连接超时（从5→3，无效链接快速失败）
+    connect=4,  # 连接超时（从5→3，无效链接快速失败）
     sock_read=5,  # 读取超时（从6→5，平衡速度和成功率）
-    total=8,  # 总超时（从10→8，减少整体等待时间）
+    total=9,  # 总超时（从10→8，减少整体等待时间）
 )
 
 CONFIG = {
@@ -633,7 +633,7 @@ def generate_iptv_playlist(top3_channels):
 if __name__ == "__main__":
     start_time = time.time()
     logger.info("="*70)
-    logger.info("📺 IPTV直播源爬取 + 高性能优化版（速度提升+源数量不变）")
+    logger.info("📺 IPTV直播源爬取")
     logger.info(f"🎯 并发数：{CONFIG['TCP_CONNECTOR_CONFIG']['limit']} | 单域名并发：{CONFIG['TCP_CONNECTOR_CONFIG']['limit_per_host']}")
     logger.info("="*70)
     
