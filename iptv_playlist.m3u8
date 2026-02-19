@@ -1,7 +1,7 @@
-更新时间: 2026-02-19 05:43:46（北京时间）
+更新时间: 2026-02-19 17:31:55（北京时间）
 
 更新时间,#genre#
-2026-02-19 05:43:46,个人自用，请勿用于商业用途
+2026-02-19 17:31:55,个人自用，请勿用于商业用途
 
 央视频道,#genre#
 CCTV1,http://58.57.40.22:9901/tsfile/live/0001_1.m3u8$最优
@@ -33,45 +33,32 @@ CCTV17,http://58.57.40.22:9901/tsfile/live/0019_1.m3u8$最优
 央视台球,https://epg.pw/stream/ca9c1cd4b97fb824cedd7fedfd0c7a950afdd7f00751cfbb7c2d89831d7746a5.m3u8$最优
 高尔夫网球,http://38.75.136.137:98/gslb/dsdqpub/gefwq.m3u8?auth=testpub$最优
 电视指南,http://38.75.136.137:98/gslb/dsdqpub/dszn.m3u8?auth=testpub$最优
-中学生,https://migu.188766.xyz/订阅后播放/中学生$最优
-发现之旅,https://migu.188766.xyz/订阅后播放/发现之旅$最优
 
 卫视频道,#genre#
-湖南卫视,https://migu.188766.xyz/请使用订阅链接观看/湖南卫视4K$最优
-湖南卫视,https://migu.188766.xyz/要用订阅的地址/hnws$次优
-湖南卫视,https://txmov2.a.kwimgs.com/bs3/video-hls/5199687338554291078_hlsb.m3u8$三优
-浙江卫视,https://migu.188766.xyz/请使用订阅链接观看/浙江卫视4K$最优
-浙江卫视,https://migu.188766.xyz/要用订阅的地址/z_jws$次优
-浙江卫视,https://migu.188766.xyz/请使用订阅链接观看/浙江卫视$三优
-江苏卫视,https://migu.188766.xyz/订阅后播放/江苏卫视$最优
-江苏卫视,http://223.105.252.8/PLTV/4/224/3221228099/index.m3u8$次优
-江苏卫视,http://iptv.cqshushu.com/stv.php?id=5a21705c$三优
-东方卫视,https://migu.188766.xyz/订阅后播放/东方卫视$最优
-东方卫视,https://migu.188766.xyz/要用订阅的地址/dfws$次优
+湖南卫视,https://txmov2.a.kwimgs.com/bs3/video-hls/5199687338554291078_hlsb.m3u8$最优
+湖南卫视,http://iptv.cqshushu.com/stv.php?id=5a53e58d$次优
+浙江卫视,http://58.57.40.22:9901/tsfile/live/1029_1.m3u8$最优
+浙江卫视,http://iptv.cqshushu.com/stv.php?id=5a3edab2$次优
+江苏卫视,http://58.57.40.22:9901/tsfile/live/1031_1.m3u8$最优
+江苏卫视,http://iptv.cqshushu.com/stv.php?id=5a21705c$次优
+东方卫视,http://58.57.40.22:9901/tsfile/live/1030_1.m3u8$最优
+东方卫视,http://iptv.cqshushu.com/stv.php?id=4bf2a9e9$次优
 东方卫视,https://bp-resource-dfl.bestv.cn/148/3/video.m3u8$三优
 深圳卫视,http://23.237.228.134/live6/shenzhen.m3u8$最优
-深圳卫视,https://migu.188766.xyz/请使用订阅链接观看/深圳卫视$次优
-深圳卫视,http://iptv.cqshushu.com/stv.php?id=5a3478ee$三优
-北京卫视,https://migu.188766.xyz/订阅后播放/北京卫视$最优
-北京卫视,http://58.57.40.22:9901/tsfile/live/1032_1.m3u8$次优
-北京卫视,http://iptv.cqshushu.com/stv.php?id=4ddfb741$三优
-广东卫视,https://migu.188766.xyz/订阅后播放/广东卫视$最优
-广东卫视,http://23.237.228.134/live6/guangdong.m3u8$次优
-广东卫视,http://iptv.cqshushu.com/stv.php?id=530cf649$三优
+深圳卫视,http://iptv.cqshushu.com/stv.php?id=5a3478ee$次优
+北京卫视,http://satellitepull.cnr.cn/live/wxbtv/playlist.m3u8$最优
+北京卫视,http://iptv.cqshushu.com/stv.php?id=4ddfb741$次优
+广东卫视,http://23.237.228.134/live6/guangdong.m3u8$最优
+广东卫视,http://iptv.cqshushu.com/stv.php?id=530cf649$次优
 广西卫视,http://23.237.228.134/live6/guangxi.m3u8$最优
 广西卫视,http://iptv.cqshushu.com/stv.php?id=53ebe4ec$次优
 东南卫视,http://58.57.40.22:9901/tsfile/live/1037_1.m3u8$最优
-海南卫视,https://migu.188766.xyz/订阅后播放/海南卫视$最优
-海南卫视,https://migu.188766.xyz/要用订阅的地址/hn_hnws$次优
-海南卫视,http://58.57.40.22:9901/tsfile/live/1000_1.m3u8$三优
+海南卫视,http://58.57.40.22:9901/tsfile/live/1000_1.m3u8$最优
 河北卫视,http://58.57.40.22:9901/tsfile/live/1044_1.m3u8$最优
-河南卫视,https://migu.188766.xyz/订阅后播放/河南卫视高清$最优
-河南卫视,http://58.57.40.22:9901/tsfile/live/1048_1.m3u8$次优
-湖北卫视,https://migu.188766.xyz/订阅后播放/湖北卫视$最优
-湖北卫视,http://58.57.40.22:9901/tsfile/live/1038_1.m3u8$次优
-湖北卫视,http://iptv.cqshushu.com/stv.php?id=5a52f54d$三优
-江西卫视,https://migu.188766.xyz/订阅后播放/江西卫视$最优
-江西卫视,http://58.57.40.22:9901/tsfile/live/1043_1.m3u8$次优
+河南卫视,http://58.57.40.22:9901/tsfile/live/1048_1.m3u8$最优
+湖北卫视,http://23.237.228.134/live6/hubei.m3u8$最优
+湖北卫视,http://iptv.cqshushu.com/stv.php?id=5a52f54d$次优
+江西卫视,http://58.57.40.22:9901/tsfile/live/1043_1.m3u8$最优
 四川卫视,http://39.152.103.17:8089/tsfile/live/1044_1.m3u8$最优
 四川卫视,http://58.57.40.22:9901/tsfile/live/1046_1.m3u8$次优
 四川卫视,http://iptv.cqshushu.com/stv.php?id=4fcef3ee$三优
@@ -80,85 +67,53 @@ CCTV17,http://58.57.40.22:9901/tsfile/live/0019_1.m3u8$最优
 云南卫视,http://58.57.40.22:9901/tsfile/live/1047_1.m3u8$最优
 天津卫视,http://58.57.40.22:9901/tsfile/live/1034_1.m3u8$最优
 安徽卫视,http://58.57.40.22:9901/tsfile/live/1033_1.m3u8$最优
-辽宁卫视,https://migu.188766.xyz/订阅后播放/辽宁卫视$最优
-辽宁卫视,http://58.57.40.22:9901/tsfile/live/1035_1.m3u8$次优
+山东卫视,http://183.11.239.36:808/hls/43/index.m3u8$最优
+辽宁卫视,http://58.57.40.22:9901/tsfile/live/1035_1.m3u8$最优
 黑龙江卫视,http://58.57.40.22:9901/tsfile/live/1040_1.m3u8$最优
-吉林卫视,https://migu.188766.xyz/订阅后播放/吉林卫视$最优
-吉林卫视,http://58.57.40.22:9901/tsfile/live/1050_1.m3u8$次优
-内蒙古卫视,https://migu.188766.xyz/请使用订阅链接观看/内蒙古卫视$最优
-内蒙古卫视,http://120.76.248.139/live/bfgd/4200000110.m3u8$次优
-宁夏卫视,https://migu.188766.xyz/订阅后播放/宁夏卫视$最优
-宁夏卫视,http://58.57.40.22:9901/tsfile/live/1054_1.m3u8$次优
-山西卫视,http://119.39.9.8:9901/tsfile/live/0118_1.m3u8$最优
+吉林卫视,http://58.57.40.22:9901/tsfile/live/1050_1.m3u8$最优
+内蒙古卫视,http://120.76.248.139/live/bfgd/4200000110.m3u8$最优
+宁夏卫视,http://58.57.40.22:9901/tsfile/live/1054_1.m3u8$最优
+山西卫视,http://m3u8.channel.wsrtv.com.cn/cms/videos/nmip-media/channellive/channel7/playlist.m3u8$最优
 陕西卫视,http://23.237.228.134/live6/sichuan.m3u8$最优
-陕西卫视,https://migu.188766.xyz/订阅后播放/陕西卫视$次优
 甘肃卫视,http://58.57.40.22:9901/tsfile/live/1056_1.m3u8$最优
-青海卫视,https://migu.188766.xyz/订阅后播放/青海卫视$最优
-青海卫视,http://58.57.40.22:9901/tsfile/live/1057_1.m3u8$次优
+青海卫视,http://58.57.40.22:9901/tsfile/live/1057_1.m3u8$最优
 新疆卫视,http://58.57.40.22:9901/tsfile/live/1055_1.m3u8$最优
 西藏卫视,http://36.32.174.67:60080/newlive/live/hls/48/live.m3u8$最优
-三沙卫视,https://migu.188766.xyz/要用订阅的地址/hn_ssws$最优
-三沙卫视,https://srs.ssws.tv/video/sstv-10/index.m3u8$次优
-兵团卫视,https://migu.188766.xyz/订阅后播放/兵团卫视$最优
-兵团卫视,http://183.11.239.36:808/hls/7/index.m3u8$次优
+三沙卫视,https://srs.ssws.tv/video/sstv-10/index.m3u8$最优
+兵团卫视,http://183.11.239.36:808/hls/7/index.m3u8$最优
 延边卫视,http://120.76.248.139/live/bfgd/4200000117.m3u8$最优
 延边卫视,https://srs.iyb983.cn/video/CYS/index.m3u8$次优
 安多卫视,https://liveout.xntv.tv/a65jur/96iln2.m3u8$最优
-农林卫视,https://migu.188766.xyz/订阅后播放/中国农林卫视$最优
-农林卫视,http://120.76.248.139/live/bfgd/4200000122.m3u8$次优
+农林卫视,http://120.76.248.139/live/bfgd/4200000122.m3u8$最优
 厦门卫视,http://183.11.239.36:808/hls/17/index.m3u8$最优
 厦门卫视,https://epg.pw/stream/aa65dd411565991ace44f9e5934bd018fdd52122e052d471a363b6ee839e1079.ctv$次优
-山东教育卫视,https://migu.188766.xyz/订阅后播放/山东教育$最优
-山东教育卫视,https://test1.live.sdetv.com.cn/live/dianshizhibo/playlist.m3u8$次优
-中国教育1台,https://migu.188766.xyz/订阅后播放/CETV1$最优
-中国教育2台,https://migu.188766.xyz/订阅后播放/CETV2$最优
-中国教育4台,https://migu.188766.xyz/订阅后播放/CETV4$最优
+山东教育卫视,https://test1.live.sdetv.com.cn/live/dianshizhibo/playlist.m3u8$最优
 
 数字频道,#genre#
 CHC动作电影,http://120.238.94.82:9901/tsfile/live/1052_1.m3u8$最优
 CHC家庭影院,http://61.162.52.6:8088/newlive/live/hls/60/live.m3u8$最优
-CHC影迷电影,https://migu.188766.xyz/订阅后播放/CHC影迷电影$最优
 重温经典,https://other.ottiptv.cc/cwjd.m3u8$最优
-凤凰卫视中文台,https://mgev.188766.xyz/必须用订阅地址/hk_fhzw$最优
-凤凰卫视中文台,https://mgev.188766.xyz/请使用订阅链接观看/fhzw$次优
-凤凰卫视中文台,http://iptv.cqshushu.com/stv.php?id=n496e6eec$三优
-凤凰卫视资讯台,https://mgev.188766.xyz/必须用订阅地址/hk_fhzx$最优
-凤凰卫视资讯台,https://mgev.188766.xyz/请使用订阅链接观看/fhzx$次优
-凤凰卫视资讯台,http://iptv.cqshushu.com/stv.php?id=n4966a4fb$三优
-凤凰卫视香港台,https://mgev.188766.xyz/请使用订阅链接观看/fhhk$最优
-凤凰卫视香港台,https://mgev.188766.xyz/必须用订阅地址/hk_fhhk$次优
-凤凰卫视香港台,http://iptv.cqshushu.com/stv.php?id=n49654430$三优
+凤凰卫视中文台,http://iptv.cqshushu.com/stv.php?id=n496e6eec$最优
+凤凰卫视资讯台,http://iptv.cqshushu.com/stv.php?id=n4966a4fb$最优
+凤凰卫视香港台,http://iptv.cqshushu.com/stv.php?id=n49654430$最优
 凤凰卫视电影台,http://iot-mqqt.111yao.cn:8080/live/diyp_fhdy.m3u8$最优
-纪实科教,https://migu.188766.xyz/订阅后播放/北京纪实科教$最优
-纪实科教,http://111.31.106.140/downflv.brtvcloud.com/8klive/8kliveok.m3u8$次优
-纪实科教,http://120.76.248.139/live/bfgd/4200000113.m3u8$三优
-五星体育,https://migu.188766.xyz/请使用订阅链接观看/五星体育$最优
-五星体育,https://other.ottiptv.cc/wxty.m3u8$次优
-快乐垂钓,https://migu.188766.xyz/订阅后播放/快乐垂钓$最优
+纪实科教,http://111.31.106.140/downflv.brtvcloud.com/8klive/8kliveok.m3u8$最优
+纪实科教,http://120.76.248.139/live/bfgd/4200000113.m3u8$次优
+五星体育,https://other.ottiptv.cc/wxty.m3u8$最优
+劲爆体育,http://8.218.84.3:8885/live/NlAhgdR475_p9pHeKE1G1rILoVl18Qqe36jUsiWqY5S26LQzNA-82o0LSiNo13OG0TjnHint92FaGOdQKWbGgIqMxjYHJKfKmz5-sDiesmTbAxE-GePCEhWtmcc34I1qpRF-7LjmYkvzb6Z031xjMJ9oqMvNwqQk-mVldD0G6Jso-oleU3z0vdP5jZk5oHwysitVUXSTbua0xNvBg3gp7kGtcMQsyg_Kg-hfWgLQr5eOhIy4zHbYYag-td6NcatUaPE49DgqVaZv5CGKGGVfVg.m3u8?u=1757123819$最优
 汽摩,http://120.76.248.139/live/bfgd/4200000168.m3u8$最优
-梨园频道,https://migu.188766.xyz/订阅后播放/梨园频道$最优
-梨园频道,https://dxtx.hntv.tv/live/lypd.m3u8?txSecret=10c771842a0be59e8b575d765173ec96&txTime=7B923E0A&wsSecret=41543190cdf375f1c73207222bb96542&wsTime=1769313549$次优
-文物宝库,https://migu.188766.xyz/订阅后播放/文物宝库$最优
-武术世界,https://migu.188766.xyz/订阅后播放/武术世界$最优
+梨园频道,https://dxtx.hntv.tv/live/lypd.m3u8?txSecret=10c771842a0be59e8b575d765173ec96&txTime=7B923E0A&wsSecret=41543190cdf375f1c73207222bb96542&wsTime=1769313549$最优
 生活时尚,http://8.218.84.3:8885/live/NlAhgdR475_p9pHeKE1G1rILoVl18Qqe36jUsiWqY5S26LQzNA-82o0LSiNo13OGv6JZQFaCoLKvAXAwqvyCMFxFz3MePmg1geZw74JSom3rn9fKh5ShDeNw3XMO0FTEzCpsHL8YjEsw2vYwlFudCDNPUm3lQvpd9ejH2L_6nSW4lsbr9JaMeZgL5zYqDLzQgO2MqKWkfpaxNPEEb7NiZlxF6wsiSEyD62S5y52WoJBVXAPKGfbgo92BM5R1V6XvUUyzdc85Ncy0hfc6l6IX2Q.m3u8?u=1757123819$最优
 都市剧场,https://satellitepull.cnr.cn/live/wxcqxwgb/playlist.m3u8$最优
 动漫秀场,http://8.218.84.3:8885/live/NlAhgdR475_p9pHeKE1G1rILoVl18Qqe36jUsiWqY5S26LQzNA-82o0LSiNo13OG65Z92UDWjXjUztx8_6jXB9paauw4zZI0JtsOY0HKF0lC8_JLi2pa2Ma0in_8jninRMK9S6ET_iXvB0tt02GhFMVjLlS7gQGcvNT4wy5TGJ-pnjzynVYXfleaV6B-PTVjzainvo1nrtsX0XQfIjD4Wu_342NdqjeGOY-wKDY51eFJJmRV1ksdNOtjFabg76ifiDVsRkidO7CjSocYw1pRIQ.m3u8?u=1757123819$最优
-新动漫,https://migu.188766.xyz/订阅后播放/新动漫$最优
-卡酷少儿,https://migu.188766.xyz/订阅后播放/北京卡酷少儿$最优
-卡酷少儿,http://58.57.40.22:9901/tsfile/live/1060_1.m3u8$次优
+卡酷少儿,http://58.57.40.22:9901/tsfile/live/1060_1.m3u8$最优
 金鹰卡通,http://58.57.40.22:9901/tsfile/live/1059_1.m3u8$最优
-优漫卡通,https://migu.188766.xyz/订阅后播放/优漫卡通频道$最优
-哈哈炫动,https://migu.188766.xyz/要用订阅的地址/hhxd$最优
-嘉佳卡通,https://migu.188766.xyz/订阅后播放/嘉佳卡通$最优
-嘉佳卡通,https://hk.188766.xyz/要用订阅的地址/gd_jjkt$次优
 音乐现场,https://satellitepull.cnr.cn/live/wx32nmgyygb/playlist.m3u8$最优
 
 湖北地方台,#genre#
 
 河南省级,#genre#
-河南卫视,https://migu.188766.xyz/订阅后播放/河南卫视高清$最优
-河南卫视,http://58.57.40.22:9901/tsfile/live/1048_1.m3u8$次优
-河南移动戏曲,https://migu.188766.xyz/订阅后播放/移动戏曲频道$最优
+河南卫视,http://58.57.40.22:9901/tsfile/live/1048_1.m3u8$最优
 
 河南市县,#genre#
 嵩县综合新闻,http://tvpull.dxhmt.cn:9081/tv/10325-1.m3u8?zhendhttp://wshls.live.migucloud.com/live/MZCYG799_C0/playlist.m3u8?zhend$最优
@@ -178,15 +133,9 @@ CGTN阿语,https://0472.org/hls/cgtna.m3u8$最优
 海峡卫视,http://8.138.7.223/tv/hxws.m3u8$最优
 北京卫视4K超,http://183.215.134.239:19901/tsfile/live/0122_1.m3u8?key=txiptv&playlive=1&authid=0$最优
 苏州4K,https://tylive.kan0512.com/norecord/csztv4k_4k.m3u8$最优
-科幻电影,https://yylunbo.ottiptv.cc/yy/1354930209$最优
-无线星河,https://cdn6.101.qzz.io/163189/tvbxh$最优
-东森电影,http://8.218.84.3:8885/live/LxWcScuQ6WphaELY4DhkKm8SIv7_ZgNIJtNvFurqphvyqxUIU84OjKVCwFxMq9iUHWMHCytb2VBItbRCwo0LykwxMoUHpMM_iP4852Z3fkyk8zLr_cHdtRNfGHcdy6CBHw-Gsla_fUeSZd5w4Wac0uJflUo3jPx-syZub8WoZXN8RiuExRGYFHshahLkcavYsTA0xVX1vv5-7vKJhs-n7zwpfIB1QcisXHnKxS0kd5Hze8xeJra-LdG_RCTOfdFcvx03TGauO_eJLMAVKIyz9Q.m3u8?u=1756878715$最优
-靖天戏剧,http://breezy-audrie-zspace-7524863c.koyeb.app/vipsir?token=leifeng&id=4gtv-4gtv058$最优
-靖天映画,http://breezy-audrie-zspace-7524863c.koyeb.app/vipsir?token=leifeng&id=4gtv-4gtv055$最优
+靖天映画,http://8.218.84.3:8885/live/NlAhgdR475_p9pHeKE1G1rILoVl18Qqe36jUsiWqY5S26LQzNA-82o0LSiNo13OGDXv1SfZ1MhhtLDvMdZtSidqO1YPWuu00ZaAz_b0Ihbb7Q51OkyNfs2D8NErQUB5-ZDHT6Zkkf4Hw28oxeuXPQzXaayE0zVcA9b4AcBPQgt0YsLk64wcv91Sa-Gk0nDTE_RP3qgYMpUNpTTTLiTGKOXSdye5XmlIjbipatd2QaTM1ylxLytNz7bMJPC2hDabAHqbtO9DZZ-4DuMvYfMNGbg.m3u8?u=1757123819$最优
 龙华电影,https://cdn8.163189.xyz/live/lhdy/stream.m3u8$最优
-龙华电影,http://iptv.cqshushu.com/stv.php?id=66c77727$次优
 AMC电影,http://61.221.215.25:8800/hls/43/index.m3u8$最优
-1930年代经典电影,https://yylunbo.ottiptv.cc/yy/1356363815$最优
 8090电影一哥,https://yylunbo.ottiptv.cc/yy/29197808$最优
 CHC电影,http://183.237.95.108:9901/tsfile/live/1008_1.m3u8?key=txiptv&playlive=0&authid=0$最优
 YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
@@ -197,25 +146,14 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 倩女幽魂妖魔道,http://jsmov2.a.yximgs.com/bs3/video-hls/5232901391302199073_hlsb.m3u8$最优
 倩女幽魂道道道,http://jsmov2.a.yximgs.com/bs3/video-hls/5216294367991385255_hlsb.m3u8$最优
 史诗级科幻电影阿凡达,https://yylunbo.ottiptv.cc/yy/1382735577$最优
-周星驰搞笑电影,https://yylunbo.ottiptv.cc/yy/38670875$最优
-哈尔滨影视,http://stream.hrbtv.net/yspd/sd/live.m3u8?zheild$最优
-国产动作电影,https://yylunbo.ottiptv.cc/yy/1382736858$最优
-国产大片电影,https://yylunbo.ottiptv.cc/yy/1354926655$最优
 国产电影就是闹着玩的,https://yylunbo.ottiptv.cc/yy/1354931503$最优
-国内玄幻电影林正英,https://yylunbo.ottiptv.cc/yy/1354932444$最优
-国内经典动作电影,https://yylunbo.ottiptv.cc/yy/1382851522$最优
 夏洛特烦恼国内电影喜剧,https://yylunbo.ottiptv.cc/yy/1354936201$最优
 大江大河2高分影视推荐,https://yylunbo.ottiptv.cc/yy/1382736797$最优
 大江大河高分影视推荐,https://yylunbo.ottiptv.cc/yy/1382736806$最优
-大进军全集红色系列电影,https://yylunbo.ottiptv.cc/yy/1382745083$最优
-天映经典,http://8.218.84.3:8885/live/LxWcScuQ6WphaELY4DhkKm8SIv7_ZgNIJtNvFurqphvyqxUIU84OjKVCwFxMq9iU2jH_Pl6VqGBxHA1IcsitfbKBR673Nu6KG0a27h2exhgUv2dW7fXLtqFZUFX8lctnx2REX0_9N_OE-shnVLOGaoO-0m2O1w2pp5b8sE82sD6hkqtKyg0TkrETYUXvMKUXU9iNc9OW1bvzOvWqkjmjiDdB0XQq2Ci1iWw5fVRe7CRLJb6cHe9q13apio-Vp0OMIvhoPz6HTwp5r3Ay9JXAsQ.m3u8?u=1756878715$最优
 奇幻冒险电影凯斯宾王子的魔法征途,https://yylunbo.ottiptv.cc/yy/1354926671$最优
 安徽影视,https://www.ahtv.cn/folder9000/folder20193?channelIndex=3$最优
 寒战,https://vip.ffzy-play6.com/20221019/157_bf0740ee/index.m3u8$最优
-岳云鹏宋小宝也来演电影了,https://yylunbo.ottiptv.cc/yy/1354926612$最优
 影视小艺,https://yylunbo.ottiptv.cc/yy/1382737886$最优
-怪医文三块影视剧,https://yylunbo.ottiptv.cc/yy/1354936154$最优
-恐怖电影,https://yylunbo.ottiptv.cc/yy/24066336$最优
 悬疑武侠电影九门,https://yylunbo.ottiptv.cc/yy/1382828768$最优
 我不是药神,https://vip.ffzy-play1.com/20221018/478_c3afed66/index.m3u8$最优
 拆弹专家1,https://vip.ffzy-online.com/20221015/719_80ff87c2/index.m3u8$最优
@@ -224,30 +162,23 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 梅艳芳主演喜剧电影,https://yylunbo.ottiptv.cc/yy/1382735627$最优
 浙江教科影视,https://ali-m-l.cztv.com/channels/lantian/channel004/1080p.m3u8$最优
 热血抗日电影,https://yylunbo.ottiptv.cc/yy/1382749907$最优
-燃燃影视,https://yylunbo.ottiptv.cc/yy/50298248$最优
-爆笑电影王牌大贱谍23,https://yylunbo.ottiptv.cc/yy/1382735556$最优
-珍珠港电影,https://yylunbo.ottiptv.cc/yy/1354936234$最优
+电影电影电影电影电影电影,https://yylunbo.ottiptv.cc/yy/1351496216$最优
 电影百团大战,https://yylunbo.ottiptv.cc/yy/1382736871$最优
 电影黑豹,https://yylunbo.ottiptv.cc/yy/1382736816$最优
 粟裕大将影视,https://yylunbo.ottiptv.cc/yy/1354926542$最优
 精彩动作电影,https://yylunbo.ottiptv.cc/yy/1382736823$最优
 精彩动作电影享不停,https://yylunbo.ottiptv.cc/yy/1382736809$最优
-纬来电影,http://8.218.84.3:8885/live/LxWcScuQ6WphaELY4DhkKm8SIv7_ZgNIJtNvFurqphvyqxUIU84OjKVCwFxMq9iUHWMHCytb2VBItbRCwo0LypZl51sr4vf3DGhZh3g1VUuuJLW7HVy471lEuDO-YH11Gl0MCkU9WPcq_d0755X83srub1-XHBE5VbZ_j0gx5SPYEI5SLQlIljrPPsTmql9SFpa6P4IOxG5COwYIkcjPYJSXp8eyJ2SYELzoWKcB5ls02Ml0ER2jnqJTLQouDP-GRTvxVnAv-md1jJ8pOhWFPA.m3u8?u=1756878715$最优
-纬来电影,http://iptv.cqshushu.com/stv.php?id=581b458b$次优
-经典港片电影,https://yylunbo.ottiptv.cc/yy/1461889059$最优
 经典电影,https://yylunbo.ottiptv.cc/yy/1414812324$最优
 让子弹飞,https://vip.ffzy-play7.com/20230116/11563_b9f44814/index.m3u8$最优
 超精彩系列动作电影,https://yylunbo.ottiptv.cc/yy/1382745096$最优
 辽宁影视剧,http://120.76.248.139/live/bfgd/4200000070.m3u8$最优
-远去的飞鹰影视剧,https://yylunbo.ottiptv.cc/yy/1354930912$最优
 野山鹰影视剧,https://yylunbo.ottiptv.cc/yy/1354932395$最优
 龙门飞甲,http://jsmov2.a.yximgs.com/bs3/video-hls/5203346449046555193_hlsb.m3u8$最优
 北京纪实科教8K,https://gdcucc.v1.mk/gdcucc/brtv8k.m3u8$最优
 南国都市,http://tencentplay.gztv.com/live/nanguodushi.m3u8?txSecret=140110ae3d6c936a77f94c4f4d85b0d3&txTime=18d57929bd4$最优
 南国都市,https://tencentplay.gztv.com/live/nanguodushi.m3u8?txSecret=550af55c0ea34ce492748481415b6dfa&txTime=1903e7b17de$次优
 新视觉,http://120.76.248.139/live/bfgd/4200000249.m3u8$最优
-广东少儿,https://hk.188766.xyz/要用订阅的地址/gd_gdse$最优
-广东少儿,http://gmxw.7766.org:808/hls/175/index.m3u8$次优
+广东少儿,http://gmxw.7766.org:808/hls/175/index.m3u8$最优
 浙江少儿,https://ali-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8$最优
 中华小当家,https://live.iill.top/huya/11342413$最优
 南京少儿,http://nklive.nbs.cn/hls/e0981f3f-1a20-4a59-b8d1-17feb83a4610/index.m3u8$最优
@@ -255,23 +186,26 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 福州少儿,http://live.zohi.tv/video/s10001-fztv-4/index.m3u8$最优
 韩国EBS少儿,http://ebsonairios.ebs.co.kr/ebsutablet500k/tablet500k/playlist.m3u8$最优
 黑龙江少儿,https://ls.qingting.fm/live/4972/64k.m3u8$最优
-广东珠江,https://hk.188766.xyz/要用订阅的地址/gd_gdzj$最优
-广东珠江,http://cdn2.132.us.kg/live/gdzj/stream.m3u8$次优
-广东珠江,http://iptv.cqshushu.com/stv.php?id=n6e47401d$三优
-大湾区卫视,https://migu.188766.xyz/订阅后播放/大湾区卫视$最优
-大湾区卫视,http://222.128.55.152:9080/live/dwq.m3u8$次优
-大湾区卫视,http://iptv.cqshushu.com/stv.php?id=684d0497$三优
-广东体育,https://hk.188766.xyz/要用订阅的地址/gd_gdty$最优
-广东体育,https://migu.188766.xyz/必须用订阅地址/hk_gdty$次优
-广东体育,http://cdn2.163189.xyz/live/gdty/stream.m3u8$三优
+吃鸡小表弟,https://goodiptv.club/douyu/9370197$最优
+淮秀帮官方,https://goodiptv.club/douyu/2519745$最优
+篮球过人技巧,https://goodiptv.club/douyu/9406897$最优
+老人家小熊猫君,https://goodiptv.club/douyu/753342$最优
+虾米大模王,https://goodiptv.club/douyu/102114$最优
+阿九筒的春天,https://goodiptv.club/douyu/3705679$最优
+广东珠江,http://cdn2.132.us.kg/live/gdzj/stream.m3u8$最优
+广东珠江,http://iptv.cqshushu.com/stv.php?id=n6e47401d$次优
+大湾区卫视,http://222.128.55.152:9080/live/dwq.m3u8$最优
+大湾区卫视,http://iptv.cqshushu.com/stv.php?id=684d0497$次优
+广东体育,http://cdn2.132.us.kg/live/gdty/stream.m3u8$最优
+广东体育,http://cdn2.163189.xyz/live/gdty/stream.m3u8$次优
+广东体育,http://iptv.cqshushu.com/stv.php?id=n2afd3461$三优
 七台河新闻综合,http://live.qthnews.org.cn:1935/live/live1/800k/tzwj_video.m3u8$最优
 七台河民生社教,http://live.qthnews.org.cn:1935/live/live2/800k/tzwj_video.m3u8$最优
 万州三峡移民,http://123.146.162.24:8017/c2F0hmi/1000/live.m3u8$最优
 万荣综合,http://60.222.246.220:19433/hls1.m3u8$最优
 三明新闻综合,http://ls.qingting.fm/live/4885.m3u8$最优
-上海新闻综合,https://migu.188766.xyz/订阅后播放/上海新闻综合$最优
-上海第一财经,https://migu.188766.xyz/要用订阅的地址/dycj$最优
-上海第一财经,https://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8$次优
+上海新闻综合,https://mgtv.ottiptv.cc/migu/651632657.m3u8?migutoken=348c9164063c2b1df215dd2fa7cd92cb119d8a335ae0edfb5d615a6c714e71b669eee2f5ff1730afa92af7ca41d0aa96e3a280d7e5f2069eb8a3b852f3ebc270147489d7c8bfb08a7c4b9c4d80$最优
+上海第一财经,https://satellitepull.cnr.cn/live/wx32dycjgb/playlist.m3u8$最优
 上虞文化影院,http://l.cztvcloud.com/channels/lantian/SXshangyu2/720p.m3u8$最优
 上虞新商都,http://l.cztvcloud.com/channels/lantian/SXshangyu3/720p.m3u8$最优
 上虞新闻综合,http://l.cztvcloud.com/channels/lantian/SXshangyu1/720p.m3u8?zzhed$最优
@@ -293,6 +227,7 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 井研综合,http://tvfile.jyrmt.cn/nmip-media/channellive/channel104452/playlist.m3u8$最优
 亳州农村,http://zbbf2.ahbztv.com/live/418.m3u8$最优
 什邡新闻,http://live.sfrmt.com:85/live/zhpd.m3u8?zsicd$最优
+仁寿综合,https://play.scrstv.com.cn/DT/live.m3u8?auth_key=60001724663204-0-0-c1cc4ded9841ac34f63cdbd3aec647ef$最优
 任丘综合,https://jwcdnqx.hebyun.com.cn/live/rqtv1/1500k/tzwj_video.m3u8$最优
 伊犁哈萨克,http://110.153.180.106:55555/out_3/index.m3u8$最优
 伊犁经济法制,http://110.153.180.106:55555/out_4/index.m3u8$最优
@@ -315,8 +250,7 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 内蒙经济,https://ls.qingting.fm/live/1885/64k.m3u8$最优
 内黄综合,http://tvpull.dxhmt.cn:9081/tv/10527-1.m3u8$最优
 剑阁综合,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel105549/playlist.m3u8$最优
-北京新闻,https://migu.188766.xyz/订阅后播放/北京新闻$最优
-北京新闻,https://satellitepull.cnr.cn/live/wxbjxwgb/playlist.m3u8$次优
+北京新闻,https://satellitepull.cnr.cn/live/wxbjxwgb/playlist.m3u8$最优
 北京科教,http://player.cntv.cn/standard/live_HLSDRM20180606.swf?ChannelID=btv3&P2PChannelID=pd://cctv_p2p_hdbtv3$最优
 北京青年,http://player.cntv.cn/standard/live_HLSDRM20180919.swf?v=180.171.5.8.9.6.3.9&ChannelID=btv8&videoTVChannel=btv8&P2PChannelID=pd://cctv_p2p_hdbtv8&tai=btv8&VideoName=btv8&channelID=btv8$最优
 北海新闻综合,https://live.gxrb.com.cn/gx/beihai/index.m3u8$最优
@@ -344,8 +278,7 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 唐河一套,http://tvpull.dxhmt.cn:9081/tv/11328-1.m3u8$最优
 嘉兴新闻综合,http://tvfile.jyrmt.cn:80/nmip-media/channellive/channel104452/playlist.m3u8$最优
 嘉峪关综合,http://play.kankanlive.com/live/1720583434627241.m3u8$最优
-四海钓鱼,https://migu.188766.xyz/订阅后播放/四海钓鱼$最优
-四海钓鱼,http://120.76.248.139/live/bfgd/4200000229.m3u8$次优
+四海钓鱼,http://120.76.248.139/live/bfgd/4200000229.m3u8$最优
 固始综合,http://tvpull.dxhmt.cn:9081/tv/11525-1.m3u8$最优
 大宁综合,http://live.daningtv.com/aac_dngb/playlist.m3u8$最优
 天祝综合,https://play.kankanlive.com/live/1656487214793905.m3u8$最优
@@ -369,10 +302,10 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 巩义新闻综合,http://tvpull.dxhmt.cn:9081/tv/10181-1.m3u8$最优
 平泉综合,https://jwcdnqx.hebyun.com.cn/live/pqzh/1500k/tzwj_video.m3u8$最优
 平湖新闻综合,http://l.cztvcloud.com/channels/lantian/SXpinghu1/720p.m3u8?zzhed$最优
+平湖新闻综合,http://play-sh13.quklive.com/live/1690167908295069.m3u8?auth_key=2027466211-f190eec410c24473825cbe1d8541e545-0-f21db57ae1b534802c1cf7be86cc3aef$次优
 平湖民生休闲,http://l.cztvcloud.com/channels/lantian/SXpinghu2/720p.m3u8$最优
 平遥新闻综合,https://tntgjhjb.live.sxmty.com/live/hls/3a4585ac11ec4e1bb07b419101b370c3/baf63e2b313440c2a25d7859f9b73b05-1.m3u8?zshanxd$最优
-广东民生,https://hk.188766.xyz/要用订阅的地址/gd_gdms$最优
-广东民生,http://183.11.239.36:808/hls/18/index.m3u8$次优
+广东民生,http://183.11.239.36:808/hls/18/index.m3u8$最优
 广元公共,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel101257/playlist.m3u8$最优
 广元综合,https://m3u8.channel.dzsm.com/nmip-media/channellive/channel100999/playlist.m3u8$最优
 广安公共,http://live1.gatv.com.cn:85/live/GGPD.m3u8$最优
@@ -433,6 +366,7 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 武乡新闻综合,http://uzoiczhh.live.sxmty.com/live/hls/0d41f1480c4042d49927858f01fde707/53130407737b417b9a6259b57246bae3.m3u8?zshanxd$最优
 武威新闻,https://play.kankanlive.com/live/1693539781636986.m3u8$最优
 武汉一台新闻综合,https://ls.qingting.fm/live/20198/64k.m3u8$最优
+武清综合,https://tvpull.smartwq.cn/wqlive/convergencemedia/playlist.m3u8?ztianjd$最优
 武进新闻,https://live.wjyanghu.com/live/CH1.m3u8$最优
 武进生活,http://live.wjyanghu.com/live/CH2.m3u8$最优
 永嘉新闻综合,http://l.cztvcloud.com/channels/lantian/SXyongjia1/720p.m3u8$最优
@@ -446,6 +380,8 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 沐川综合,http://file.ysxtv.cn/cms/videos/nmip-media/channellive/channel4/playlist.m3u8?zsicd$最优
 沭阳综合,https://shuyang-tv-hls.cm.jstv.com:443/shuyang-tv/shuyangzh.m3u8$最优
 河北农民,https://ls.qingting.fm/live/1650/64k.m3u8$最优
+河源公共,http://tmpstream.hyrtv.cn/hygg/sd/live.m3u8$最优
+河源综合,http://tmpstream.hyrtv.cn/xwzh/sd/live.m3u8$最优
 泌阳新闻综合,http://tvpull.dxhmt.cn:9081/tv/11726-1.m3u8$最优
 泗阳综合,http://3739115337.cloudvdn.com/a.m3u8?domain=siyang-tv-hls.cm.jstv.com&player=nwEAAKHdjSKP_58X&secondToken=secondToken%3A5FUijZmDyNMxtCDdne0YzSAwjuw&streamid=siyang-tv%3Asiyang-tv%2Fsiyangzh&v3=1$最优
 洞头综合,http://l.cztvcloud.com/channels/lantian/SXdongtou1/720p.m3u8$最优
@@ -473,21 +409,21 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 浙江钱江,http://ali-m-l.cztv.com/channels/lantian/channel02/1080p.m3u8$最优
 浙江钱江,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8$次优
 浙江钱江都市,https://ali-m-l.cztv.com/channels/lantian/channel002/1080p.m3u8$最优
-海南新闻,https://migu.188766.xyz/要用订阅的地址/hn_xwpd$最优
-海南新闻,http://ls.qingting.fm/live/1861.m3u8$次优
+海南新闻,http://ls.qingting.fm/live/1861.m3u8$最优
 海宁新闻综合,https://p2hs.vzan.com/slowlive/317913155078575177/live.m3u8$最优
 涟水电视台综合,https://lianshui-tv-hls.cm.jstv.com:443/lianshui-tv/lsxw.m3u8$最优
 淅川电视,http://live.dxhmt.cn:9081/tv/11326-1.m3u8$最优
+淮安新闻综合,https://mgtv.ottiptv.cc/migu/639731826.m3u8?migutoken=383a4690d772fe16ccec98f2da2e7e0c3b362ae2d9a0fa219e9a7bb76bb96d4ca6392f861efb0a61154552c563897f4660867745735f85e310ec9fb52d7fc55cd30da8d55169f8c415c5a69a15$最优
 淮阴综合,https://huaiyin-tv-replay.cm.jstv.com/huaiyin-tv/huaiyinf.m3u8$最优
 清河经济综艺,https://jwcdnqx.hebyun.com.cn/live/qinghe1/1500k/tzwj_video.m3u8$最优
 温县综合,http://tvpull.dxhmt.cn:9081/tv/10825-1.m3u8$最优
 湖州文化娱乐,http://hzcm-live.media.hugd.com/613c47f0ab0d4eaa98b21378d0db6ded/0051d31c9dd543a7825eea4e49675b2a.m3u8?auth_key=2277598059-0a5ebfa1c0dc4671b42a60810fc37039-0-fa625b7d1feab612062453c12e3c8887$最优
+滨海新闻综合,http://traffic.jbh.tjbh.com/live/bhtv10/playlist.m3u8$最优
 潢川综合,http://tvpull.dxhmt.cn:9081/tv/11526-1.m3u8$最优
 灌阳新闻综合,https://ls.qingting.fm/live/5043/64k.m3u8$最优
 灵宝新闻综合,http://tvpull.dxhmt.cn:9081/tv/11282-1.m3u8?zhend$最优
 玛纳斯综合,http://218.84.127.245:1026/hls/main1/playlist.m3u8?zxinjd,$最优
-环球旅游,https://migu.188766.xyz/订阅后播放/环球旅游$最优
-环球旅游,http://120.76.248.139/live/bfgd/4200000147.m3u8$次优
+环球旅游,http://120.76.248.139/live/bfgd/4200000147.m3u8$最优
 瑞丽综合,http://live.ynurl.com/video/s10021-rltv/index.m3u8?zyund$最优
 甘南县综合,https://stream.hrbtv.net/zxpd/sd/live.m3u8$最优
 甘肃经济,https://satellitepull.cnr.cn/live/wxgshhzs/playlist.m3u8$最优
@@ -561,18 +497,19 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 金川乡村,http://live.jinchuanrmt.com:90/live/jcxc.m3u8?zsicd$最优
 金川新闻综合,http://live.jinchuanrmt.com:90/live/zhxw.m3u8?zsicd$最优
 金平综合,http://live.ynurl.com/video/s10041-JPTV/index.m3u8?zyund$最优
-铜梁综合,http://183.64.174.171:40123/ch1.m3u8?zzhongqd$最优
 铜陵新闻综合,https://ls.qingting.fm/live/21303/64k.m3u8$最优
+镇江二套社会民生,http://zjtv-wshls.homecdn.com/live/2aa16.m3u8$最优
 镇江新闻综合,http://cm-wshls.homecdn.com/live/2aa50.m3u8$最优
 长子综合,https://www.wxhcgbds.com:8081/channelTv/WXTV_1.m3u8?zshanxd$最优
 长宁综合,http://cnpull.sccnfb.com:80/live/123456.m3u8$最优
-长影频道,http://tpc.x3322.net:9901/tsfile/live/1010_1.m3u8$最优
 长沙新闻综合,http://ls.qingting.fm/live/4877.m3u8$最优
 长白山电视台,http://stream8.jlntv.cn/cbstv/sd/live.m3u8?zjild$最优
 长白朝语,http://hplayer1.juyun.tv:80/camera/11344136.m3u8$最优
 陇川综合,http://live.ynurl.com/video/s10027-LCDST/index.m3u8?zyund$最优
+陇川综合,https://zb-live.ynurl.com/longchuan/58f88df3-605e-4c57-865c-8e8f85241ca1.m3u8$次优
 陕西公共,http://ls.qingting.fm/live/1222.m3u8$最优
 陕西新闻咨询,http://112.46.105.20:8009/hls/18/index.m3u8$最优
+陕西新闻资讯,https://mgtv.ottiptv.cc/migu/956909289.m3u8?migutoken=d4f3f5a8bf93821548ae70c6bd12860956574c27b3b1ef52c88c8e3d72259b1727a6dbf5d6a5de850afac4c7ffe2f2124bb3b558a89906cd32ccc8913f0f22dd74b7a84514b6015bff75903d9c$最优
 陕西秦腔,http://112.46.105.20:8009/hls/22/index.m3u8$最优
 陕西都市青春,http://112.46.105.20:8009/hls/19/index.m3u8$最优
 陕西银龄,http://112.46.105.20:8009/hls/20/index.m3u8$最优
@@ -584,6 +521,7 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 靖远综合,http://play.kankanlive.com/live/1692005762394912.m3u8$最优
 项城新闻,http://tvpull.dxhmt.cn:9081/tv/11681-1.m3u8$最优
 麻栗坡电视台,http://tvdrs.wsrtv.com.cn:8100/channellive/mlptv.flv?zyund$最优
+黄山新闻综合,http://hslive.hsnewsnet.com/lsdream/hve9Wjs/1000/live.m3u8$最优
 黎城综合,http://111.53.96.67:8081/live/1/index.m3u8$最优
 黑龙江新闻,https://ls.qingting.fm/live/4974/64k.m3u8$最优
 龙井综合,http://stream9.jlntv.cn:80/aac_longjinggb/playlist.m3u8$最优
@@ -622,23 +560,20 @@ YY果国际电影频道,https://yylunbo.ottiptv.cc/yy/1382627144$最优
 JJ斗地主,https://live.iill.top/douyin/685317364746$最优
 人生必看的科幻片,https://yylunbo.ottiptv.cc/yy/1382745114$最优
 哑巴竟然会说话,https://yylunbo.ottiptv.cc/yy/1354932427$最优
-大家都在看的电视剧,https://yylunbo.ottiptv.cc/yy/1354930964$最优
 新三国萌儿陪看,https://yylunbo.ottiptv.cc/yy/29216766$最优
 新白娘子4K观看,https://yylunbo.ottiptv.cc/yy/1508961855$最优
 朵宝陪你看狄仁杰,https://yylunbo.ottiptv.cc/yy/1353753252$最优
 来看修牛蹄,https://yylunbo.ottiptv.cc/yy/1382749887$最优
 欢乐一起看,https://yylunbo.ottiptv.cc/yy/1354930926$最优
 浪客剑心传说的完结篇,https://yylunbo.ottiptv.cc/yy/1382736820$最优
-清官难当看芝麻官如何破局,https://yylunbo.ottiptv.cc/yy/1382749909$最优
 漫画解说,https://yylunbo.ottiptv.cc/yy/1382735568$最优
-百家讲坛红楼梦篇,https://yylunbo.ottiptv.cc/yy/1382741639$最优
+百家讲坛之明太祖朱元璋,https://yylunbo.ottiptv.cc/yy/1354936149$最优
 返乡青年撞破村中隐秘村里有情况,https://yylunbo.ottiptv.cc/yy/1382749940$最优
 这部剧你居然没看过,https://yylunbo.ottiptv.cc/yy/1354932355$最优
 进来陪你看动漫,https://yylunbo.ottiptv.cc/yy/1352866135$最优
 进来陪你看电视,https://yylunbo.ottiptv.cc/yy/1353518742$最优
 钟馗传说,https://yylunbo.ottiptv.cc/yy/1382736839$最优
 陪你一起看好剧,https://yylunbo.ottiptv.cc/yy/1354932359$最优
-靓剑乐乐陪看,https://yylunbo.ottiptv.cc/yy/1352946111$最优
 1987年春晚,https://txmov2.a.kwimgs.com/bs3/video-hls/5195746663405928031_hlsb.m3u8$最优
 1988年春晚,https://txmov2.a.kwimgs.com/bs3/video-hls/5216575810935394655_hlsb.m3u8$最优
 1989年春晚,https://txmov2.a.kwimgs.com/bs3/video-hls/5194620763762726260_hlsb.m3u8$最优
@@ -735,85 +670,25 @@ JJ斗地主,https://live.iill.top/douyin/685317364746$最优
 黄花城水长城02,http://gctxyc.liveplay.myqcloud.com/gc/wgw02_1/index.m3u8$最优
 黄花城水长城03,https://gcalic.v.myalicdn.com/gc/wgw03_1/index.m3u8$最优
 黄龙,https://gcalic.v.myalicdn.com/gc/hlzycc_1/index.m3u8$最优
-2026-02-19 00:27:23,https://vd3.bdstatic.com/mda-rkaittm5s06vzzyq/sc/cae_h264/1762869883709304452/mda-rkaittm5s06vzzyq.mp4$最优
-CCTV-1 综合,https://migu.188766.xyz/订阅后播放/CCTV1$最优
-CCTV-1 综合,http://iptv.cqshushu.com/stv.php?id=65b36335$次优
-CCTV-2 财经,https://migu.188766.xyz/订阅后播放/CCTV2$最优
-CCTV-2 财经,http://iptv.cqshushu.com/stv.php?id=65b5b8f5$次优
-CCTV-3 综艺,https://migu.188766.xyz/订阅后播放/CCTV3$最优
-CCTV-3 综艺,http://iptv.cqshushu.com/stv.php?id=65b47a65$次优
-CCTV-4 中文国际,https://migu.188766.xyz/订阅后播放/CCTV4$最优
-CCTV-4 中文国际,http://iptv.cqshushu.com/stv.php?id=n4a5d2858$次优
-CCTV-5 体育,https://migu.188766.xyz/订阅后播放/CCTV5$最优
-CCTV-5 体育,http://iptv.cqshushu.com/stv.php?id=65af9be4$次优
-CCTV-5+ 体育赛事,https://migu.188766.xyz/订阅后播放/CCTV5p$最优
-CCTV-5+ 体育赛事,http://iptv.cqshushu.com/stv.php?id=nef8dac1$次优
-CCTV-6 电影,https://migu.188766.xyz/订阅后播放/CCTV6$最优
-CCTV-6 电影,http://iptv.cqshushu.com/stv.php?id=65b48560$次优
-CCTV-7 国防军事,https://migu.188766.xyz/订阅后播放/CCTV7$最优
-CCTV-7 国防军事,http://iptv.cqshushu.com/stv.php?id=n408755f8$次优
-CCTV-8 电视剧,https://migu.188766.xyz/订阅后播放/CCTV8$最优
-CCTV-8 电视剧,http://iptv.cqshushu.com/stv.php?id=50fdc854$次优
-CCTV-9 纪录,https://migu.188766.xyz/订阅后播放/CCTV9$最优
-CCTV-10 科教,https://migu.188766.xyz/订阅后播放/CCTV10$最优
-CCTV-10 科教,http://iptv.cqshushu.com/stv.php?id=4ee90a2f$次优
-CCTV-11 戏曲,https://migu.188766.xyz/订阅后播放/CCTV11$最优
-CCTV-11 戏曲,http://iptv.cqshushu.com/stv.php?id=4ee69fa9$次优
-CCTV-12 社会与法,https://migu.188766.xyz/订阅后播放/CCTV12$最优
-CCTV-12 社会与法,http://iptv.cqshushu.com/stv.php?id=3bac7728$次优
-CCTV-13 新闻,https://migu.188766.xyz/订阅后播放/CCTV13$最优
-CCTV-13 新闻,http://iptv.cqshushu.com/stv.php?id=4ee827ef$次优
-CCTV-14 少儿,https://migu.188766.xyz/订阅后播放/CCTV14$最优
-CCTV-14 少儿,http://iptv.cqshushu.com/stv.php?id=4ee72d51$次优
-CCTV-15 音乐,https://migu.188766.xyz/订阅后播放/CCTV15$最优
-CCTV-15 音乐,http://iptv.cqshushu.com/stv.php?id=4eeedf1f$次优
-CCTV-17 农业农村,https://migu.188766.xyz/订阅后播放/CCTV17$最优
-CCTV-17 农业农村,http://iptv.cqshushu.com/stv.php?id=322d3cd3$次优
-CCTV-4 中文国际 欧洲,https://migu.188766.xyz/订阅后播放/CCTV4欧洲$最优
-CCTV-4 中文国际 美洲,https://migu.188766.xyz/订阅后播放/CCTV4美洲$最优
+2026-02-19 12:26:02,https://vd3.bdstatic.com/mda-rkaittm5s06vzzyq/sc/cae_h264/1762869883709304452/mda-rkaittm5s06vzzyq.mp4$最优
+CCTV-1 综合,http://iptv.cqshushu.com/stv.php?id=65b36335$最优
+CCTV-2 财经,http://iptv.cqshushu.com/stv.php?id=65b5b8f5$最优
+CCTV-3 综艺,http://iptv.cqshushu.com/stv.php?id=65b47a65$最优
+CCTV-4 中文国际,http://iptv.cqshushu.com/stv.php?id=n4a5d2858$最优
+CCTV-5 体育,http://iptv.cqshushu.com/stv.php?id=65af9be4$最优
+CCTV-5+ 体育赛事,http://iptv.cqshushu.com/stv.php?id=nef8dac1$最优
+CCTV-6 电影,http://iptv.cqshushu.com/stv.php?id=65b48560$最优
+CCTV-7 国防军事,http://iptv.cqshushu.com/stv.php?id=n408755f8$最优
+CCTV-8 电视剧,http://iptv.cqshushu.com/stv.php?id=50fdc854$最优
+CCTV-10 科教,http://iptv.cqshushu.com/stv.php?id=4ee90a2f$最优
+CCTV-11 戏曲,http://iptv.cqshushu.com/stv.php?id=4ee69fa9$最优
+CCTV-12 社会与法,http://iptv.cqshushu.com/stv.php?id=3bac7728$最优
+CCTV-13 新闻,http://iptv.cqshushu.com/stv.php?id=4ee827ef$最优
+CCTV-14 少儿,http://iptv.cqshushu.com/stv.php?id=4ee72d51$最优
+CCTV-15 音乐,http://iptv.cqshushu.com/stv.php?id=4eeedf1f$最优
+CCTV-17 农业农村,http://iptv.cqshushu.com/stv.php?id=322d3cd3$最优
 河北4K,https://event.pull.hebtv.com:443/live/live101.m3u8$最优
-上视东方影视,https://migu.188766.xyz/订阅后播放/上视东方影视$最优
-新片放映厅,https://migu.188766.xyz/订阅后播放/新片放映厅$最优
-经典香港电影,https://migu.188766.xyz/订阅后播放/经典香港电影$最优
-抗战经典影片,https://migu.188766.xyz/订阅后播放/抗战经典影片$最优
-南方影视,https://migu.188766.xyz/订阅后播放/南方影视$最优
-和美乡途轮播台,https://migu.188766.xyz/订阅后播放/和美乡途轮播台$最优
-茶,https://migu.188766.xyz/订阅后播放/茶$最优
-赛事最经典,https://migu.188766.xyz/订阅后播放/赛事最经典$最优
-最强综艺趴,https://migu.188766.xyz/订阅后播放/最强综艺趴$最优
-经典动画大集合,https://migu.188766.xyz/订阅后播放/经典动画大集合$最优
-财富天下,https://migu.188766.xyz/订阅后播放/财富天下$最优
-体坛名栏汇,https://migu.188766.xyz/订阅后播放/体坛名栏汇$最优
-24小时城市联赛轮播台,https://migu.188766.xyz/订阅后播放/24小时城市联赛轮播台$最优
-老故事,https://migu.188766.xyz/订阅后播放/老故事$最优
-新动力量创一流,https://migu.188766.xyz/订阅后播放/新动力量创一流$最优
-北京影视,https://migu.188766.xyz/订阅后播放/北京影视$最优
-北京文艺,https://migu.188766.xyz/订阅后播放/北京文艺$最优
-北京财经,https://migu.188766.xyz/订阅后播放/北京财经$最优
-北京生活,https://migu.188766.xyz/订阅后播放/北京i生活$最优
-河南新闻,https://migu.188766.xyz/订阅后播放/新闻频道$最优
-河南都市,https://migu.188766.xyz/订阅后播放/都市频道$最优
-河南民生,https://migu.188766.xyz/订阅后播放/民生频道$最优
-河南电视剧,https://migu.188766.xyz/订阅后播放/电视剧频道$最优
-河南公共,https://migu.188766.xyz/订阅后播放/公共频道$最优
-河南法治,https://migu.188766.xyz/订阅后播放/法治频道$最优
-河南武术,https://migu.188766.xyz/订阅后播放/武术频道$最优
-河南象视界,https://migu.188766.xyz/订阅后播放/象视界$最优
-广东新闻,https://hk.188766.xyz/要用订阅的地址/gd_gdxw$最优
-广东影视,https://hk.188766.xyz/要用订阅的地址/gd_gdys$最优
-广东影视,http://iptv.cqshushu.com/stv.php?id=n2afb37ab$次优
-岭南戏曲,https://hk.188766.xyz/要用订阅的地址/gd_lnxq$最优
-广东移动,https://hk.188766.xyz/要用订阅的地址/gd_gdyd$最优
-现代教育,https://hk.188766.xyz/要用订阅的地址/gd_xdjy$最优
-广东生活频道,https://hk.188766.xyz/要用订阅的地址/gd_gdsh$最优
-上海新纪实,https://migu.188766.xyz/要用订阅的地址/jsrw$最优
-上海都市,https://migu.188766.xyz/要用订阅的地址/shds$最优
-上海魔都眼,https://migu.188766.xyz/要用订阅的地址/mdy$最优
-爱上海,https://migu.188766.xyz/要用订阅的地址/ash$最优
-海南文旅,https://migu.188766.xyz/要用订阅的地址/hn_wlpd$最优
-海南自贸,https://migu.188766.xyz/要用订阅的地址/hn_jjpd$最优
-海南公共,https://migu.188766.xyz/要用订阅的地址/hn_ggpd$最优
-海南少儿,https://migu.188766.xyz/要用订阅的地址/hn_sepd$最优
+广东影视,http://iptv.cqshushu.com/stv.php?id=n2afb37ab$最优
 内蒙古农牧,http://play1-qk.nmtv.cn:80/live/1686561299036179.m3u8$最优
 内蒙古新闻综合,http://play1-qk.nmtv.cn/live/1686560423879174.m3u8$最优
 内蒙古少儿,http://play1-qk.nmtv.cn/live/1686560464515368.m3u8$最优
@@ -821,57 +696,18 @@ CCTV-4 中文国际 美洲,https://migu.188766.xyz/订阅后播放/CCTV4美洲$�
 内蒙古经济生活,http://play1-qk.nmtv.cn/live/1686562470947181.m3u8$最优
 内蒙古蒙语卫视,http://play1-qk.nmtv.cn/live/1686560387346365.m3u8$最优
 内蒙古蒙语文化,http://play1-qk.nmtv.cn/live/1686561065304370.m3u8$最优
-翡翠台,https://mgev.188766.xyz/必须用订阅地址/hk_fct$最优
-翡翠台,http://iptv.cqshushu.com/stv.php?id=n7549189d$次优
-翡翠台4K,https://mgev.188766.xyz/必须用订阅地址/hk_fct4k$最优
-无线新闻,https://mgev.188766.xyz/必须用订阅地址/hk_wxxw$最优
-Now新闻台,https://mgev.188766.xyz/必须用订阅地址/hk_now$最优
-TVB Plus,https://mgev.188766.xyz/必须用订阅地址/hk_tvbp$最优
-明珠台,https://mgev.188766.xyz/必须用订阅地址/hk_mzt$最优
-明珠台,http://iptv.cqshushu.com/stv.php?id=n75ab7db0$次优
-TVB星河,https://mgev.188766.xyz/必须用订阅地址/hk_tvbxh$最优
-TVB功夫,https://mgev.188766.xyz/必须用订阅地址/hk_yzwx$最优
-八度空间,https://mgev.188766.xyz/必须用订阅地址/hk_8tv$最优
-CHU,https://mgev.188766.xyz/必须用订阅地址/hk_chu$最优
-CH5,https://mgev.188766.xyz/必须用订阅地址/hk_ch5$最优
-CH8,https://mgev.188766.xyz/必须用订阅地址/hk_ch8$最优
-澳视澳门,https://mgev.188766.xyz/必须用订阅地址/hk_asam$最优
-HOY77,https://mgev.188766.xyz/必须用订阅地址/hk_hoy$最优
-CCTV-9 记录,http://iptv.cqshushu.com/stv.php?id=65b89b46$最优
-CCTV-16 奥林匹克,http://iptv.cqshushu.com/stv.php?id=34622605$最优
-汕头综合,http://iptv.cqshushu.com/stv.php?id=n2483dc12$最优
-汕头经济,http://iptv.cqshushu.com/stv.php?id=7e5a2477$最优
-潮州民生,http://iptv.cqshushu.com/stv.php?id=n230c08ff$最优
-潮州综合,http://iptv.cqshushu.com/stv.php?id=n2309dfa1$最优
-TVBPLUS,http://iptv.cqshushu.com/stv.php?id=6429ae4c$最优
-ViuTV,http://iptv.cqshushu.com/stv.php?id=78204936$最优
-ViuTV 6,http://iptv.cqshushu.com/stv.php?id=necd2834$最优
-中天新闻,http://ali.hlspull.yximgs.com/live/tboxpropqqtvvqqqyquuqqfvbscvqdqtwqfsqqsqqqcvuyqemqeqtxw.flv$最优
-中天新闻,http://iptv.cqshushu.com/stv.php?id=41d8a09d$次优
-寰宇新闻台,http://iptv.cqshushu.com/stv.php?id=n43c34be8$最优
-东森新闻台,http://iptv.cqshushu.com/stv.php?id=n88aa83$最优
-东森电影台,http://iptv.cqshushu.com/stv.php?id=n5502f4$最优
-东森洋片台,http://iptv.cqshushu.com/stv.php?id=n7160b4$最优
-东森幼幼台,http://iptv.cqshushu.com/stv.php?id=naa6d18$最优
-TVBS HD,http://iptv.cqshushu.com/stv.php?id=154f9d73$最优
-TVBS 新闻台,http://iptv.cqshushu.com/stv.php?id=n69ccce92$最优
-龙华戏剧,http://iptv.cqshushu.com/stv.php?id=66c51883$最优
-龙华偶像,http://iptv.cqshushu.com/stv.php?id=66c2f564$最优
-龙华洋片,http://iptv.cqshushu.com/stv.php?id=66c68ce7$最优
-龙华经典,http://iptv.cqshushu.com/stv.php?id=66c892d4$最优
-好萊塢電影台,http://iptv.cqshushu.com/stv.php?id=n2db95de5$最优
-美亚电影,http://iptv.cqshushu.com/stv.php?id=5824ef5e$最优
-中天新聞台,http://iptv.cqshushu.com/stv.php?id=n3ee59a96$最优
-新唐人亞太台,http://iptv.cqshushu.com/stv.php?id=3c4b5186$最优
-東森新聞台,http://iptv.cqshushu.com/stv.php?id=2c4f5ac9$最优
-TVBS新聞,http://iptv.cqshushu.com/stv.php?id=7713a03d$最优
-Bloomberg TV,http://iptv.cqshushu.com/stv.php?id=n1794885d$最优
-TVBS,http://iptv.cqshushu.com/stv.php?id=n5bc98b1$最优
-2026-02-18 21:08:22,http://kakaxi.indevs.in/LOGO/Disclaimer.mp4$最优
+翡翠台,http://iptv.cqshushu.com/stv.php?id=n7549189d$最优
+明珠台,http://iptv.cqshushu.com/stv.php?id=n75ab7db0$最优
+2026-02-19 16:01:04,http://kakaxi.indevs.in/LOGO/Disclaimer.mp4$最优
 CGTN英语,https://0472.org/hls/cgtn.m3u8$最优
 CGTN记录,https://0472.org/hls/cgtnd.m3u8$最优
+哈尔滨生活,http://111.43.126.240:9003/hls/3/index.m3u8$最优
 TVB翡翠台,http://ali.hlspull.yximgs.com/live/tboxprofhwwqpthqyqtqqqxcxbfhqqfqvhdtqdvbtvqsqxqfsqqcvbctvbfc.flv$最优
+中天新闻,http://ali.hlspull.yximgs.com/live/tboxpropqqtvvqqqyquuqqfvbscvqdqtwqfsqqsqqqcvuyqemqeqtxw.flv$最优
+中天新闻,http://iptv.cqshushu.com/stv.php?id=41d8a09d$次优
 中天综合,http://ali.hlspull.yximgs.com/live/tboxpropqqtvvqqqyquuqqfvbscvqdqtwqfsqqsqqqcvuyqemqeqtxw.flv$最优
+TVBS,http://iptv.cqshushu.com/stv.php?id=n5bc98b1$最优
+TVBS,http://tianhewan.top/ZIPP.php?url=http://211.72.65.236:8575/.m3u8$次优
 三立新闻,http://ali.hlspull.yximgs.com/live/tboxprohmcyoywqqubqdfqfvchtquqxcqxvcbsqfsdxcbmqsllivexw.flv$最优
 台视新闻,http://ali.hlspull.yximgs.com/live/tboxproncqqtqqudtqlqcvbcvntqqqsfwetqfvcbcxvdqbqfflvcqtsxw.flv$最优
 东森新闻,http://ali.hlspull.yximgs.com/live/tboxpromhqttuqqcvbyquoqdqqeqywefqqfbxfbxxvbqqqlqqhqsxw.flv$最优
@@ -953,3 +789,31 @@ TVB翡翠台,http://ali.hlspull.yximgs.com/live/tboxprofhwwqpthqyqtqqqxcxbfhqqfq
 ❌河南焦作云台山红石峡,https://gcalic.v.myalicdn.com/gc/pts01_1/index.m3u8$最优
 ❌河南商丘永城市日月湖景区,https://gcalic.v.myalicdn.com/gc/hgsspzxdpb_1/index.m3u8$最优
 ❌河南鹤壁浚县古城景区北城门,https://gcalic.v.myalicdn.com/gc/hlzycc_1/index.m3u8$最优
+CCTV-9 记录,http://iptv.cqshushu.com/stv.php?id=65b89b46$最优
+CCTV-16 奥林匹克,http://iptv.cqshushu.com/stv.php?id=34622605$最优
+汕头综合,http://iptv.cqshushu.com/stv.php?id=n2483dc12$最优
+汕头经济,http://iptv.cqshushu.com/stv.php?id=7e5a2477$最优
+潮州民生,http://iptv.cqshushu.com/stv.php?id=n230c08ff$最优
+潮州综合,http://iptv.cqshushu.com/stv.php?id=n2309dfa1$最优
+TVBPLUS,http://iptv.cqshushu.com/stv.php?id=6429ae4c$最优
+ViuTV,http://iptv.cqshushu.com/stv.php?id=78204936$最优
+ViuTV 6,http://iptv.cqshushu.com/stv.php?id=necd2834$最优
+寰宇新闻台,http://iptv.cqshushu.com/stv.php?id=n43c34be8$最优
+东森新闻台,http://iptv.cqshushu.com/stv.php?id=n88aa83$最优
+东森电影台,http://iptv.cqshushu.com/stv.php?id=n5502f4$最优
+东森洋片台,http://iptv.cqshushu.com/stv.php?id=n7160b4$最优
+东森幼幼台,http://iptv.cqshushu.com/stv.php?id=naa6d18$最优
+TVBS HD,http://iptv.cqshushu.com/stv.php?id=154f9d73$最优
+TVBS 新闻台,http://iptv.cqshushu.com/stv.php?id=n69ccce92$最优
+纬来电影,http://iptv.cqshushu.com/stv.php?id=581b458b$最优
+龙华戏剧,http://iptv.cqshushu.com/stv.php?id=66c51883$最优
+龙华偶像,http://iptv.cqshushu.com/stv.php?id=66c2f564$最优
+龙华洋片,http://iptv.cqshushu.com/stv.php?id=66c68ce7$最优
+龙华经典,http://iptv.cqshushu.com/stv.php?id=66c892d4$最优
+好萊塢電影台,http://iptv.cqshushu.com/stv.php?id=n2db95de5$最优
+美亚电影,http://iptv.cqshushu.com/stv.php?id=5824ef5e$最优
+中天新聞台,http://iptv.cqshushu.com/stv.php?id=n3ee59a96$最优
+新唐人亞太台,http://iptv.cqshushu.com/stv.php?id=3c4b5186$最优
+東森新聞台,http://iptv.cqshushu.com/stv.php?id=2c4f5ac9$最优
+TVBS新聞,http://iptv.cqshushu.com/stv.php?id=7713a03d$最优
+Bloomberg TV,http://iptv.cqshushu.com/stv.php?id=n1794885d$最优
