@@ -1,5 +1,4 @@
 https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt
-https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u
 https://raw.githubusercontent.com/zhi35/iptv/refs/heads/master/iptv.m3u
 https://raw.githubusercontent.com/sln654360/sln654360.github.io/refs/heads/main/bingcha.m3u
 https://iptv.cqshushu.com/stv.php
