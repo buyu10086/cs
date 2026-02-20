@@ -42,8 +42,8 @@ TCP_CONNECTOR_CONFIG = {
 
 # 超时配置优化：区分连接/读取超时，减少无效等待
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=4,  # 连接超时（从5→3，无效链接快速失败）
-    sock_read=5,  # 读取超时（从6→5，平衡速度和成功率）
+    connect=5,  # 连接超时（从5→3，无效链接快速失败）
+    sock_read=6,  # 读取超时（从6→5，平衡速度和成功率）
     total=9,  # 总超时（从10→8，减少整体等待时间）
 )
 
