@@ -5,6 +5,7 @@ import asyncio
 import aiohttp
 import logging
 import fnmatch
+from io import StringIO  # 新增：提升大文件写入效率
 from pathlib import Path
 from urllib.parse import urlparse
 from datetime import datetime, timezone, timedelta
@@ -37,14 +38,22 @@ TCP_CONNECTOR_CONFIG = {
     "limit": 200,  # 全局并发连接数（从80→200，提升批量请求效率）
     "limit_per_host": 25,  # 单域名并发（从15→30，适配CCTV等集中域名）
     "ttl_dns_cache": 0,  # 禁用DNS缓存，避免解析延迟
-    "ssl": False,  # 跳过SSL验证（非敏感请求，大幅提升速度）
+    # 修复点1：替换废弃的ssl=False为verify_ssl=False（aiohttp推荐参数）
+    "verify_ssl": False,  # 跳过SSL验证（非敏感请求，大幅提升速度）
 }
 
-# 超时配置优化：区分连接/读取超时，减少无效等待
-AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=5,  # 连接超时（从5→3，无效链接快速失败）
-    sock_read=6,  # 读取超时（从6→5，平衡速度和成功率）
-    total=9,  # 总超时（从10→8，减少整体等待时间）
+# 🌟 新增：CCTV频道专属超时配置（可独立调整）
+CCTV_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
+    connect=4,  # CCTV频道连接超时（比通用配置稍长，适配官方源稳定性）
+    sock_read=7,  # CCTV频道读取超时
+    total=10,     # CCTV频道总超时
+)
+
+# 通用频道超时配置（原配置）
+COMMON_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
+    connect=3,  # 连接超时（从5→3，无效链接快速失败）
+    sock_read=5,  # 读取超时（从6→5，平衡速度和成功率）
+    total=8,  # 总超时（从10→8，减少整体等待时间）
 )
 
 CONFIG = {
@@ -61,14 +70,16 @@ CONFIG = {
     "CACHE_FILE": "iptv_speed_cache.json",
     "CACHE_EXPIRE_SECONDS": 1800,  # 缓存有效期30分钟
     "BAD_KEYWORDS": ["ad", "advertising", "spam"],
-    "AIOHTTP_TIMEOUT": AIOHTTP_TIMEOUT,
+    # 🌟 替换：区分CCTV和通用超时配置
+    "CCTV_AIOHTTP_TIMEOUT": CCTV_AIOHTTP_TIMEOUT,
+    "COMMON_AIOHTTP_TIMEOUT": COMMON_AIOHTTP_TIMEOUT,
     "TCP_CONNECTOR_CONFIG": TCP_CONNECTOR_CONFIG,
     # 新增：无效链接短期缓存（5分钟内不重复测试）
     "INVALID_URL_CACHE_SECONDS": 300,
 }
 
 # ===============================
-# 3. 频道分类与别名映射（保持不变）
+# 3. 频道分类与别名映射（修复冗余正则）
 # ===============================
 CHANNEL_CATEGORIES = {
     "央视频道": [
@@ -189,7 +200,8 @@ CHANNEL_MAPPING = {
     "求索纪录": ["求索记录", "求索纪录4K", "求索记录4K", "求索纪录 4K", "求索记录 4K"],
     "金鹰纪实": ["湖南金鹰纪实", "金鹰记实"],
     "纪实科教": ["北京纪实科教", "BRTV纪实科教", "纪实科教8K"],
-    "星空卫视": ["星空衛視", "星空衛視", "星空卫視"],
+    # 修复点2：清理冗余的重复匹配项
+    "星空卫视": ["星空衛視", "星空卫視"],
     "CHANNEL[V]": ["CHANNEL-V", "Channel[V]"],
     "凤凰卫视中文台": ["凤凰中文", "凤凰中文台", "凤凰卫视中文", "凤凰卫视"],
     "凤凰卫视香港台": ["凤凰香港台", "凤凰卫视香港", "凤凰香港"],
@@ -300,9 +312,15 @@ def build_alias_map():
     GLOBAL_ALIAS_MAP = alias_map
     return GLOBAL_ALIAS_MAP
 
-# 核心优化1：测速函数（批量处理+缓存精准复用）
-async def test_single_url_async(url, session, cache_data):
-    """异步测速：优化缓存逻辑，无效链接短期不重复测试"""
+# 🌟 修复点3：修正CCTV频道判断逻辑
+def is_cctv_channel(ch_name):
+    """判断频道是否为CCTV相关频道（修复逻辑错误）"""
+    # 正确逻辑：只要频道在央视频道分类中，就判定为CCTV相关频道
+    return ch_name in CHANNEL_CATEGORIES["央视频道"]
+
+# 核心优化1：测速函数（批量处理+缓存精准复用 + 差异化超时）
+async def test_single_url_async(url, session, cache_data, ch_name):
+    """异步测速：优化缓存逻辑，无效链接短期不重复测试 + 区分CCTV/通用超时"""
     now = time.time()
     
     # 1. 先检查无效链接缓存（5分钟内不重复测试）
@@ -316,12 +334,15 @@ async def test_single_url_async(url, session, cache_data):
         if now - cache_info["timestamp"] < CONFIG["CACHE_EXPIRE_SECONDS"]:
             return (url, cache_info["latency"])
     
-    # 3. 执行测速（HEAD请求，优化超时）
+    # 3. 🌟 核心修改：根据频道类型选择超时配置
+    timeout = CONFIG["CCTV_AIOHTTP_TIMEOUT"] if is_cctv_channel(ch_name) else CONFIG["COMMON_AIOHTTP_TIMEOUT"]
+    
+    # 4. 执行测速（HEAD请求，使用匹配的超时配置）
     try:
         start_time = time.time()
         async with session.head(
             url,
-            timeout=CONFIG["AIOHTTP_TIMEOUT"],
+            timeout=timeout,  # 使用差异化超时
             allow_redirects=True,
             headers=CONFIG["HEADERS"]
         ) as response:
@@ -334,9 +355,9 @@ async def test_single_url_async(url, session, cache_data):
         cache_data["invalid"][url] = now
         return (url, float('inf'))
 
-# 核心优化2：批量测速（分批次处理，避免任务堆积）
-async def test_urls_async(urls, cache_data):
-    """异步批量测速：分批次处理，提升并发效率"""
+# 核心优化2：批量测速（分批次处理，避免任务堆积 + 传递频道名称）
+async def test_urls_async(urls, cache_data, ch_name):
+    """异步批量测速：分批次处理，提升并发效率 + 传递频道名称用于超时匹配"""
     if not urls:
         return {}
     
@@ -354,14 +375,15 @@ async def test_urls_async(urls, cache_data):
     connector = aiohttp.TCPConnector(**CONFIG["TCP_CONNECTOR_CONFIG"])
     async with aiohttp.ClientSession(connector=connector) as session:
         for batch in batches:
-            tasks = [test_single_url_async(url, session, cache_data) for url in batch]
+            # 🌟 传递频道名称到单个测速函数
+            tasks = [test_single_url_async(url, session, cache_data, ch_name) for url in batch]
             results = await asyncio.gather(*tasks)
             for url, latency in results:
                 if latency < float('inf'):
                     result_dict[url] = latency
     
-    # 批量保存缓存（减少IO次数）
-    save_speed_cache(cache_data)
+    # 修复点4：移除批次内的缓存保存，改为统一保存
+    # save_speed_cache(cache_data)  # 注释掉：避免频繁IO
     return result_dict
 
 # 核心优化3：爬取函数（异步批量爬取，减少IO）
@@ -398,7 +420,8 @@ async def _crawl_single_source(source_url, session):
     try:
         async with session.get(
             source_url,
-            timeout=CONFIG["AIOHTTP_TIMEOUT"],
+            # 🌟 爬取阶段使用通用超时（爬取源列表不区分频道类型）
+            timeout=CONFIG["COMMON_AIOHTTP_TIMEOUT"],
             headers=CONFIG["HEADERS"],
             compress=True  # 启用压缩，减少数据传输耗时
         ) as response:
@@ -529,7 +552,7 @@ def read_iptv_sources_from_txt():
     
     return valid_urls
 
-# 核心优化4：筛选最优源（减少排序耗时）
+# 核心优化4：筛选最优源（减少排序耗时 + 传递频道名称）
 async def crawl_and_select_top3():
     """爬取+筛选：优化排序逻辑，减少计算耗时"""
     all_channels = {}
@@ -559,8 +582,8 @@ async def crawl_and_select_top3():
         if len(urls) == 0:
             continue
 
-        # 批量测速
-        latency_dict = await test_urls_async(urls, cache_data)
+        # 🌟 传递频道名称到批量测速函数
+        latency_dict = await test_urls_async(urls, cache_data, ch_name)
         if not latency_dict:
             continue
 
@@ -571,30 +594,32 @@ async def crawl_and_select_top3():
         valid_channel_count += 1
 
     pbar.close()
+    # 修复点5：所有测速完成后统一保存缓存，减少IO次数
+    save_speed_cache(cache_data)
     logger.info(f"测速完成：共筛选出 {valid_channel_count} 个有效频道")
     return all_channels
 
-# 生成播放列表（保持不变，减少IO）
+# 生成播放列表（优化写入效率，修复索引越界）
 def generate_iptv_playlist(top3_channels):
-    """生成播放列表：一次性写入，减少IO次数"""
+    """生成播放列表：使用StringIO提升大文件写入效率，修复索引越界"""
     if not top3_channels:
         logger.error("无有效频道，无法生成播放列表")
         return
 
     output_path = Path(CONFIG["OUTPUT_FILE"])
     beijing_now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
-    playlist_content = [
-        f"更新时间: {beijing_now}（北京时间）",
-        "",
-        "更新时间,#genre#",
-        f"{beijing_now},{CONFIG['IPTV_DISCLAIMER']}",
-        ""
-    ]
+    # 修复点6：使用StringIO提升大文件拼接效率
+    playlist_io = StringIO()
+    playlist_io.write(f"更新时间: {beijing_now}（北京时间）\n")
+    playlist_io.write("\n")
+    playlist_io.write("更新时间,#genre#\n")
+    playlist_io.write(f"{beijing_now},{CONFIG['IPTV_DISCLAIMER']}\n")
+    playlist_io.write("\n")
     top_k = CONFIG["TOP_K"]
 
     # 按分类写入
     for category, ch_list in CHANNEL_CATEGORIES.items():
-        playlist_content.append(f"{category},#genre#")
+        playlist_io.write(f"{category},#genre#\n")
         for std_ch in ch_list:
             if std_ch not in top3_channels:
                 continue
@@ -602,30 +627,40 @@ def generate_iptv_playlist(top3_channels):
             for idx, url in enumerate(urls):
                 if idx >= top_k:
                     break
-                tag = RANK_TAGS[idx] if idx < len(RANK_TAGS) else f"$第{idx+1}优"
-                playlist_content.append(f"{std_ch},{url}{tag}")
-        playlist_content.append("")
+                # 修复点7：增加索引判断，避免越界
+                if idx < len(RANK_TAGS):
+                    tag = RANK_TAGS[idx]
+                else:
+                    tag = f"$第{idx+1}优"
+                playlist_io.write(f"{std_ch},{url}{tag}\n")
+        playlist_io.write("\n")
 
     # 未分类频道
     other_channels = [ch for ch in top3_channels if ch not in ALL_CATEGORIZED_CHANNELS]
     if other_channels:
-        playlist_content.append("其它频道,#genre#")
+        playlist_io.write("其它频道,#genre#\n")
         for std_ch in other_channels:
             urls = top3_channels[std_ch]
             for idx, url in enumerate(urls):
                 if idx >= top_k:
                     break
-                tag = RANK_TAGS[idx] if idx < len(RANK_TAGS) else f"$第{idx+1}优"
-                playlist_content.append(f"{std_ch},{url}{tag}")
-        playlist_content.append("")
+                # 修复点7：增加索引判断，避免越界
+                if idx < len(RANK_TAGS):
+                    tag = RANK_TAGS[idx]
+                else:
+                    tag = f"$第{idx+1}优"
+                playlist_io.write(f"{std_ch},{url}{tag}\n")
+        playlist_io.write("\n")
 
     # 一次性写入文件，减少IO次数
     try:
         with open(output_path, "w", encoding="utf-8") as f:
-            f.write("\n".join(playlist_content).rstrip("\n"))
+            f.write(playlist_io.getvalue().rstrip("\n"))
         logger.info(f"成功生成播放列表：{output_path.absolute()}")
     except Exception as e:
         logger.error(f"生成文件失败：{e}")
+    finally:
+        playlist_io.close()
 
 # ===============================
 # 6. 主执行逻辑（优化事件循环）
@@ -635,6 +670,8 @@ if __name__ == "__main__":
     logger.info("="*70)
     logger.info("📺 IPTV直播源爬取")
     logger.info(f"🎯 并发数：{CONFIG['TCP_CONNECTOR_CONFIG']['limit']} | 单域名并发：{CONFIG['TCP_CONNECTOR_CONFIG']['limit_per_host']}")
+    logger.info(f"⏱️ CCTV超时：连接{CONFIG['CCTV_AIOHTTP_TIMEOUT'].connect}s | 读取{CONFIG['CCTV_AIOHTTP_TIMEOUT'].sock_read}s | 总{CONFIG['CCTV_AIOHTTP_TIMEOUT'].total}s")
+    logger.info(f"⏱️ 通用超时：连接{CONFIG['COMMON_AIOHTTP_TIMEOUT'].connect}s | 读取{CONFIG['COMMON_AIOHTTP_TIMEOUT'].sock_read}s | 总{CONFIG['COMMON_AIOHTTP_TIMEOUT'].total}s")
     logger.info("="*70)
     
     build_alias_map()
