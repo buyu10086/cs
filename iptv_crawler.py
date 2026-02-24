@@ -392,6 +392,7 @@ async def crawl_and_merge_sources():
     all_raw_channels = defaultdict(set)
     source_urls = read_iptv_sources_from_txt()
     if not source_urls:
+        logger.warning("未读取到任何IPTV源链接")
         return all_raw_channels
 
     # 优化TCP连接器，提升爬取速度
