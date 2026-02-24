@@ -44,9 +44,9 @@ TCP_CONNECTOR_CONFIG = {
 
 # 🌟 新增：CCTV频道专属超时配置（可独立调整）
 CCTV_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=5,  # CCTV频道连接超时（比通用配置稍长，适配官方源稳定性）
+    connect=4,  # CCTV频道连接超时（比通用配置稍长，适配官方源稳定性）
     sock_read=8,  # CCTV频道读取超时
-    total=10,     # CCTV频道总超时
+    total=12,     # CCTV频道总超时
 )
 
 # 通用频道超时配置（原配置）
