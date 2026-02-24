@@ -3,7 +3,7 @@ name: 名著目录更新
 on:
   schedule:
     # 北京时间 9 点、21 点 → UTC 时间为 1 点、13 点（UTC+8 时差）
-    - cron: "0 9,21 * * *"
+    - cron: "0 1,13 * * *"  # 修正：原cron写的是9,21（UTC），对应北京时间17,5点，此处修正为正确的UTC 1,13
   workflow_dispatch:  # 支持手动触发
 
 jobs:
@@ -16,6 +16,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 拉取完整历史，避免提交时冲突
+          # 新增：指定分支，确保拉取正确的main分支
+          ref: ${{ github.ref }}
 
       - name: 设置 Python 环境
         uses: actions/setup-python@v5
@@ -29,7 +31,7 @@ jobs:
           echo "=== 升级 pip 版本 ==="
           python -m pip install --upgrade pip
           echo "=== 安装 requirements.txt 中的依赖 ==="
-          pip install -r requirements.txt
+          pip install -r requirements.txt || echo "requirements.txt不存在，跳过该步骤"
           echo "=== 安装额外依赖（tqdm/aiohttp） ==="
           pip install tqdm aiohttp
         id: install_deps
@@ -47,6 +49,10 @@ jobs:
           # 配置 git 身份
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          
+          # 核心修复：拉取远程最新变更，解决fetch first冲突
+          echo "=== 拉取远程最新代码 ==="
+          git pull --rebase origin ${{ github.ref_name }} || git pull --allow-unrelated-histories origin ${{ github.ref_name }}
           
           # 添加目标文件
           git add iptv_playlist.m3u8
