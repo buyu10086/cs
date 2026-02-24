@@ -1,7 +1,7 @@
-更新时间: 2026-02-24 05:53:49（北京时间）
+更新时间: 2026-02-24 15:46:34（北京时间）
 
 更新时间,#genre#
-2026-02-24 05:53:49,个人自用，请勿用于商业用途
+2026-02-24 15:46:34,个人自用，请勿用于商业用途
 
 央视频道,#genre#
 
@@ -15,7 +15,6 @@
 广东卫视,http://iptv.cqshushu.com/stv.php?id=530cf649$最优
 广西卫视,http://iptv.cqshushu.com/stv.php?id=53ebe4ec$最优
 湖北卫视,http://iptv.cqshushu.com/stv.php?id=5a52f54d$最优
-四川卫视,http://iptv.cqshushu.com/stv.php?id=4fcef3ee$最优
 延边卫视,https://srs.iyb983.cn/video/CYS/index.m3u8$最优
 安多卫视,https://liveout.xntv.tv/a65jur/96iln2.m3u8$最优
 厦门卫视,https://epg.pw/stream/aa65dd411565991ace44f9e5934bd018fdd52122e052d471a363b6ee839e1079.ctv$最优
@@ -24,6 +23,7 @@
 CHC动作电影,http://120.238.94.82:9901/tsfile/live/1052_1.m3u8$最优
 CHC家庭影院,http://61.162.52.6:8088/newlive/live/hls/60/live.m3u8$最优
 重温经典,https://other.ottiptv.cc/cwjd.m3u8$最优
+凤凰卫视中文台,http://iptv.cqshushu.com/stv.php?id=n496e6eec$最优
 凤凰卫视资讯台,http://iptv.cqshushu.com/stv.php?id=n4966a4fb$最优
 凤凰卫视香港台,http://iptv.cqshushu.com/stv.php?id=n49654430$最优
 五星体育,https://other.ottiptv.cc/wxty.m3u8$最优
@@ -47,10 +47,10 @@ CGTN法语,https://0472.org/hls/cgtnf.m3u8$最优
 CGTN西语,https://0472.org/hls/cgtnx.m3u8$最优
 CGTN阿语,https://0472.org/hls/cgtna.m3u8$最优
 广东珠江,http://cdn2.132.us.kg/live/gdzj/stream.m3u8$最优
-广东珠江,http://iptv.cqshushu.com/stv.php?id=n6e47401d$次优
 大湾区卫视,http://222.128.55.152:9080/live/dwq.m3u8$最优
 大湾区卫视,http://iptv.cqshushu.com/stv.php?id=684d0497$次优
 广东体育,http://cdn2.132.us.kg/live/gdty/stream.m3u8$最优
+广东体育,http://iptv.cqshushu.com/stv.php?id=n2afd3461$次优
 七台河新闻综合,http://live.qthnews.org.cn:1935/live/live1/800k/tzwj_video.m3u8$最优
 七台河民生社教,http://live.qthnews.org.cn:1935/live/live2/800k/tzwj_video.m3u8$最优
 万州三峡移民,http://123.146.162.24:8017/c2F0hmi/1000/live.m3u8$最优
@@ -113,16 +113,14 @@ CGTN阿语,https://0472.org/hls/cgtna.m3u8$最优
 卫辉综合,http://tvpull.dxhmt.cn:9081/tv/10781-1.m3u8$最优
 双辽综合,http://stream3.jlntv.cn:80/aac_slgb/playlist.m3u8$最优
 叙州新闻综合,http://pili-live-hls.ybcxjd.com/jdh-live/2108111201035597.m3u8?zsicd$最优
-句容影院,http://jrlive.jrntv.com/live/_definst_/yingshis/chunklist_w1994429382.m3u8?zjiangsd$最优
-可克达拉综合,http://file.loulannews.cn/nmip-media/channellive/channel103824/playlist.m3u8$最优
 叶县,http://tvpull.dxhmt.cn:9081/tv/10422-1.m3u8$最优
 合肥新闻,http://112.27.235.94:8000/hls/18/index.m3u8$最优
 吉林乡村,https://satellitepull.cnr.cn/live/wxjlxcgb/playlist.m3u8$最优
-名山综合,https://m3u8channel-bx.yunxya.com/nmip-media/channellive/channel104666/playlist.m3u8$最优
 周口扶沟,http://live.dxhmt.cn:9081/tv/11621-1.m3u8$最优
 哈密一套,https://tvpull.hmgbtv.com/hmtv/channel9cd66b3d5d258b2b.flv$最优
-哈密三套,https://tvpull.hmgbtv.com/hmtv/channelfb0e5c505477aa44/playlist.m3u8$最优
 哈密二套,https://tvpull.hmgbtv.com/hmtv/channel108259412c6a6711/playlist.m3u8$最优
+哈尔滨娱乐,https://stream.hrbtv.net/ylpd/sd/live.m3u8$最优
+哈尔滨新闻综合,http://stream.hrbtv.net/xwzh/sd/live.m3u8?zheild$最优
 哈尔滨生活,http://111.43.126.240:9003/hls/3/index.m3u8$最优
 哈尔滨资讯,http://stream.hrbtv.net/zxpd/sd/live.m3u8$最优
 哈尔滨都市咨询,http://stream.hrbtv.net/zxpd/sd/live.m3u8?zheild$最优
@@ -197,7 +195,6 @@ CGTN阿语,https://0472.org/hls/cgtna.m3u8$最优
 无锡娱乐,https://stream.thmz.com/wxtv2/playlist.m3u8$最优
 无锡新闻综合,http://stream.thmz.com/wxtv1/playlist.m3u8$最优
 无锡生活,https://stream.thmz.com/wxtv4/playlist.m3u8$最优
-无锡经济,https://stream.thmz.com/wxtv5/playlist.m3u8$最优
 无锡都市资讯,http://stream.thmz.com/wxtv3/playlist.m3u8$最优
 旺苍新闻综合,http://channel.wcrmt.cn:80/nmip-media/channellive/channel105268/playlist.m3u8$最优
 昌黎综合,https://jwcdnqx.hebyun.com.cn/live/clzhpd/1500k/tzwj_video.m3u8$最优
@@ -274,10 +271,10 @@ CGTN阿语,https://0472.org/hls/cgtna.m3u8$最优
 玛纳斯综合,http://218.84.127.245:1026/hls/main1/playlist.m3u8?zxinjd,$最优
 环球旅游,http://120.76.248.139/live/bfgd/4200000147.m3u8$最优
 瑞丽综合,http://live.ynurl.com/video/s10021-rltv/index.m3u8?zyund$最优
+甘南县综合,https://stream.hrbtv.net/zxpd/sd/live.m3u8$最优
 甘肃经济,https://satellitepull.cnr.cn/live/wxgshhzs/playlist.m3u8$最优
 甘肃都市,https://satellitepull.cnr.cn/live/wxgsdstb/playlist.m3u8$最优
 生态环境,http://120.76.248.139/live/bfgd/4200000149.m3u8$最优
-番禺综合,http://video.epaper.pybtv.cn:8080/live/rtmp_live_demo.flv$最优
 登封综合,http://tvpull.dxhmt.cn:9081/tv/10185-1.m3u8$最优
 白银综合,https://play.kankanlive.com/live/1720408089419110.m3u8$最优
 盈江综合,http://live.ynurl.com/video/s10016-YJTV-2/index.m3u8?zyund$最优
@@ -358,6 +355,7 @@ CGTN阿语,https://0472.org/hls/cgtna.m3u8$最优
 陇川综合,https://zb-live.ynurl.com/longchuan/58f88df3-605e-4c57-865c-8e8f85241ca1.m3u8$最优
 陕西公共,http://ls.qingting.fm/live/1222.m3u8$最优
 陕西新闻咨询,http://112.46.105.20:8009/hls/18/index.m3u8$最优
+陕西新闻资讯,https://mgtv.ottiptv.cc/migu/956909289.m3u8?migutoken=d4f3f5a8bf93821548ae70c6bd12860956574c27b3b1ef52c88c8e3d72259b1727a6dbf5d6a5de850afac4c7ffe2f2124bb3b558a89906cd32ccc8913f0f22dd74b7a84514b6015bff75903d9c$最优
 陕西秦腔,http://112.46.105.20:8009/hls/22/index.m3u8$最优
 陕西都市青春,http://112.46.105.20:8009/hls/19/index.m3u8$最优
 陕西银龄,http://112.46.105.20:8009/hls/20/index.m3u8$最优
@@ -465,7 +463,7 @@ TVBS,http://iptv.cqshushu.com/stv.php?id=n5bc98b1$最优
 ❌河南焦作云台山红石峡,https://gcalic.v.myalicdn.com/gc/pts01_1/index.m3u8$最优
 ❌河南商丘永城市日月湖景区,https://gcalic.v.myalicdn.com/gc/hgsspzxdpb_1/index.m3u8$最优
 ❌河南鹤壁浚县古城景区北城门,https://gcalic.v.myalicdn.com/gc/hlzycc_1/index.m3u8$最优
-2026-02-24 03:48:16,http://kakaxi.indevs.in/LOGO/Disclaimer.mp4$最优
+CCTV-1 综合,http://iptv.cqshushu.com/stv.php?id=65b36335$最优
 CCTV-2 财经,http://iptv.cqshushu.com/stv.php?id=65b5b8f5$最优
 CCTV-3 综艺,http://iptv.cqshushu.com/stv.php?id=65b47a65$最优
 CCTV-4 中文国际,http://iptv.cqshushu.com/stv.php?id=n4a5d2858$最优
@@ -482,7 +480,6 @@ CCTV-14 少儿,http://iptv.cqshushu.com/stv.php?id=4ee72d51$最优
 CCTV-15 音乐,http://iptv.cqshushu.com/stv.php?id=4eeedf1f$最优
 CCTV-17 农业农村,http://iptv.cqshushu.com/stv.php?id=322d3cd3$最优
 苏州4K,https://tylive.kan0512.com/norecord/csztv4k_4k.m3u8$最优
-河北4K,https://event.pull.hebtv.com:443/live/live101.m3u8$最优
 广东影视,http://iptv.cqshushu.com/stv.php?id=n2afb37ab$最优
 浙江少儿,https://ali-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8$最优
 内蒙古农牧,http://play1-qk.nmtv.cn:80/live/1686561299036179.m3u8$最优
@@ -494,6 +491,7 @@ CCTV-17 农业农村,http://iptv.cqshushu.com/stv.php?id=322d3cd3$最优
 内蒙古蒙语文化,http://play1-qk.nmtv.cn/live/1686561065304370.m3u8$最优
 翡翠台,http://iptv.cqshushu.com/stv.php?id=n7549189d$最优
 明珠台,http://iptv.cqshushu.com/stv.php?id=n75ab7db0$最优
+2026-02-24 14:16:59,http://kakaxi.indevs.in/LOGO/Disclaimer.mp4$最优
 CCTV-9 记录,http://iptv.cqshushu.com/stv.php?id=65b89b46$最优
 CCTV-16 奥林匹克,http://iptv.cqshushu.com/stv.php?id=34622605$最优
 CGTN,http://iptv.cqshushu.com/stv.php?id=2708082f$最优
@@ -513,11 +511,8 @@ TVBS HD,http://iptv.cqshushu.com/stv.php?id=154f9d73$最优
 TVBS 新闻台,http://iptv.cqshushu.com/stv.php?id=n69ccce92$最优
 纬来体育,http://iptv.cqshushu.com/stv.php?id=5816d06e$最优
 纬来电影,http://iptv.cqshushu.com/stv.php?id=581b458b$最优
-龙华戏剧,http://iptv.cqshushu.com/stv.php?id=66c51883$最优
 龙华偶像,http://iptv.cqshushu.com/stv.php?id=66c2f564$最优
-龙华电影,http://iptv.cqshushu.com/stv.php?id=66c77727$最优
 龙华洋片,http://iptv.cqshushu.com/stv.php?id=66c68ce7$最优
-龙华经典,http://iptv.cqshushu.com/stv.php?id=66c892d4$最优
 好萊塢電影台,http://iptv.cqshushu.com/stv.php?id=n2db95de5$最优
 美亚电影,http://iptv.cqshushu.com/stv.php?id=5824ef5e$最优
 中天新聞台,http://iptv.cqshushu.com/stv.php?id=n3ee59a96$最优
