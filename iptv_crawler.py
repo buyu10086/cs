@@ -36,7 +36,7 @@ logger = init_logger()
 # 核心优化：TCP连接器参数调优，禁用DNS缓存，提升连接速度
 TCP_CONNECTOR_CONFIG = {
     "limit": 200,  # 全局并发连接数（从80→200，提升批量请求效率）
-    "limit_per_host": 25,  # 单域名并发（从15→30，适配CCTV等集中域名）
+    "limit_per_host": 30,  # 单域名并发（从15→30，适配CCTV等集中域名）
     "ttl_dns_cache": 0,  # 禁用DNS缓存，避免解析延迟
     # 修复点1：替换废弃的ssl=False为verify_ssl=False（aiohttp推荐参数）
     "verify_ssl": False,  # 跳过SSL验证（非敏感请求，大幅提升速度）
@@ -44,7 +44,7 @@ TCP_CONNECTOR_CONFIG = {
 
 # 🌟 新增：CCTV频道专属超时配置（可独立调整）
 CCTV_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=4,  # CCTV频道连接超时（比通用配置稍长，适配官方源稳定性）
+    connect=5,  # CCTV频道连接超时（比通用配置稍长，适配官方源稳定性）
     sock_read=8,  # CCTV频道读取超时
     total=10,     # CCTV频道总超时
 )
@@ -52,8 +52,8 @@ CCTV_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
 # 通用频道超时配置（原配置）
 COMMON_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
     connect=3,  # 连接超时（从5→3，无效链接快速失败）
-    sock_read=5,  # 读取超时（从6→5，平衡速度和成功率）
-    total=8,  # 总超时（从10→8，减少整体等待时间）
+    sock_read=4,  # 读取超时（从6→5，平衡速度和成功率）
+    total=6,  # 总超时（从10→8，减少整体等待时间）
 )
 
 CONFIG = {
