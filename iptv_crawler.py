@@ -1,12 +1,14 @@
 import re
 import requests
 import time
+import json
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse
 
 # ---------- 进度条（可选依赖）----------
 try:
@@ -320,46 +322,153 @@ def build_alias_map():
     GLOBAL_ALIAS_MAP = alias_map
     return GLOBAL_ALIAS_MAP
 
+# 新增：央视频API解析函数
+def parse_yangshipin_api(page_url):
+    """解析央视频的API，获取真实视频地址"""
+    try:
+        # 从URL中提取频道ID
+        match = re.search(r'/live/([a-zA-Z0-9]+)', page_url)
+        if not match:
+            # 备用：从页面标题提取频道名
+            session = get_requests_session()
+            response = session.get(page_url, timeout=10)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            title = soup.title.string if soup.title else ""
+            channel_id = normalize_cctv_name(title).replace("CCTV", "")
+            if not channel_id:
+                return []
+        
+        channel_id = match.group(1) if match else channel_id
+        # 央视频直播API地址（多备用方案）
+        api_urls = [
+            f"https://api.cntv.cn/live/getVideoInfo4CCTV?id={channel_id}&cb=callback",
+            f"https://hls.cctvccdn.cn/asp/hls/2000/0303000a/{channel_id}/main/0303000a_{channel_id}_index.m3u8"
+        ]
+        
+        video_urls = []
+        session = get_requests_session()
+        
+        for api_url in api_urls:
+            try:
+                response = session.get(api_url, timeout=10)
+                if response.status_code == 200:
+                    # 处理JSONP格式
+                    if 'callback' in api_url:
+                        json_str = re.sub(r'^callback\(|\)$', '', response.text.strip())
+                        data = json.loads(json_str)
+                        if data.get('code') == 200:
+                            for item in data.get('data', {}).get('item', []):
+                                if 'url' in item and item['url']:
+                                    video_urls.append(item['url'])
+                    # 直接是m3u8内容
+                    else:
+                        video_urls.append(api_url)
+                    if video_urls:
+                        break
+            except:
+                continue
+        
+        return list(set(video_urls))
+    except Exception as e:
+        print(f"⚠️  央视频API解析失败: {e}")
+        return []
+
+# 新增：zimtv iframe解析函数
+def parse_zimtv_iframe(page_url):
+    """解析zimtv的iframe，获取视频地址"""
+    try:
+        session = get_requests_session()
+        response = session.get(page_url, timeout=10)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # 查找所有iframe
+        iframes = soup.find_all('iframe')
+        video_urls = []
+        
+        for iframe in iframes:
+            iframe_src = iframe.get('src', '')
+            if not iframe_src:
+                continue
+                
+            # 处理相对路径
+            if not iframe_src.startswith('http'):
+                iframe_src = urljoin(page_url, iframe_src)
+            
+            # 访问iframe页面
+            try:
+                iframe_response = session.get(iframe_src, timeout=10)
+                iframe_soup = BeautifulSoup(iframe_response.text, 'html.parser')
+                
+                # 多种方式提取视频链接
+                # 1. 直接匹配script中的视频链接
+                scripts = iframe_soup.find_all('script')
+                for script in scripts:
+                    if script.string:
+                        matches = re.findall(r'["\'](https?://.*?\.m3u8.*?)["\']', script.string)
+                        matches += re.findall(r'src\s*=\s*["\'](https?://.*?\.m3u8.*?)["\']', script.string)
+                        for url in matches:
+                            video_urls.append(url)
+                
+                # 2. 查找video标签
+                videos = iframe_soup.find_all('video')
+                for video in videos:
+                    src = video.get('src', '')
+                    if src and ('.m3u8' in src or '.mp4' in src or '.flv' in src):
+                        video_urls.append(src)
+                
+            except:
+                continue
+        
+        # 直接从主页面查找视频链接
+        if not video_urls:
+            scripts = soup.find_all('script')
+            for script in scripts:
+                if script.string:
+                    matches = re.findall(r'["\'](https?://.*?\.m3u8.*?)["\']', script.string)
+                    video_urls.extend(matches)
+        
+        return list(set(video_urls))
+    except Exception as e:
+        print(f"⚠️  zimtv iframe解析失败: {e}")
+        return []
+
 def extract_video_urls_from_html(html_content, page_url):
     """
-    从HTML内容中提取视频链接
+    从HTML内容中提取视频链接（增强版）
     返回: 视频链接列表
     """
     video_urls = []
     
-    # 1. 直接匹配所有视频链接
-    matches = VIDEO_URL_REGEX.findall(html_content)
-    for url in matches:
-        # 清理链接中的多余引号和空格
-        clean_url = url.strip('"\' ').split('"')[0].split("'")[0]
-        if clean_url not in video_urls:
-            video_urls.append(clean_url)
-    
-    # 2. 针对央视频特殊处理（提取真实播放地址）
+    # 1. 针对央视频特殊处理（优先使用API解析）
     if CONFIG["WEB_CRAWL_CONFIG"]["YANGSHIPIN_DOMAIN"] in page_url:
-        # 央视频的视频链接通常在script标签中
-        script_pattern = re.compile(r'var\s+videoUrl\s*=\s*["\'](.*?)["\']', re.IGNORECASE)
-        script_matches = script_pattern.findall(html_content)
-        for url in script_matches:
-            if VIDEO_URL_REGEX.search(url) and url not in video_urls:
-                video_urls.append(url)
+        print("ℹ️  检测到央视频，使用API解析...")
+        api_urls = parse_yangshipin_api(page_url)
+        if api_urls:
+            video_urls.extend(api_urls)
     
-    # 3. 针对zimtv特殊处理
-    if CONFIG["WEB_CRAWL_CONFIG"]["ZIMTV_DOMAIN"] in page_url:
-        # 查找iframe中的视频链接
-        soup = BeautifulSoup(html_content, 'html.parser')
-        iframes = soup.find_all('iframe')
-        for iframe in iframes:
-            iframe_src = iframe.get('src', '')
-            if iframe_src and VIDEO_URL_REGEX.search(iframe_src):
-                if iframe_src not in video_urls:
-                    video_urls.append(iframe_src)
+    # 2. 针对zimtv特殊处理（解析iframe）
+    elif CONFIG["WEB_CRAWL_CONFIG"]["ZIMTV_DOMAIN"] in page_url:
+        print("ℹ️  检测到zimtv，解析iframe...")
+        iframe_urls = parse_zimtv_iframe(page_url)
+        if iframe_urls:
+            video_urls.extend(iframe_urls)
     
+    # 3. 通用兜底：直接匹配所有视频链接
+    if not video_urls:
+        print("ℹ️  使用通用正则匹配...")
+        matches = VIDEO_URL_REGEX.findall(html_content)
+        for url in matches:
+            clean_url = url.strip('"\' ').split('"')[0].split("'")[0]
+            if clean_url not in video_urls and clean_url:
+                video_urls.append(clean_url)
+    
+    # 去重并过滤空链接
+    video_urls = [url for url in list(set(video_urls)) if url]
     return video_urls
 
 def crawl_web_video_links(page_url):
     """
-    爬取指定网页的视频链接
+    爬取指定网页的视频链接（增强版）
     返回: (频道名, 视频链接列表)
     """
     try:
@@ -378,9 +487,16 @@ def crawl_web_video_links(page_url):
         # 提取视频链接
         video_urls = extract_video_urls_from_html(response.text, page_url)
         
-        print(f"✅ 爬取网页 {page_url} 成功：")
-        print(f"   - 识别频道：{channel_name}")
-        print(f"   - 提取到 {len(video_urls)} 个视频链接")
+        if video_urls:
+            print(f"✅ 爬取网页 {page_url} 成功：")
+            print(f"   - 识别频道：{channel_name}")
+            print(f"   - 提取到 {len(video_urls)} 个视频链接")
+            # 打印提取到的链接（便于调试）
+            for i, url in enumerate(video_urls, 1):
+                print(f"     {i}. {url}")
+        else:
+            print(f"⚠️  爬取网页 {page_url} 完成，但未找到视频链接")
+            print(f"   - 识别频道：{channel_name}")
         
         return (channel_name, video_urls)
     
@@ -459,9 +575,12 @@ def read_iptv_sources_from_txt():
             # 判断是否为网页链接（非m3u8/txt的http链接）
             if line.startswith(("http://", "https://")):
                 # 区分普通IPTV源和网页源
-                if any(domain in line for domain in [CONFIG["WEB_CRAWL_CONFIG"]["YANGSHIPIN_DOMAIN"], 
-                                                    CONFIG["WEB_CRAWL_CONFIG"]["ZIMTV_DOMAIN"]]) or \
-                   not (line.endswith((".m3u8", ".txt", ".m3u")) or CONFIG["ZUBO_SOURCE_MARKER"] in line):
+                is_web_page = any(domain in line for domain in [
+                    CONFIG["WEB_CRAWL_CONFIG"]["YANGSHIPIN_DOMAIN"], 
+                    CONFIG["WEB_CRAWL_CONFIG"]["ZIMTV_DOMAIN"]
+                ]) or not (line.endswith((".m3u8", ".txt", ".m3u")) or CONFIG["ZUBO_SOURCE_MARKER"] in line)
+                
+                if is_web_page:
                     web_page_urls.add(line)
                 else:
                     valid_urls_set.add(line)
@@ -722,13 +841,24 @@ if __name__ == "__main__":
     print(f"🌐 新增支持：央视频({CONFIG['WEB_CRAWL_CONFIG']['YANGSHIPIN_DOMAIN']})、zimtv({CONFIG['WEB_CRAWL_CONFIG']['ZIMTV_DOMAIN']}) 网页爬取")
     print("=" * 70)
 
-    # 安装依赖提示（新增BeautifulSoup）
+    # 安装依赖提示
+    required_packages = []
     try:
         from bs4 import BeautifulSoup
     except ImportError:
-        print("⚠️  未安装BeautifulSoup4，网页爬取功能需要该依赖！")
-        print("   请运行：pip install beautifulsoup4")
-        exit(1)
+        required_packages.append("beautifulsoup4")
+    
+    if required_packages:
+        print("⚠️  缺少必要依赖，正在提示安装命令：")
+        print(f"   pip install {' '.join(required_packages)}")
+        import sys
+        import subprocess
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install"] + required_packages)
+            print("✅ 依赖安装成功！")
+        except:
+            print("❌ 依赖安装失败，请手动运行上述命令")
+            exit(1)
 
     # 创建全局 Session（用于爬取源，测速时每个线程会创建独立 Session）
     session = get_requests_session()
