@@ -84,7 +84,7 @@ CONFIG = {
     "IPTV_DISCLAIMER": "个人自用，请勿用于商业用途",
     "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",
     "CACHE_FILE": "iptv_speed_cache.json",
-    "CACHE_EXPIRE_SECONDS": 1800,
+    "CACHE_EXPIRE_SECONDS": 600,
     "BAD_KEYWORDS": ["ad", "advertising", "spam", "弹窗", "广告", "推广"],
     "CCTV_AIOHTTP_TIMEOUT": CCTV_AIOHTTP_TIMEOUT,
     "COMMON_AIOHTTP_TIMEOUT": COMMON_AIOHTTP_TIMEOUT,
