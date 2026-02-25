@@ -29,7 +29,7 @@ http://69.30.246.194/live/cctv10.m3u8
 http://69.30.246.194/live/cctv12.m3u8
 http://69.30.246.194/live/cctv13.m3u8
 http://69.30.246.194/live/cctv14.m3u8
-
+http://69.30.246.194/live/cctv15.m3u8
 
 
 
