@@ -1,14 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-IPTV 直播源爬取与优选工具（优化版）
-=====================================
-优化特性：
-1. 增强CCTV识别：扩充别名、支持模糊匹配、忽略空格/符号/大小写
-2. 其他原有优化特性保持不变
-"""
-
 import re
 import requests
 import time
@@ -40,8 +29,8 @@ CONFIG = {
         "Connection": "close"                        # 关闭长连接，减少资源占用
     },
     # 全局测速配置
-    "TEST_TIMEOUT": 3,                                # 单链接超时时间（秒），网络差可改为8
-    "MAX_WORKERS": 40,                                # 并发线程数，带宽高可设30-50
+    "TEST_TIMEOUT": 2,                                # 单链接超时时间（秒），网络差可改为8
+    "MAX_WORKERS": 50,                                # 并发线程数，带宽高可设30-50
     "RETRY_TIMES": 1,                                 # 网络请求重试次数
     "TOP_K": 3,                                       # 每个频道保留前三最优源
     "IPTV_DISCLAIMER": "个人自用，请勿用于商业用途",
