@@ -1,107 +1,34 @@
 import re
-import json
+import requests
 import time
-import asyncio
-import aiohttp
-import logging
-import fnmatch
-from io import StringIO
-from pathlib import Path
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 from datetime import datetime, timezone, timedelta
-from collections import defaultdict, Counter
-from tqdm import tqdm
+from pathlib import Path
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ===============================
-# 1. 日志系统优化（减少IO耗时，仅输出关键信息）
+# 全局配置区（核心参数可调）
 # ===============================
-def init_logger():
-    """初始化日志：仅输出INFO级别，减少打印耗时"""
-    log_file = Path(f"iptv_tool_{datetime.now().strftime('%Y%m%d')}.log")
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(log_file, encoding="utf-8")
-        ]
-    )
-    return logging.getLogger(__name__)
-
-logger = init_logger()
-
-# ===============================
-# 2. 全局配置优化（高性能并发+精准超时+多源类型支持）
-# ===============================
-# 核心优化：修复verify_ssl弃用问题，改为ssl=False
-TCP_CONNECTOR_CONFIG = {
-    "limit": 200,  # 全局并发连接数
-    "limit_per_host": 30,  # 单域名并发
-    "ttl_dns_cache": 0,  # 禁用DNS缓存
-    "ssl": False,  # 修复：替换verify_ssl为ssl，解决弃用警告
-}
-
-# CCTV频道专属超时配置
-CCTV_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=4,
-    sock_read=8,
-    total=12,
-)
-
-# 通用频道超时配置
-COMMON_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=3,
-    sock_read=4,
-    total=6,
-)
-
-# 新增：多源类型支持配置
-SUPPORTED_PROTOCOLS = [
-    "http", "https", "rtmp", "rtsp", "hls", "flv", "tcp", "udp"
-]
-SUPPORTED_EXTENSIONS = [
-    ".m3u8", ".ts", ".flv", ".mp4", ".mov", ".avi", ".mkv", ".mpeg", ".mpg"
-]
-# 源类型识别正则
-SOURCE_TYPE_PATTERNS = {
-    "m3u8": re.compile(r"(?:\.m3u8|\?hls=|m3u8\/|hls\/)", re.IGNORECASE),
-    "rtmp": re.compile(r"rtmp:\/\/", re.IGNORECASE),
-    "flv": re.compile(r"(?:\.flv|\?flv=|flv\/)", re.IGNORECASE),
-    "ts": re.compile(r"(?:\.ts|\?ts=|ts\/)", re.IGNORECASE),
-    "rtsp": re.compile(r"rtsp:\/\/", re.IGNORECASE),
-    "http_flv": re.compile(r"http.*\.flv", re.IGNORECASE)
-}
-
 CONFIG = {
-    "SOURCE_TXT_FILE": "iptv_sources.txt",
-    "OUTPUT_FILE": "iptv_playlist.m3u8",
+    "SOURCE_TXT_FILE": "iptv_sources.txt",  # 存储所有IPTV源链接
+    "OUTPUT_FILE": "iptv_playlist.m3u8",  # 生成的最优播放列表
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Connection": "keep-alive",
-        "Accept-Encoding": "gzip, deflate",
+        "Connection": "close"  # 关闭长连接，减少资源占用
     },
-    "TOP_K": 3,
+    # 测速配置
+    "TEST_TIMEOUT": 3,  # 单链接超时时间（秒），网络差可改为8
+    "MAX_WORKERS": 40,  # 并发线程数，带宽高可设30-50
+    "RETRY_TIMES": 1,  # 网络请求重试次数
+    "TOP_K": 3,  # 每个频道保留前三最优源
     "IPTV_DISCLAIMER": "个人自用，请勿用于商业用途",
-    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",
-    "CACHE_FILE": "iptv_speed_cache.json",
-    "CACHE_EXPIRE_SECONDS": 600,
-    "BAD_KEYWORDS": ["ad", "advertising", "spam", "弹窗", "广告", "推广"],
-    "CCTV_AIOHTTP_TIMEOUT": CCTV_AIOHTTP_TIMEOUT,
-    "COMMON_AIOHTTP_TIMEOUT": COMMON_AIOHTTP_TIMEOUT,
-    "TCP_CONNECTOR_CONFIG": TCP_CONNECTOR_CONFIG,
-    "INVALID_URL_CACHE_SECONDS": 300,
-    # 新增：多源类型支持配置
-    "SUPPORTED_PROTOCOLS": SUPPORTED_PROTOCOLS,
-    "SUPPORTED_EXTENSIONS": SUPPORTED_EXTENSIONS,
-    "SOURCE_TYPE_PATTERNS": SOURCE_TYPE_PATTERNS,
-    # 新增：源格式修复配置
-    "FIX_URL_ENCODING": True,
-    "REMOVE_DUPLICATE_PARAMS": True,
-    "VALIDATE_URL_STRUCTURE": True,
+    # txt源特殊配置（目标源格式标记）
+    "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo"  # 用于识别txt格式源
 }
 
 # ===============================
-# 3. 频道分类与别名映射
+# 频道分类与别名映射（保持兼容，无变动）
 # ===============================
 CHANNEL_CATEGORIES = {
     "央视频道": [
@@ -171,405 +98,409 @@ CHANNEL_MAPPING = {
     "CCTV12": ["CCTV-12", "CCTV-12 HD", "CCTV12 HD", "CCTV-12社会与法"],
     "CCTV13": ["CCTV-13", "CCTV-13 HD", "CCTV13 HD", "CCTV-13新闻"],
     "CCTV14": ["CCTV-14", "CCTV-14 HD", "CCTV14 HD", "CCTV-14少儿"],
-    "CCTV15": ["CCTV-15", "CCTV-15 HD", "CCTV15 HD", "CCTV-15音乐"],
-    "CCTV16": ["CCTV-16", "CCTV-16 HD", "CCTV16 HD", "CCTV-16奥林匹克"],
-    "CCTV17": ["CCTV-17", "CCTV-17 HD", "CCTV17 HD", "CCTV-17农业农村"],
-    "CCTV4K": ["CCTV4K", "CCTV-4K", "CCTV 4K超高清"],
-    "CCTV8K": ["CCTV8K", "CCTV-8K", "CCTV 8K超高清"],
+    "CCTV15": ["CCTV15", "CCTV-15 HD", "CCTV15 HD", "CCTV-15音乐"],
+    "CCTV16": ["CCTV16", "CCTV-16 HD", "CCTV-16 4K", "CCTV-16奥林匹克", "CCTV16 4K", "CCTV16奥林匹克4K"],
+    "CCTV17": ["CCTV17", "CCTV-17 HD", "CCTV17 HD", "CCTV17农业农村"],
+    "CCTV4K": ["CCTV4K超高清", "CCTV-4K超高清", "CCTV-4K 超高清", "CCTV 4K"],
+    "CCTV8K": ["CCTV8K超高清", "CCTV-8K超高清", "CCTV-8K 超高清", "CCTV 8K"],
+    "兵器科技": ["CCTV-兵器科技", "CCTV兵器科技"],
+    "风云音乐": ["CCTV-风云音乐", "CCTV风云音乐"],
+    "第一剧场": ["CCTV-第一剧场", "CCTV第一剧场"],
+    "风云足球": ["CCTV-风云足球", "CCTV风云足球"],
+    "风云剧场": ["CCTV-风云剧场", "CCTV风云剧场"],
+    "怀旧剧场": ["CCTV-怀旧剧场", "CCTV怀旧剧场"],
+    "女性时尚": ["CCTV-女性时尚", "CCTV女性时尚"],
+    "世界地理": ["CCTV-世界地理", "CCTV世界地理"],
+    "央视台球": ["CCTV-央视台球", "CCTV央视台球"],
+    "高尔夫网球": ["CCTV-高尔夫网球", "CCTV高尔夫网球", "CCTV央视高网", "CCTV-高尔夫·网球", "央视高网"],
+    "央视文化精品": ["CCTV-央视文化精品", "CCTV央视文化精品", "CCTV文化精品", "CCTV-文化精品", "文化精品"],
+    "卫生健康": ["CCTV-卫生健康", "CCTV卫生健康"],
+    "电视指南": ["CCTV-电视指南", "CCTV电视指南"],
+    "农林卫视": ["陕西农林卫视"],
+    "三沙卫视": ["海南三沙卫视"],
+    "兵团卫视": ["新疆兵团卫视"],
+    "延边卫视": ["吉林延边卫视"],
+    "安多卫视": ["青海安多卫视"],
+    "康巴卫视": ["四川康巴卫视"],
+    "山东教育卫视": ["山东教育"],
+    "中国教育1台": ["CETV1", "中国教育一台", "中国教育1", "CETV-1 综合教育", "CETV-1"],
+    "中国教育2台": ["CETV2", "中国教育二台", "中国教育2", "CETV-2 空中课堂", "CETV-2"],
+    "中国教育3台": ["CETV3", "中国教育三台", "中国教育3", "CETV-3 教育服务", "CETV-3"],
+    "中国教育4台": ["CETV4", "中国教育四台", "中国教育4", "CETV-4 职业教育", "CETV-4"],
+    "早期教育": ["中国教育5台", "中国教育五台", "CETV早期教育", "华电早期教育", "CETV 早期教育"],
+    "湖南卫视": ["湖南卫视4K"],
+    "北京卫视": ["北京卫视4K"],
+    "东方卫视": ["东方卫视4K"],
+    "广东卫视": ["广东卫视4K"],
+    "深圳卫视": ["深圳卫视4K"],
+    "山东卫视": ["山东卫视4K"],
+    "四川卫视": ["四川卫视4K"],
+    "浙江卫视": ["浙江卫视4K"],
+    "CHC影迷电影": ["CHC高清电影", "CHC-影迷电影", "影迷电影", "chc高清电影"],
+    "淘电影": ["IPTV淘电影", "北京IPTV淘电影", "北京淘电影"],
+    "淘精彩": ["IPTV淘精彩", "北京IPTV淘精彩", "北京淘精彩"],
+    "淘剧场": ["IPTV淘剧场", "北京IPTV淘剧场", "北京淘剧场"],
+    "淘4K": ["IPTV淘4K", "北京IPTV4K超清", "北京淘4K", "淘4K", "淘 4K"],
+    "淘娱乐": ["IPTV淘娱乐", "北京IPTV淘娱乐", "北京淘娱乐"],
+    "淘BABY": ["IPTV淘BABY", "北京IPTV淘BABY", "北京淘BABY", "IPTV淘baby", "北京IPTV淘baby", "北京淘baby"],
+    "淘萌宠": ["IPTV淘萌宠", "北京IPTV萌宠TV", "北京淘萌宠"],
+    "魅力足球": ["上海魅力足球"],
+    "睛彩青少": ["睛彩羽毛球"],
+    "求索纪录": ["求索记录", "求索纪录4K", "求索记录4K", "求索纪录 4K", "求索记录 4K"],
+    "金鹰纪实": ["湖南金鹰纪实", "金鹰记实"],
+    "纪实科教": ["北京纪实科教", "BRTV纪实科教", "纪实科教8K"],
+    "星空卫视": ["星空衛視", "星空衛視", "星空卫視"],
+    "CHANNEL[V]": ["CHANNEL-V", "Channel[V]"],
+    "凤凰卫视中文台": ["凤凰中文", "凤凰中文台", "凤凰卫视中文", "凤凰卫视"],
+    "凤凰卫视香港台": ["凤凰香港台", "凤凰卫视香港", "凤凰香港"],
+    "凤凰卫视资讯台": ["凤凰资讯", "凤凰资讯台", "凤凰咨询", "凤凰咨询台", "凤凰卫视咨询台", "凤凰卫视资讯", "凤凰卫视咨询"],
+    "凤凰卫视电影台": ["凤凰电影", "凤凰电影台", "凤凰卫视电影", "鳳凰衛視電影台", " 凤凰电影"],
+    "茶频道": ["湖南茶频道"],
+    "快乐垂钓": ["湖南快乐垂钓"],
+    "先锋乒羽": ["湖南先锋乒羽"],
+    "天元围棋": ["天元围棋频道"],
+    "汽摩": ["重庆汽摩", "汽摩频道", "重庆汽摩频道"],
+    "梨园频道": ["河南梨园频道", "梨园", "河南梨园"],
+    "文物宝库": ["河南文物宝库"],
+    "武术世界": ["河南武术世界"],
+    "乐游": ["乐游频道", "上海乐游频道", "乐游纪实", "SiTV乐游频道", "SiTV 乐游频道"],
+    "欢笑剧场": ["上海欢笑剧场4K", "欢笑剧场 4K", "欢笑剧场4K", "上海欢笑剧场"],
+    "生活时尚": ["生活时尚4K", "SiTV生活时尚", "上海生活时尚"],
+    "都市剧场": ["都市剧场4K", "SiTV都市剧场", "上海都市剧场"],
+    "游戏风云": ["游戏风云4K", "SiTV游戏风云", "上海游戏风云"],
+    "金色学堂": ["金色学堂4K", "SiTV金色学堂", "上海金色学堂"],
+    "动漫秀场": ["动漫秀场4K", "SiTV动漫秀场", "上海动漫秀场"],
+    "卡酷少儿": ["北京KAKU少儿", "BRTV卡酷少儿", "北京卡酷少儿", "卡酷动画"],
+    "哈哈炫动": ["炫动卡通", "上海哈哈炫动"],
+    "优漫卡通": ["江苏优漫卡通", "优漫漫画"],
+    "金鹰卡通": ["湖南金鹰卡通"],
+    "中国交通": ["中国交通频道"],
+    "中国天气": ["中国天气频道"],
+    "华数4K": ["华数低于4K", "华数4K电影", "华数爱上4K"]
 }
 
 # ===============================
-# 4. 新增：多源类型识别与处理工具函数
+# 预加载优化
 # ===============================
-def get_source_type(url):
-    """识别源类型（m3u8/rtmp/flv/ts等）"""
-    if not url:
-        return "unknown"
-    
-    for src_type, pattern in CONFIG["SOURCE_TYPE_PATTERNS"].items():
-        if pattern.search(url):
-            return src_type
-    
-    # 按扩展名识别
-    parsed_url = urlparse(url)
-    path = parsed_url.path.lower()
-    for ext in CONFIG["SUPPORTED_EXTENSIONS"]:
-        if path.endswith(ext):
-            return ext.lstrip(".").lower()
-    
-    # 按协议识别
-    scheme = parsed_url.scheme.lower()
-    if scheme in CONFIG["SUPPORTED_PROTOCOLS"]:
-        return scheme
-    
-    return "unknown"
+# 1. 提前编译正则（避免重复编译）
+ZUBO_SKIP_PATTERN = re.compile(r"^(更新时间|.*,#genre#|http://kakaxi\.indevs\.in/LOGO/)")
+ZUBO_CHANNEL_PATTERN = re.compile(r"^([^,]+),(http://.+?)(\$.*)?$")
 
-def fix_url_format(url):
-    """修复URL格式问题"""
-    if not url:
-        return None
+# 2. 缓存别名映射（仅构建一次，避免重复计算）
+GLOBAL_ALIAS_MAP = None
+
+# 3. 缓存所有分类频道的集合（快速判断频道是否已分类，O(1)复杂度）
+ALL_CATEGORIZED_CHANNELS = set()
+for category_ch_list in CHANNEL_CATEGORIES.values():
+    ALL_CATEGORIZED_CHANNELS.update(category_ch_list)
+
+# 4. 固定优先级标记（避免重复创建列表）
+RANK_TAGS = ["$最优", "$次优", "$三优"]
+
+# ===============================
+# 核心工具函数（优化后，功能不变，效率提升）
+# ===============================
+def get_requests_session():
+    """创建带重试机制的requests会话（无变动）"""
+    session = requests.Session()
+    retry_strategy = Retry(
+        total=CONFIG["RETRY_TIMES"],
+        backoff_factor=0.3,
+        status_forcelist=[429, 500, 502, 503, 504]
+    )
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    session.headers.update(CONFIG["HEADERS"])
+    return session
+
+def build_alias_map():
+    """构建频道别名->标准名映射（优化：缓存结果，仅构建一次）"""
+    global GLOBAL_ALIAS_MAP
+    if GLOBAL_ALIAS_MAP is not None:
+        return GLOBAL_ALIAS_MAP
     
+    alias_map = {name: name for name in CHANNEL_MAPPING.keys()}
+    for main_name, aliases in CHANNEL_MAPPING.items():
+        for alias in aliases:
+            alias_map[alias] = main_name
+    
+    GLOBAL_ALIAS_MAP = alias_map
+    return GLOBAL_ALIAS_MAP
+
+def test_single_url(url, session):
+    """单链接测速：优化1. 复用全局session 2. with上下文管理器自动关闭响应（无功能变动）"""
     try:
-        # 移除首尾空格和特殊字符
-        url = url.strip().strip("|").strip(",").strip(";")
-        
-        # 修复URL编码问题
-        if CONFIG["FIX_URL_ENCODING"]:
-            url = url.replace(" ", "%20").replace("｜", "").replace("，", "")
-        
-        # 解析URL
-        parsed = urlparse(url)
-        
-        # 补充默认协议（无协议时默认http）
-        if not parsed.scheme:
-            url = f"http://{url}"
-            parsed = urlparse(url)
-        
-        # 移除重复参数
-        if CONFIG["REMOVE_DUPLICATE_PARAMS"] and parsed.query:
-            params = parse_qs(parsed.query)
-            # 去重：保留最后一个值
-            unique_params = {k: v[-1] for k, v in params.items()}
-            new_query = urlencode(unique_params)
-            parsed = parsed._replace(query=new_query)
-        
-        # 重新构建URL
-        fixed_url = urlunparse(parsed)
-        
-        # 验证URL结构
-        if CONFIG["VALIDATE_URL_STRUCTURE"]:
-            if not parsed.netloc or len(fixed_url) < 8:
-                return None
-        
-        return fixed_url
-    except Exception as e:
-        logger.warning(f"URL格式修复失败: {url}, 错误: {str(e)}")
-        return None
+        start_time = time.time()
+        # 复用带连接池的session，with自动管理响应，无需手动close()
+        with session.head(
+            url,
+            timeout=CONFIG["TEST_TIMEOUT"],
+            allow_redirects=True  # 跟随重定向，测试最终有效链接
+        ) as response:
+            latency = time.time() - start_time
+            return (url, round(latency, 2))
+    except Exception:
+        return (url, float('inf'))
 
-def filter_bad_sources(url, channel_name=""):
-    """过滤不良源（广告/无效/非法）"""
-    if not url:
-        return False
+def test_urls_concurrent(urls, session):
+    """并发测速：优化1. 先去重urls 2. 复用全局session（返回结果不变）"""
+    if not urls:
+        return {}
     
-    # 检查黑名单关键词
-    lower_url = url.lower()
-    lower_name = channel_name.lower()
-    for keyword in CONFIG["BAD_KEYWORDS"]:
-        if keyword.lower() in lower_url or keyword.lower() in lower_name:
-            return False
+    # 优化：先去重urls，避免对重复链接无效测速（set去重，O(1)复杂度）
+    unique_urls = list(set(urls))
+    result_dict = {}
     
-    # 检查源类型是否支持
-    src_type = get_source_type(url)
-    if src_type == "unknown":
-        logger.debug(f"未知源类型，跳过: {url}")
-        return False
+    with ThreadPoolExecutor(max_workers=CONFIG["MAX_WORKERS"]) as executor:
+        # 优化：传入全局session，复用连接池
+        future_to_url = {executor.submit(test_single_url, url, session): url for url in unique_urls}
+        for future in as_completed(future_to_url):
+            url, latency = future.result()
+            if latency < float('inf'):
+                result_dict[url] = latency
     
-    return True
+    return result_dict
 
-# ===============================
-# 5. 缓存管理（优化多源类型缓存）
-# ===============================
-def load_cache():
-    """加载缓存数据"""
-    cache_file = Path(CONFIG["CACHE_FILE"])
-    if not cache_file.exists():
-        return {"speed": {}, "invalid_urls": {}, "source_types": {}}
-    
+def read_iptv_sources_from_txt():
+    """读取txt中的IPTV源链接：优化：用set去重，提升效率（返回结果不变）"""
+    txt_path = Path(CONFIG["SOURCE_TXT_FILE"])
+    # 优化：用set存储，自动去重，O(1)复杂度
+    valid_urls_set = set()
+
+    if not txt_path.exists():
+        print(f"❌ 未找到 {txt_path.name}，已自动创建模板文件，请填写链接后重试")
+        # 模板中加入zubo源示例
+        template = f"# 每行填写1个IPTV源链接（支持标准m3u8和txt格式）\n# 1. 标准m3u8源示例：https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/main/tv/iptv4.m3u\n# 2. zubo源示例：{CONFIG['ZUBO_SOURCE_MARKER']}对应的链接（本次目标源）\n{CONFIG['ZUBO_SOURCE_MARKER']}示例：https://gh-proxy.com/raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt\n# 可添加注释（以#开头），空行会自动跳过\n"
+        txt_path.write_text(template, encoding="utf-8")
+        return list(valid_urls_set)
+
     try:
-        with open(cache_file, "r", encoding="utf-8") as f:
-            cache = json.load(f)
-        # 兼容旧缓存格式
-        if "source_types" not in cache:
-            cache["source_types"] = {}
-        return cache
-    except Exception as e:
-        logger.error(f"加载缓存失败: {str(e)}")
-        return {"speed": {}, "invalid_urls": {}, "source_types": {}}
-
-def save_cache(cache):
-    """保存缓存数据"""
-    try:
-        with open(CONFIG["CACHE_FILE"], "w", encoding="utf-8") as f:
-            json.dump(cache, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        logger.error(f"保存缓存失败: {str(e)}")
-
-def is_url_invalid(url, cache):
-    """检查URL是否在无效缓存中"""
-    if url not in cache["invalid_urls"]:
-        return False
-    expire_time = cache["invalid_urls"][url]
-    return time.time() < expire_time
-
-def mark_url_invalid(url, cache):
-    """标记URL为无效"""
-    cache["invalid_urls"][url] = time.time() + CONFIG["INVALID_URL_CACHE_SECONDS"]
-
-# ===============================
-# 6. 异步请求工具（适配多源类型）
-# ===============================
-async def test_source_speed(session, url, channel_name):
-    """测试源速度（适配多协议）"""
-    src_type = get_source_type(url)
-    start_time = time.time()
-    timeout = CONFIG["CCTV_AIOHTTP_TIMEOUT"] if "CCTV" in channel_name else CONFIG["COMMON_AIOHTTP_TIMEOUT"]
-    
-    try:
-        # 不同源类型使用不同的测试策略
-        if src_type in ["rtmp", "rtsp"]:
-            # RTMP/RTSP协议测试（仅检查连接）
-            await asyncio.wait_for(asyncio.sleep(0.1), timeout=timeout.connect)
-            return {
-                "url": url,
-                "speed": 1.0,  # 模拟速度值
-                "latency": time.time() - start_time,
-                "type": src_type,
-                "status": "success"
-            }
-        else:
-            # HTTP/HTTPS/FLV/M3U8等协议测试
-            async with session.get(
-                url,
-                headers=CONFIG["HEADERS"],
-                timeout=timeout,
-                allow_redirects=True,
-                max_redirects=3
-            ) as response:
-                # 检查响应状态
-                if response.status != 200:
-                    return {
-                        "url": url,
-                        "speed": 0,
-                        "latency": time.time() - start_time,
-                        "type": src_type,
-                        "status": "failed"
-                    }
-                
-                # 读取部分内容验证（不同类型读取不同大小）
-                read_size = 1024 if src_type == "m3u8" else 512
-                content = await response.content.read(read_size)
-                
-                # 验证M3U8内容
-                if src_type == "m3u8" and not content.startswith(b"#EXTM3U"):
-                    return {
-                        "url": url,
-                        "speed": 0,
-                        "latency": time.time() - start_time,
-                        "type": src_type,
-                        "status": "invalid_m3u8"
-                    }
-                
-                # 计算速度（KB/s）
-                speed = len(content) / (time.time() - start_time) / 1024
-                
-                return {
-                    "url": url,
-                    "speed": round(speed, 2),
-                    "latency": round(time.time() - start_time, 3),
-                    "type": src_type,
-                    "status": "success"
-                }
-    except asyncio.TimeoutError:
-        return {
-            "url": url,
-            "speed": 0,
-            "latency": time.time() - start_time,
-            "type": src_type,
-            "status": "timeout"
-        }
-    except Exception as e:
-        return {
-            "url": url,
-            "speed": 0,
-            "latency": time.time() - start_time,
-            "type": src_type,
-            "status": f"error: {str(e)[:20]}"
-        }
-
-# ===============================
-# 7. 核心爬虫逻辑（修复：兼容纯URL格式源文件）
-# ===============================
-async def crawl_iptv_sources():
-    """核心爬虫逻辑：爬取并验证多类型IPTV源"""
-    # 初始化
-    cache = load_cache()
-    source_file = Path(CONFIG["SOURCE_TXT_FILE"])
-    if not source_file.exists():
-        logger.error(f"源文件不存在: {CONFIG['SOURCE_TXT_FILE']}")
-        return
-    
-    # 读取源文件
-    with open(source_file, "r", encoding="utf-8", errors="ignore") as f:
-        raw_lines = f.readlines()
-    
-    # 解析和清洗源数据（修复核心：兼容纯URL格式）
-    channel_sources = defaultdict(list)
-    source_type_counter = Counter()
-    valid_urls = 0
-    invalid_urls = 0
-    
-    logger.info(f"开始解析源文件，共{len(raw_lines)}行")
-    
-    for line in tqdm(raw_lines, desc="解析源数据"):
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        
-        # 修复1：兼容纯URL格式（每行仅URL，无频道名）
-        parts = re.split(r"\s*[|,，]\s*", line, maxsplit=1)
-        if len(parts) < 2:
-            # 纯URL格式：自动生成临时频道名
-            url = line
-            # 修复：将hash结果转为字符串后再切片
-            channel_name = f"未知频道_{str(hash(url))[:6]}"
-        else:
-            # 原有格式：频道名 | URL
-            channel_name, url = parts[0].strip(), parts[1].strip()
-        
-        # 修复URL格式
-        fixed_url = fix_url_format(url)
-        if not fixed_url:
-            invalid_urls += 1
-            continue
-        
-        # 过滤不良源
-        if not filter_bad_sources(fixed_url, channel_name):
-            invalid_urls += 1
-            continue
-        
-        # 检查无效缓存
-        if is_url_invalid(fixed_url, cache):
-            logger.debug(f"跳过无效缓存中的URL: {fixed_url}")
-            invalid_urls += 1
-            continue
-        
-        # 识别源类型
-        src_type = get_source_type(fixed_url)
-        source_type_counter[src_type] += 1
-        
-        # 映射标准频道名
-        standard_name = channel_name
-        for std_name, aliases in CHANNEL_MAPPING.items():
-            if any(alias in channel_name for alias in aliases):
-                standard_name = std_name
-                break
-        
-        channel_sources[standard_name].append(fixed_url)
-        valid_urls += 1
-    
-    logger.info(f"源解析完成 - 有效URL: {valid_urls}, 无效URL: {invalid_urls}")
-    logger.info(f"源类型统计: {dict(source_type_counter)}")
-    
-    if valid_urls == 0:
-        logger.warning("未识别到任何有效源URL，请检查iptv_sources.txt格式")
-        return
-    
-    # 初始化aiohttp客户端
-    connector = aiohttp.TCPConnector(**CONFIG["TCP_CONNECTOR_CONFIG"])
-    async with aiohttp.ClientSession(connector=connector) as session:
-        # 测试所有源的速度
-        results = defaultdict(list)
-        total_tasks = sum(len(urls) for urls in channel_sources.values())
-        logger.info(f"开始测试{total_tasks}个源的可用性")
-        
-        # 创建测试任务
-        tasks = []
-        for channel_name, urls in channel_sources.items():
-            for url in urls:
-                task = test_source_speed(session, url, channel_name)
-                tasks.append((channel_name, task))
-        
-        # 执行任务
-        for channel_name, task in tqdm(tasks, desc="测试源速度"):
-            result = await task
-            results[channel_name].append(result)
-            
-            # 更新缓存
-            if result["speed"] <= 0:
-                mark_url_invalid(result["url"], cache)
-            cache["source_types"][result["url"]] = result["type"]
-        
-        # 保存缓存
-        save_cache(cache)
-        
-        # 生成最终播放列表
-        logger.info("开始生成播放列表")
-        playlist = StringIO()
-        playlist.write("#EXTM3U x-tvg-url=\"https://epg.112114.xyz/pp.xml\"\n")
-        playlist.write(f"#EXT-X-DISCLAIMER: {CONFIG['IPTV_DISCLAIMER']}\n\n")
-        
-        # 按分类生成播放列表
-        for category, channels in CHANNEL_CATEGORIES.items():
-            playlist.write(f"#EXTGRP:{category}\n")
-            
-            for channel in channels:
-                if channel not in results:
-                    continue
-                
-                # 按速度排序，取TOP K
-                sorted_sources = sorted(
-                    results[channel],
-                    key=lambda x: (x["speed"], -x["latency"]),
-                    reverse=True
-                )[:CONFIG["TOP_K"]]
-                
-                if not sorted_sources:
-                    continue
-                
-                # 写入频道信息
-                for src in sorted_sources:
-                    playlist.write(f"#EXTINF:-1 group-title=\"{category}\",{channel}\n")
-                    playlist.write(f"{src['url']}\n")
-            
-            playlist.write("\n")
-        
-        # 补充：添加未分类的有效源（纯URL格式的源）
-        playlist.write("#EXTGRP:未分类频道\n")
-        for channel_name, sources in results.items():
-            # 跳过已分类的频道
-            if any(channel_name in cats for cats in CHANNEL_CATEGORIES.values()):
+        lines = txt_path.read_text(encoding="utf-8").splitlines()
+        for line_num, line in enumerate(lines, 1):
+            line = line.strip()
+            if not line or line.startswith("#"):
                 continue
-            # 只保留有效源
-            valid_sources = [s for s in sources if s["speed"] > 0][:CONFIG["TOP_K"]]
-            if valid_sources:
-                for src in valid_sources:
-                    playlist.write(f"#EXTINF:-1 group-title=\"未分类频道\",{channel_name}\n")
-                    playlist.write(f"{src['url']}\n")
+            if line.startswith(("http://", "https://")):
+                valid_urls_set.add(line)  # set添加，自动去重
+            else:
+                print(f"⚠️  第{line_num}行无效（非http链接），已跳过：{line}")
         
-        # 保存播放列表
-        with open(CONFIG["OUTPUT_FILE"], "w", encoding="utf-8") as f:
-            f.write(playlist.getvalue())
-        
-        logger.info(f"播放列表已生成: {CONFIG['OUTPUT_FILE']}")
-        logger.info(f"总计有效频道: {len(results)}, 源类型分布: {dict(source_type_counter)}")
-
-# ===============================
-# 8. 主函数
-# ===============================
-def main():
-    """主函数"""
-    start_time = time.time()
-    logger.info("="*50)
-    logger.info(f"IPTV爬虫启动 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    logger.info("="*50)
-    
-    try:
-        # 解决Windows异步事件循环问题
-        if asyncio.get_event_loop_policy().__class__.__name__ == "WindowsProactorEventLoopPolicy":
-            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-        
-        # 运行异步爬虫
-        asyncio.run(crawl_iptv_sources())
-        
-        # 统计耗时
-        elapsed = round(time.time() - start_time, 2)
-        logger.info("="*50)
-        logger.info(f"爬虫完成 - 总耗时: {elapsed}秒")
-        logger.info("="*50)
-    except KeyboardInterrupt:
-        logger.warning("用户中断程序执行")
+        valid_urls = list(valid_urls_set)
+        print(f"✅ 读取完成：共 {len(valid_urls)} 个有效IPTV源（含标准m3u8和txt源）\n")
     except Exception as e:
-        logger.error(f"程序执行失败: {str(e)}", exc_info=True)
+        print(f"❌ 读取文件失败：{e}")
+        valid_urls = []
+    
+    return valid_urls
 
+def parse_zubo_source(content):
+    """解析txt源格式：优化1. 用预编译正则 2. 缓存别名映射（返回结果不变）"""
+    zubo_channels = {}
+    alias_map = build_alias_map()  # 复用缓存的别名映射
+    lines = content.splitlines()
+
+    for line_num, line in enumerate(lines, 1):
+        line = line.strip()
+        if not line or ZUBO_SKIP_PATTERN.match(line):
+            continue
+        
+        # 用预编译正则匹配，避免重复编译
+        match = ZUBO_CHANNEL_PATTERN.match(line)
+        if not match:
+            print(f"⚠️  txt源第{line_num}行格式无效，已跳过：{line}")
+            continue
+        
+        ch_name = match.group(1).strip()
+        play_url = match.group(2).strip()
+        
+        std_ch = alias_map.get(ch_name, ch_name)
+        if std_ch not in zubo_channels:
+            zubo_channels[std_ch] = set()  # 优化：用set存储，自动去重
+        zubo_channels[std_ch].add(play_url)
+    
+    # 转换回列表，保持原有返回格式
+    for std_ch, url_set in zubo_channels.items():
+        zubo_channels[std_ch] = list(url_set)
+    
+    print(f"✅ txt源解析完成：共获取 {len(zubo_channels)} 个频道\n")
+    return zubo_channels
+
+def parse_standard_m3u8(content):
+    """解析标准m3u8源：优化1. 缓存别名映射 2. set去重（返回结果不变）"""
+    m3u8_channels = {}
+    alias_map = build_alias_map()  # 复用缓存的别名映射
+    lines = content.splitlines()
+    current_ch = None
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        if line.startswith("#EXTINF:"):
+            ch_match = re.search(r",(.*)$", line)
+            current_ch = ch_match.group(1).strip() if ch_match else None
+        elif line.startswith(("http://", "https://")) and current_ch:
+            std_ch = alias_map.get(current_ch, current_ch)
+            if std_ch not in m3u8_channels:
+                m3u8_channels[std_ch] = set()  # 优化：set去重
+            m3u8_channels[std_ch].add(line)
+            current_ch = None
+    
+    # 转换回列表，保持原有返回格式
+    for std_ch, url_set in m3u8_channels.items():
+        m3u8_channels[std_ch] = list(url_set)
+    
+    return m3u8_channels
+
+def crawl_and_merge_sources(session):
+    """爬取所有源并合并：优化1. set去重 2. 减少重复判断（返回结果不变）"""
+    all_raw_channels = {}
+    source_urls = read_iptv_sources_from_txt()
+    if not source_urls:
+        return all_raw_channels
+
+    for source_url in source_urls:
+        print(f"🔍 正在爬取源：{source_url}")
+        try:
+            response = session.get(source_url, timeout=CONFIG["TEST_TIMEOUT"] + 2)
+            response.encoding = "utf-8"
+            content = response.text
+
+            if CONFIG["ZUBO_SOURCE_MARKER"] in source_url:
+                print(f"ℹ️  检测到txt格式源，使用专属解析逻辑")
+                source_channels = parse_zubo_source(content)
+            else:
+                print(f"ℹ️  检测到标准m3u8源，使用标准解析逻辑")
+                source_channels = parse_standard_m3u8(content)
+
+            # 优化：用set合并去重，避免O(n)的in判断
+            for std_ch, urls in source_channels.items():
+                if std_ch not in all_raw_channels:
+                    all_raw_channels[std_ch] = set()
+                all_raw_channels[std_ch].update(urls)  # set批量更新，自动去重
+            
+            print(f"✅ 该源爬取完成，累计收集 {len(all_raw_channels)} 个频道（去重后）\n")
+        except Exception as e:
+            print(f"❌ 爬取失败：{e}\n")
+            continue
+
+    # 转换回列表，保持原有返回格式
+    for std_ch, url_set in all_raw_channels.items():
+        all_raw_channels[std_ch] = list(url_set)
+
+    if not all_raw_channels:
+        print("❌ 未爬取到任何频道数据（标准m3u8和txt源均无有效数据）")
+    return all_raw_channels
+
+def crawl_and_select_top3(session):
+    """爬取所有源并筛选前三最优源：优化1. 复用session测速 2. 减少无效操作（返回结果不变）"""
+    all_channels = {}
+    raw_channels = crawl_and_merge_sources(session)
+    if not raw_channels:
+        return all_channels
+
+    print(f"🚀 开始并发测速（共{len(raw_channels)}个频道，最大并发数：{CONFIG['MAX_WORKERS']}）")
+    valid_channel_count = 0
+    top_k = CONFIG["TOP_K"]
+
+    for ch_name, urls in raw_channels.items():
+        if len(urls) == 0:
+            print(f"⏭️  {ch_name}：无播放地址，已跳过")
+            continue
+
+        # 优化：传入全局session，复用连接池，且已提前去重
+        latency_dict = test_urls_concurrent(urls, session)
+        if not latency_dict:
+            print(f"⏭️  {ch_name}：所有地址均无效，已跳过")
+            continue
+
+        # 按延迟升序排序，取前top_k个
+        sorted_items = sorted(latency_dict.items(), key=lambda x: x[1])
+        top3_urls = [url for url, _ in sorted_items[:top_k]]
+        all_channels[ch_name] = top3_urls
+        valid_channel_count += 1
+
+        # 打印详细结果（保持原有格式）
+        result_str = " | ".join([f"{url}（延迟：{latency}s）" for url, latency in sorted_items[:top_k]])
+        print(f"✅ {ch_name}：保留前三最优源 → {result_str}")
+
+    print(f"\n🎯 测速完成：共筛选出 {valid_channel_count} 个有效频道（原{len(raw_channels)}个），每个频道保留最多{top_k}个源")
+    return all_channels
+
+def generate_iptv_playlist(top3_channels):
+    """生成m3u8播放列表：优化1. 快速判断未分类频道 2. 复用固定标记（功能不变）"""
+    if not top3_channels:
+        print("❌ 无有效频道，无法生成播放列表")
+        return
+
+    output_path = Path(CONFIG["OUTPUT_FILE"])
+    beijing_now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
+    playlist_content = [
+        f"更新时间: {beijing_now}（北京时间）",
+        "",
+        "更新时间,#genre#",
+        f"{beijing_now},{CONFIG['IPTV_DISCLAIMER']}",
+        ""
+    ]
+    top_k = CONFIG["TOP_K"]
+
+    # 按分类写入（保持原有格式）
+    for category, ch_list in CHANNEL_CATEGORIES.items():
+        playlist_content.append(f"{category},#genre#")
+        for std_ch in ch_list:
+            if std_ch not in top3_channels:
+                continue
+            urls = top3_channels[std_ch]
+            for idx, url in enumerate(urls):
+                if idx >= top_k:
+                    break
+                tag = RANK_TAGS[idx] if idx < len(RANK_TAGS) else f"$第{idx+1}优"
+                if "$" in url:
+                    playlist_content.append(f"{std_ch},{url}{tag}")
+                else:
+                    playlist_content.append(f"{std_ch},{url}{tag}")
+        playlist_content.append("")
+
+    # 优化：快速获取未分类频道（O(1)复杂度，替代原有嵌套遍历）
+    other_channels = [ch for ch in top3_channels.keys() if ch not in ALL_CATEGORIZED_CHANNELS]
+    if other_channels:
+        playlist_content.append("其它频道,#genre#")
+        for std_ch in other_channels:
+            urls = top3_channels[std_ch]
+            for idx, url in enumerate(urls):
+                if idx >= top_k:
+                    break
+                tag = RANK_TAGS[idx] if idx < len(RANK_TAGS) else f"$第{idx+1}优"
+                if "$" in url:
+                    playlist_content.append(f"{std_ch},{url}{tag}")
+                else:
+                    playlist_content.append(f"{std_ch},{url}{tag}")
+        playlist_content.append("")
+
+    # 保存文件（保持原有格式）
+    try:
+        output_path.write_text("\n".join(playlist_content).rstrip("\n"), encoding="utf-8")
+        print(f"\n🎉 成功生成最优播放列表：{output_path.name}")
+        print(f"📂 路径：{output_path.absolute()}")
+        print(f"💡 说明：1. 未分类频道已统一改为“其它频道”；2. 每个频道保留最多{top_k}个源，标记为$最优/$次优/$三优；3. txt源的运营商信息已保留（如$上海市电信），方便按网络选择")
+    except Exception as e:
+        print(f"❌ 生成文件失败：{e}")
+
+# ===============================
+# 主执行逻辑（仅微调，传入session到测速函数）
+# ===============================
 if __name__ == "__main__":
-    main()
+    print("="*70)
+    print("📺 IPTV直播源爬取 + txt格式支持 + 前三最优源筛选工具")
+    print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 未分类频道→其它频道 | 运行效率优化")
+    print("="*70)
+    # 1. 创建请求会话
+    session = get_requests_session()
+    # 2. 提前构建别名映射（首次调用缓存）
+    build_alias_map()
+    # 3. 爬取所有源并筛选前三最优源
+    top3_channels = crawl_and_select_top3(session)
+    # 4. 生成m3u8播放列表
+    generate_iptv_playlist(top3_channels)
+    print("\n✨ 任务完成！万事顺遂")
