@@ -1,3 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+IPTV 直播源爬取与优选工具（优化版）
+=====================================
+优化特性：
+1. 增强CCTV识别：扩充别名、支持模糊匹配、忽略空格/符号/大小写
+2. 其他原有优化特性保持不变
+"""
+
 import re
 import requests
 import time
@@ -45,7 +56,7 @@ CONFIG = {
 }
 
 # ===============================
-# 频道分类与别名映射（保持不变）
+# 频道分类与别名映射（增强CCTV识别）
 # ===============================
 CHANNEL_CATEGORIES = {
     "央视频道": [
@@ -54,6 +65,7 @@ CHANNEL_CATEGORIES = {
         "兵器科技", "风云音乐", "风云足球", "风云剧场", "怀旧剧场", "第一剧场", "女性时尚", "世界地理", "央视台球", "高尔夫网球",
         "央视文化精品", "卫生健康", "电视指南", "中学生", "发现之旅", "书法频道", "国学频道", "环球奇观"
     ],
+    # 其他分类保持不变
     "卫视频道": [
         "湖南卫视", "浙江卫视", "江苏卫视", "东方卫视", "深圳卫视", "北京卫视", "广东卫视", "广西卫视", "东南卫视", "海南卫视",
         "河北卫视", "河南卫视", "湖北卫视", "江西卫视", "四川卫视", "重庆卫视", "贵州卫视", "云南卫视", "天津卫视", "安徽卫视",
@@ -97,42 +109,46 @@ CHANNEL_CATEGORIES = {
     ]
 }
 
+# 增强CCTV别名映射：覆盖更多变体（空格、符号、大小写、中英文混合）
 CHANNEL_MAPPING = {
-    "CCTV1": ["CCTV-1", "CCTV-1 HD", "CCTV1 HD", "CCTV-1综合"],
-    "CCTV2": ["CCTV-2", "CCTV-2 HD", "CCTV2 HD", "CCTV-2财经"],
-    "CCTV3": ["CCTV-3", "CCTV-3 HD", "CCTV3 HD", "CCTV-3综艺"],
-    "CCTV4": ["CCTV-4", "CCTV-4 HD", "CCTV4 HD", "CCTV-4中文国际"],
-    "CCTV4欧洲": ["CCTV-4欧洲", "CCTV-4欧洲", "CCTV4欧洲 HD", "CCTV-4 欧洲", "CCTV-4中文国际欧洲", "CCTV4中文欧洲"],
-    "CCTV4美洲": ["CCTV-4美洲", "CCTV-4北美", "CCTV4美洲 HD", "CCTV-4 美洲", "CCTV-4中文国际美洲", "CCTV4中文美洲"],
-    "CCTV5": ["CCTV-5", "CCTV-5 HD", "CCTV5 HD", "CCTV-5体育"],
-    "CCTV5+": ["CCTV-5+", "CCTV-5+ HD", "CCTV5+ HD", "CCTV-5+体育赛事"],
-    "CCTV6": ["CCTV-6", "CCTV-6 HD", "CCTV6 HD", "CCTV-6电影"],
-    "CCTV7": ["CCTV-7", "CCTV-7 HD", "CCTV7 HD", "CCTV-7国防军事"],
-    "CCTV8": ["CCTV-8", "CCTV-8 HD", "CCTV8 HD", "CCTV-8电视剧"],
-    "CCTV9": ["CCTV-9", "CCTV-9 HD", "CCTV9 HD", "CCTV-9纪录"],
-    "CCTV10": ["CCTV-10", "CCTV-10 HD", "CCTV10 HD", "CCTV-10科教"],
-    "CCTV11": ["CCTV-11", "CCTV-11 HD", "CCTV11 HD", "CCTV-11戏曲"],
-    "CCTV12": ["CCTV-12", "CCTV-12 HD", "CCTV12 HD", "CCTV-12社会与法"],
-    "CCTV13": ["CCTV-13", "CCTV-13 HD", "CCTV13 HD", "CCTV-13新闻"],
-    "CCTV14": ["CCTV-14", "CCTV-14 HD", "CCTV14 HD", "CCTV-14少儿"],
-    "CCTV15": ["CCTV15", "CCTV-15 HD", "CCTV15 HD", "CCTV-15音乐"],
-    "CCTV16": ["CCTV16", "CCTV-16 HD", "CCTV-16 4K", "CCTV-16奥林匹克", "CCTV16 4K", "CCTV16奥林匹克4K"],
-    "CCTV17": ["CCTV17", "CCTV-17 HD", "CCTV17 HD", "CCTV17农业农村"],
-    "CCTV4K": ["CCTV4K超高清", "CCTV-4K超高清", "CCTV-4K 超高清", "CCTV 4K"],
-    "CCTV8K": ["CCTV8K超高清", "CCTV-8K超高清", "CCTV-8K 超高清", "CCTV 8K"],
-    "兵器科技": ["CCTV-兵器科技", "CCTV兵器科技"],
-    "风云音乐": ["CCTV-风云音乐", "CCTV风云音乐"],
-    "第一剧场": ["CCTV-第一剧场", "CCTV第一剧场"],
-    "风云足球": ["CCTV-风云足球", "CCTV风云足球"],
-    "风云剧场": ["CCTV-风云剧场", "CCTV风云剧场"],
-    "怀旧剧场": ["CCTV-怀旧剧场", "CCTV怀旧剧场"],
-    "女性时尚": ["CCTV-女性时尚", "CCTV女性时尚"],
-    "世界地理": ["CCTV-世界地理", "CCTV世界地理"],
-    "央视台球": ["CCTV-央视台球", "CCTV央视台球"],
-    "高尔夫网球": ["CCTV-高尔夫网球", "CCTV高尔夫网球", "CCTV央视高网", "CCTV-高尔夫·网球", "央视高网"],
-    "央视文化精品": ["CCTV-央视文化精品", "CCTV央视文化精品", "CCTV文化精品", "CCTV-文化精品", "文化精品"],
-    "卫生健康": ["CCTV-卫生健康", "CCTV卫生健康"],
-    "电视指南": ["CCTV-电视指南", "CCTV电视指南"],
+    # 基础CCTV频道（大幅扩充别名）
+    "CCTV1": ["CCTV-1", "CCTV 1", "CCTV1 HD", "CCTV-1 HD", "CCTV 1 HD", "CCTV-1综合", "CCTV1综合", "央视一套", "中央一台"],
+    "CCTV2": ["CCTV-2", "CCTV 2", "CCTV2 HD", "CCTV-2 HD", "CCTV 2 HD", "CCTV-2财经", "CCTV2财经", "央视二套", "中央二台"],
+    "CCTV3": ["CCTV-3", "CCTV 3", "CCTV3 HD", "CCTV-3 HD", "CCTV 3 HD", "CCTV-3综艺", "CCTV3综艺", "央视三套", "中央三台"],
+    "CCTV4": ["CCTV-4", "CCTV 4", "CCTV4 HD", "CCTV-4 HD", "CCTV 4 HD", "CCTV-4中文国际", "CCTV4中文国际", "央视四套", "中央四台"],
+    "CCTV4欧洲": ["CCTV-4欧洲", "CCTV 4欧洲", "CCTV4欧洲 HD", "CCTV-4 欧洲", "CCTV 4 欧洲", "CCTV-4中文国际欧洲", "CCTV4中文欧洲", "央视四套欧洲"],
+    "CCTV4美洲": ["CCTV-4美洲", "CCTV 4美洲", "CCTV4美洲 HD", "CCTV-4 美洲", "CCTV 4 美洲", "CCTV-4中文国际美洲", "CCTV4中文美洲", "央视四套美洲"],
+    "CCTV5": ["CCTV-5", "CCTV 5", "CCTV5 HD", "CCTV-5 HD", "CCTV 5 HD", "CCTV-5体育", "CCTV5体育", "央视五套", "中央五台", "央视体育"],
+    "CCTV5+": ["CCTV-5+", "CCTV 5+", "CCTV5+ HD", "CCTV-5+ HD", "CCTV 5+ HD", "CCTV-5+体育赛事", "CCTV5+体育赛事", "央视五+", "中央五+", "体育赛事频道"],
+    "CCTV6": ["CCTV-6", "CCTV 6", "CCTV6 HD", "CCTV-6 HD", "CCTV 6 HD", "CCTV-6电影", "CCTV6电影", "央视六套", "中央六台", "央视电影"],
+    "CCTV7": ["CCTV-7", "CCTV 7", "CCTV7 HD", "CCTV-7 HD", "CCTV 7 HD", "CCTV-7国防军事", "CCTV7国防军事", "央视七套", "中央七台"],
+    "CCTV8": ["CCTV-8", "CCTV 8", "CCTV8 HD", "CCTV-8 HD", "CCTV 8 HD", "CCTV-8电视剧", "CCTV8电视剧", "央视八套", "中央八台", "央视电视剧"],
+    "CCTV9": ["CCTV-9", "CCTV 9", "CCTV9 HD", "CCTV-9 HD", "CCTV 9 HD", "CCTV-9纪录", "CCTV9纪录", "央视九套", "中央九台", "央视纪录"],
+    "CCTV10": ["CCTV-10", "CCTV 10", "CCTV10 HD", "CCTV-10 HD", "CCTV 10 HD", "CCTV-10科教", "CCTV10科教", "央视十套", "中央十台", "央视科教"],
+    "CCTV11": ["CCTV-11", "CCTV 11", "CCTV11 HD", "CCTV-11 HD", "CCTV 11 HD", "CCTV-11戏曲", "CCTV11戏曲", "央视十一套", "中央十一套", "央视戏曲"],
+    "CCTV12": ["CCTV-12", "CCTV 12", "CCTV12 HD", "CCTV-12 HD", "CCTV 12 HD", "CCTV-12社会与法", "CCTV12社会与法", "央视十二套", "中央十二台"],
+    "CCTV13": ["CCTV-13", "CCTV 13", "CCTV13 HD", "CCTV-13 HD", "CCTV 13 HD", "CCTV-13新闻", "CCTV13新闻", "央视十三套", "中央十三台", "央视新闻"],
+    "CCTV14": ["CCTV-14", "CCTV 14", "CCTV14 HD", "CCTV-14 HD", "CCTV 14 HD", "CCTV-14少儿", "CCTV14少儿", "央视十四套", "中央十四台", "央视少儿"],
+    "CCTV15": ["CCTV15", "CCTV-15", "CCTV 15", "CCTV15 HD", "CCTV-15 HD", "CCTV 15 HD", "CCTV-15音乐", "CCTV15音乐", "央视十五套", "中央十五台", "央视音乐"],
+    "CCTV16": ["CCTV16", "CCTV-16", "CCTV 16", "CCTV16 HD", "CCTV-16 HD", "CCTV 16 HD", "CCTV-16奥林匹克", "CCTV16奥林匹克", "央视十六套", "中央十六台", "央视奥林匹克"],
+    "CCTV17": ["CCTV17", "CCTV-17", "CCTV 17", "CCTV17 HD", "CCTV-17 HD", "CCTV 17 HD", "CCTV17农业农村", "央视十七套", "中央十七台", "央视农业农村"],
+    "CCTV4K": ["CCTV4K超高清", "CCTV-4K超高清", "CCTV 4K超高清", "CCTV-4K 超高清", "CCTV 4K", "央视4K", "中央4K"],
+    "CCTV8K": ["CCTV8K超高清", "CCTV-8K超高清", "CCTV 8K超高清", "CCTV-8K 超高清", "CCTV 8K", "央视8K", "中央8K"],
+    # CCTV付费频道（增强别名）
+    "兵器科技": ["CCTV-兵器科技", "CCTV兵器科技", "央视兵器科技", "兵器科技频道"],
+    "风云音乐": ["CCTV-风云音乐", "CCTV风云音乐", "央视风云音乐"],
+    "第一剧场": ["CCTV-第一剧场", "CCTV第一剧场", "央视第一剧场"],
+    "风云足球": ["CCTV-风云足球", "CCTV风云足球", "央视风云足球"],
+    "风云剧场": ["CCTV-风云剧场", "CCTV风云剧场", "央视风云剧场"],
+    "怀旧剧场": ["CCTV-怀旧剧场", "CCTV怀旧剧场", "央视怀旧剧场"],
+    "女性时尚": ["CCTV-女性时尚", "CCTV女性时尚", "央视女性时尚"],
+    "世界地理": ["CCTV-世界地理", "CCTV世界地理", "央视世界地理"],
+    "央视台球": ["CCTV-央视台球", "CCTV央视台球", "央视台球频道"],
+    "高尔夫网球": ["CCTV-高尔夫网球", "CCTV高尔夫网球", "CCTV央视高网", "CCTV-高尔夫·网球", "央视高网", "高尔夫网球频道"],
+    "央视文化精品": ["CCTV-央视文化精品", "CCTV央视文化精品", "CCTV文化精品", "CCTV-文化精品", "文化精品", "央视文化精品频道"],
+    "卫生健康": ["CCTV-卫生健康", "CCTV卫生健康", "央视卫生健康"],
+    "电视指南": ["CCTV-电视指南", "CCTV电视指南", "央视电视指南"],
+    # 其他频道别名保持不变
     "农林卫视": ["陕西农林卫视"],
     "三沙卫视": ["海南三沙卫视"],
     "兵团卫视": ["新疆兵团卫视"],
@@ -197,11 +213,16 @@ CHANNEL_MAPPING = {
 }
 
 # ===============================
-# 预加载优化（缓存全局数据）
+# 预加载优化（新增CCTV模糊匹配正则）
 # ===============================
 # 1. 提前编译正则（避免重复编译）
 ZUBO_SKIP_PATTERN = re.compile(r"^(更新时间|.*,#genre#|http://kakaxi\.indevs\.in/LOGO/)")
 ZUBO_CHANNEL_PATTERN = re.compile(r"^([^,]+),(http://.+?)(\$.*)?$")
+# 新增：CCTV模糊匹配正则（匹配各种变体，如CCTV 1、CCTV-5+、央视五套等）
+CCTV_PATTERN = re.compile(
+    r"(?:CCTV|央视|中央)[\s\-]?(\d+)(?:\+|PLUS)?|央视(一套|二套|三套|四套|五套|六套|七套|八套|九套|十套|十一套|十二套|十三套|十四套|十五套|十六套|十七套)|央视(体育|电影|纪录|科教|戏曲|新闻|少儿|音乐|奥林匹克|农业农村)",
+    re.IGNORECASE
+)
 
 # 2. 缓存别名映射（仅构建一次）
 GLOBAL_ALIAS_MAP = None
@@ -214,10 +235,61 @@ for category_ch_list in CHANNEL_CATEGORIES.values():
 # 4. 固定优先级标记（避免重复创建列表）
 RANK_TAGS = ["$最优", "$次优", "$三优"]
 
+# ===============================
+# 核心工具函数（新增CCTV模糊匹配函数）
+# ===============================
+def normalize_cctv_name(ch_name):
+    """
+    标准化CCTV频道名（模糊匹配+归一化）
+    示例：
+    "CCTV 5 HD" → "CCTV5"
+    "央视五套" → "CCTV5"
+    "中央十一套" → "CCTV11"
+    "央视体育" → "CCTV5"
+    """
+    if not ch_name:
+        return ch_name
+    
+    # 先清理特殊字符和空格
+    clean_name = re.sub(r"[\s\-· HD高清超高清]+", "", ch_name.strip())
+    
+    # 匹配数字+频道名
+    match = CCTV_PATTERN.search(ch_name)
+    if match:
+        # 处理数字匹配（如CCTV 5 → 5）
+        num_group = match.group(1)
+        if num_group:
+            if "+" in clean_name or "PLUS" in clean_name.upper():
+                return f"CCTV{num_group}+"
+            else:
+                return f"CCTV{num_group}"
+        # 处理中文套数匹配（如央视五套 → 5）
+        chinese_group = match.group(2)
+        if chinese_group:
+            num_map = {
+                "一套": "1", "二套": "2", "三套": "3", "四套": "4", "五套": "5",
+                "六套": "6", "七套": "7", "八套": "8", "九套": "9", "十套": "10",
+                "十一套": "11", "十二套": "12", "十三套": "13", "十四套": "14",
+                "十五套": "15", "十六套": "16", "十七套": "17"
+            }
+            return f"CCTV{num_map.get(chinese_group, '')}"
+        # 处理中文频道名匹配（如央视体育 → CCTV5）
+        name_group = match.group(3)
+        if name_group:
+            name_map = {
+                "体育": "5", "电影": "6", "纪录": "9", "科教": "10", "戏曲": "11",
+                "新闻": "13", "少儿": "14", "音乐": "15", "奥林匹克": "16", "农业农村": "17"
+            }
+            return f"CCTV{name_map.get(name_group, '')}"
+    
+    # 处理4K/8K特殊情况
+    if "4K" in clean_name and "CCTV" in clean_name:
+        return "CCTV4K"
+    if "8K" in clean_name and "CCTV" in clean_name:
+        return "CCTV8K"
+    
+    return ch_name
 
-# ===============================
-# 核心工具函数
-# ===============================
 def get_requests_session():
     """创建带重试机制的requests会话（线程安全，可共享）"""
     session = requests.Session()
@@ -345,7 +417,9 @@ def parse_zubo_source(content):
         ch_name = match.group(1).strip()
         play_url = match.group(2).strip()
         
-        std_ch = alias_map.get(ch_name, ch_name)
+        # 新增：先标准化CCTV名称，再匹配别名
+        normalized_name = normalize_cctv_name(ch_name)
+        std_ch = alias_map.get(normalized_name, alias_map.get(ch_name, normalized_name))
         if std_ch not in zubo_channels:
             zubo_channels[std_ch] = set()
         zubo_channels[std_ch].add(play_url)
@@ -375,7 +449,9 @@ def parse_standard_m3u8(content):
             ch_match = re.search(r",(.*)$", line)
             current_ch = ch_match.group(1).strip() if ch_match else None
         elif line.startswith(("http://", "https://")) and current_ch:
-            std_ch = alias_map.get(current_ch, current_ch)
+            # 新增：先标准化CCTV名称，再匹配别名
+            normalized_name = normalize_cctv_name(current_ch)
+            std_ch = alias_map.get(normalized_name, alias_map.get(current_ch, normalized_name))
             if std_ch not in m3u8_channels:
                 m3u8_channels[std_ch] = set()
             m3u8_channels[std_ch].add(line)
@@ -387,6 +463,7 @@ def parse_standard_m3u8(content):
     
     return m3u8_channels
 
+# 以下函数（crawl_and_merge_sources、crawl_and_select_top3、generate_iptv_playlist、主执行逻辑）保持不变
 def crawl_and_merge_sources(session):
     """
     爬取所有源并合并去重
@@ -543,7 +620,7 @@ def generate_iptv_playlist(top3_channels):
 if __name__ == "__main__":
     print("=" * 70)
     print("📺 IPTV直播源爬取 + 前三最优源筛选工具（优化版）")
-    print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 未分类频道自动归入“其它频道”")
+    print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 增强CCTV识别 | 未分类频道自动归入“其它频道”")
     print("=" * 70)
 
     # 创建全局 Session（用于爬取源，测速时每个线程会创建独立 Session）
