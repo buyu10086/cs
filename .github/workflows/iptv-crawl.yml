@@ -34,6 +34,7 @@ jobs:
           pip install -r requirements.txt || echo "requirements.txt不存在，跳过该步骤"
           echo "=== 安装额外依赖（tqdm/aiohttp） ==="
           pip install tqdm aiohttp
+          pip install beautifulsoup4
         id: install_deps
 
       - name: 运行爬虫脚本 iptv_crawler.py
