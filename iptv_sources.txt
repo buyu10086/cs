@@ -16,7 +16,6 @@ https://tv.cctv.com/live/cctv10
 https://tv.cctv.com/live/cctv11
 https://tv.cctv.com/live/cctv12
 https://tv.cctv.com/live/cctv13
-https://tv.cctv.com/live/cctv14
 https://tv.cctv.com/live/cctv15
 http://tv.zimtv.cn/10.html
 #分割
