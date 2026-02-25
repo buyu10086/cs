@@ -420,7 +420,8 @@ async def crawl_iptv_sources():
         if len(parts) < 2:
             # 纯URL格式：自动生成临时频道名
             url = line
-            channel_name = f"未知频道_{hash(url)[:6]}"
+            # 修复：将hash结果转为字符串后再切片
+            channel_name = f"未知频道_{str(hash(url))[:6]}"
         else:
             # 原有格式：频道名 | URL
             channel_name, url = parts[0].strip(), parts[1].strip()
