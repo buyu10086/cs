@@ -6,6 +6,7 @@ from pathlib import Path
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from bs4 import BeautifulSoup
 
 # ---------- 进度条（可选依赖）----------
 try:
@@ -41,6 +42,16 @@ CONFIG = {
         "enabled": True,                               # 是否启用单独配置
         "TEST_TIMEOUT": 5,                             # CCTV 频道超时时间（秒）
         "MAX_WORKERS": 20                              # CCTV 频道并发线程数
+    },
+    # 新增：网页爬取配置
+    "WEB_CRAWL_CONFIG": {
+        "YANGSHIPIN_DOMAIN": "tv.cctv.com",            # 央视频域名
+        "ZIMTV_DOMAIN": "tv.zimtv.cn",                 # 目标网页域名
+        "VIDEO_URL_PATTERNS": [                        # 匹配视频链接的正则
+            r'https?://.*?\.m3u8(\?.*?)?',             # m3u8链接
+            r'https?://.*?\.flv(\?.*?)?',              # flv链接
+            r'https?://.*?\.mp4(\?.*?)?'               # mp4链接
+        ]
     }
 }
 
@@ -212,6 +223,8 @@ CCTV_PATTERN = re.compile(
     r"(?:CCTV|央视|中央)[\s\-]?(\d+)(?:\+|PLUS)?|央视(一套|二套|三套|四套|五套|六套|七套|八套|九套|十套|十一套|十二套|十三套|十四套|十五套|十六套|十七套)|央视(体育|电影|纪录|科教|戏曲|新闻|少儿|音乐|奥林匹克|农业农村)",
     re.IGNORECASE
 )
+# 新增：视频链接匹配正则（编译所有模式）
+VIDEO_URL_REGEX = re.compile('|'.join(CONFIG["WEB_CRAWL_CONFIG"]["VIDEO_URL_PATTERNS"]), re.IGNORECASE)
 
 # 2. 缓存别名映射（仅构建一次）
 GLOBAL_ALIAS_MAP = None
@@ -225,7 +238,7 @@ for category_ch_list in CHANNEL_CATEGORIES.values():
 RANK_TAGS = ["$最优", "$次优", "$三优"]
 
 # ===============================
-# 核心工具函数（新增CCTV模糊匹配函数）
+# 核心工具函数（新增网页爬取相关函数）
 # ===============================
 def normalize_cctv_name(ch_name):
     """
@@ -307,6 +320,76 @@ def build_alias_map():
     GLOBAL_ALIAS_MAP = alias_map
     return GLOBAL_ALIAS_MAP
 
+def extract_video_urls_from_html(html_content, page_url):
+    """
+    从HTML内容中提取视频链接
+    返回: 视频链接列表
+    """
+    video_urls = []
+    
+    # 1. 直接匹配所有视频链接
+    matches = VIDEO_URL_REGEX.findall(html_content)
+    for url in matches:
+        # 清理链接中的多余引号和空格
+        clean_url = url.strip('"\' ').split('"')[0].split("'")[0]
+        if clean_url not in video_urls:
+            video_urls.append(clean_url)
+    
+    # 2. 针对央视频特殊处理（提取真实播放地址）
+    if CONFIG["WEB_CRAWL_CONFIG"]["YANGSHIPIN_DOMAIN"] in page_url:
+        # 央视频的视频链接通常在script标签中
+        script_pattern = re.compile(r'var\s+videoUrl\s*=\s*["\'](.*?)["\']', re.IGNORECASE)
+        script_matches = script_pattern.findall(html_content)
+        for url in script_matches:
+            if VIDEO_URL_REGEX.search(url) and url not in video_urls:
+                video_urls.append(url)
+    
+    # 3. 针对zimtv特殊处理
+    if CONFIG["WEB_CRAWL_CONFIG"]["ZIMTV_DOMAIN"] in page_url:
+        # 查找iframe中的视频链接
+        soup = BeautifulSoup(html_content, 'html.parser')
+        iframes = soup.find_all('iframe')
+        for iframe in iframes:
+            iframe_src = iframe.get('src', '')
+            if iframe_src and VIDEO_URL_REGEX.search(iframe_src):
+                if iframe_src not in video_urls:
+                    video_urls.append(iframe_src)
+    
+    return video_urls
+
+def crawl_web_video_links(page_url):
+    """
+    爬取指定网页的视频链接
+    返回: (频道名, 视频链接列表)
+    """
+    try:
+        session = get_requests_session()
+        response = session.get(page_url, timeout=10)
+        response.encoding = response.apparent_encoding or 'utf-8'
+        
+        # 提取频道名（从页面标题或URL中）
+        soup = BeautifulSoup(response.text, 'html.parser')
+        page_title = soup.title.string if soup.title else "未知频道"
+        
+        # 标准化频道名
+        normalized_name = normalize_cctv_name(page_title)
+        channel_name = build_alias_map().get(normalized_name, normalized_name)
+        
+        # 提取视频链接
+        video_urls = extract_video_urls_from_html(response.text, page_url)
+        
+        print(f"✅ 爬取网页 {page_url} 成功：")
+        print(f"   - 识别频道：{channel_name}")
+        print(f"   - 提取到 {len(video_urls)} 个视频链接")
+        
+        return (channel_name, video_urls)
+    
+    except Exception as e:
+        print(f"❌ 爬取网页 {page_url} 失败：{e}")
+        return ("未知频道", [])
+    finally:
+        session.close()
+
 def test_single_url(url, timeout):
     """
     单链接测速（每个线程独立创建 Session，避免共享带来的潜在问题）
@@ -355,15 +438,16 @@ def test_urls_concurrent(urls, timeout, max_workers):
     return result_dict
 
 def read_iptv_sources_from_txt():
-    """读取 iptv_sources.txt 中的有效链接（自动去重）"""
+    """读取 iptv_sources.txt 中的有效链接（自动去重），新增支持网页链接"""
     txt_path = Path(CONFIG["SOURCE_TXT_FILE"])
     valid_urls_set = set()
+    web_page_urls = set()  # 新增：存储网页链接
 
     if not txt_path.exists():
         print(f"❌ 未找到 {txt_path.name}，已自动创建模板文件，请填写链接后重试")
-        template = f"# 每行填写1个IPTV源链接（支持标准m3u8和txt格式）\n# 1. 标准m3u8源示例：https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/main/tv/iptv4.m3u\n# 2. zubo源示例：{CONFIG['ZUBO_SOURCE_MARKER']}对应的链接（本次目标源）\n{CONFIG['ZUBO_SOURCE_MARKER']}示例：https://gh-proxy.com/raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt\n# 可添加注释（以#开头），空行会自动跳过\n"
+        template = f"# 每行填写1个IPTV源链接（支持标准m3u8、txt格式、网页链接）\n# 1. 标准m3u8源示例：https://gh-proxy.com/raw.githubusercontent.com/vbskycn/iptv/refs/heads/main/tv/iptv4.m3u\n# 2. zubo源示例：{CONFIG['ZUBO_SOURCE_MARKER']}对应的链接（本次目标源）\n{CONFIG['ZUBO_SOURCE_MARKER']}示例：https://gh-proxy.com/raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt\n# 3. 网页链接示例：\n#    央视频：https://{CONFIG['WEB_CRAWL_CONFIG']['YANGSHIPIN_DOMAIN']}/live/cctv1/\n#    zimtv：http://{CONFIG['WEB_CRAWL_CONFIG']['ZIMTV_DOMAIN']}/10.html\n# 可添加注释（以#开头），空行会自动跳过\n"
         txt_path.write_text(template, encoding="utf-8")
-        return list(valid_urls_set)
+        return list(valid_urls_set), list(web_page_urls)
 
     try:
         lines = txt_path.read_text(encoding="utf-8").splitlines()
@@ -371,18 +455,31 @@ def read_iptv_sources_from_txt():
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
+            
+            # 判断是否为网页链接（非m3u8/txt的http链接）
             if line.startswith(("http://", "https://")):
-                valid_urls_set.add(line)
+                # 区分普通IPTV源和网页源
+                if any(domain in line for domain in [CONFIG["WEB_CRAWL_CONFIG"]["YANGSHIPIN_DOMAIN"], 
+                                                    CONFIG["WEB_CRAWL_CONFIG"]["ZIMTV_DOMAIN"]]) or \
+                   not (line.endswith((".m3u8", ".txt", ".m3u")) or CONFIG["ZUBO_SOURCE_MARKER"] in line):
+                    web_page_urls.add(line)
+                else:
+                    valid_urls_set.add(line)
             else:
                 print(f"⚠️  第{line_num}行无效（非http链接），已跳过：{line}")
         
         valid_urls = list(valid_urls_set)
-        print(f"✅ 读取完成：共 {len(valid_urls)} 个有效IPTV源（含标准m3u8和txt源）\n")
+        web_urls = list(web_page_urls)
+        
+        print(f"✅ 读取完成：")
+        print(f"   - 标准IPTV源：{len(valid_urls)} 个（含标准m3u8和txt源）")
+        print(f"   - 网页爬取源：{len(web_urls)} 个（央视频/zimtv等）\n")
     except Exception as e:
         print(f"❌ 读取文件失败：{e}")
         valid_urls = []
+        web_urls = []
     
-    return valid_urls
+    return valid_urls, web_urls
 
 def parse_zubo_source(content):
     """
@@ -452,48 +549,60 @@ def parse_standard_m3u8(content):
     
     return m3u8_channels
 
-# 以下函数（crawl_and_merge_sources、crawl_and_select_top3、generate_iptv_playlist、主执行逻辑）保持不变
 def crawl_and_merge_sources(session):
     """
-    爬取所有源并合并去重
+    爬取所有源并合并去重（新增网页爬取逻辑）
     返回字典 {标准频道名: [url列表]}（已去重）
     """
     all_raw_channels = {}
-    source_urls = read_iptv_sources_from_txt()
-    if not source_urls:
-        return all_raw_channels
+    
+    # 1. 读取源文件（区分普通IPTV源和网页源）
+    iptv_source_urls, web_page_urls = read_iptv_sources_from_txt()
+    
+    # 2. 处理普通IPTV源（原有逻辑）
+    if iptv_source_urls:
+        for source_url in iptv_source_urls:
+            print(f"🔍 正在爬取IPTV源：{source_url}")
+            try:
+                response = session.get(source_url, timeout=CONFIG["TEST_TIMEOUT"] + 2)
+                response.encoding = "utf-8"
+                content = response.text
 
-    for source_url in source_urls:
-        print(f"🔍 正在爬取源：{source_url}")
-        try:
-            response = session.get(source_url, timeout=CONFIG["TEST_TIMEOUT"] + 2)
-            response.encoding = "utf-8"
-            content = response.text
+                if CONFIG["ZUBO_SOURCE_MARKER"] in source_url:
+                    print(f"ℹ️  检测到txt格式源，使用专属解析逻辑")
+                    source_channels = parse_zubo_source(content)
+                else:
+                    print(f"ℹ️  检测到标准m3u8源，使用标准解析逻辑")
+                    source_channels = parse_standard_m3u8(content)
 
-            if CONFIG["ZUBO_SOURCE_MARKER"] in source_url:
-                print(f"ℹ️  检测到txt格式源，使用专属解析逻辑")
-                source_channels = parse_zubo_source(content)
-            else:
-                print(f"ℹ️  检测到标准m3u8源，使用标准解析逻辑")
-                source_channels = parse_standard_m3u8(content)
-
-            # 合并到总字典（自动去重）
-            for std_ch, urls in source_channels.items():
-                if std_ch not in all_raw_channels:
-                    all_raw_channels[std_ch] = set()
-                all_raw_channels[std_ch].update(urls)
-            
-            print(f"✅ 该源爬取完成，累计收集 {len(all_raw_channels)} 个频道（去重后）\n")
-        except Exception as e:
-            print(f"❌ 爬取失败：{e}\n")
-            continue
+                # 合并到总字典（自动去重）
+                for std_ch, urls in source_channels.items():
+                    if std_ch not in all_raw_channels:
+                        all_raw_channels[std_ch] = set()
+                    all_raw_channels[std_ch].update(urls)
+                
+                print(f"✅ 该源爬取完成，累计收集 {len(all_raw_channels)} 个频道（去重后）\n")
+            except Exception as e:
+                print(f"❌ 爬取失败：{e}\n")
+                continue
+    
+    # 3. 新增：处理网页源
+    if web_page_urls:
+        print(f"🔍 开始爬取网页视频链接（共{len(web_page_urls)}个网页）")
+        for page_url in web_page_urls:
+            channel_name, video_urls = crawl_web_video_links(page_url)
+            if video_urls:
+                if channel_name not in all_raw_channels:
+                    all_raw_channels[channel_name] = set()
+                all_raw_channels[channel_name].update(video_urls)
+                print(f"✅ 网页源合并完成，累计收集 {len(all_raw_channels)} 个频道（去重后）\n")
 
     # 将 set 转为 list
     for std_ch, url_set in all_raw_channels.items():
         all_raw_channels[std_ch] = list(url_set)
 
     if not all_raw_channels:
-        print("❌ 未爬取到任何频道数据（标准m3u8和txt源均无有效数据）")
+        print("❌ 未爬取到任何频道数据（标准m3u8、txt源、网页源均无有效数据）")
     return all_raw_channels
 
 def crawl_and_select_top3(session):
@@ -598,7 +707,7 @@ def generate_iptv_playlist(top3_channels):
         output_path.write_text("\n".join(playlist_content).rstrip("\n"), encoding="utf-8")
         print(f"\n🎉 成功生成最优播放列表：{output_path.name}")
         print(f"📂 路径：{output_path.absolute()}")
-        print(f"💡 说明：1. 未分类频道已统一改为“其它频道”；2. 每个频道保留最多{top_k}个源，标记为$最优/$次优/$三优；3. txt源的运营商信息已保留（如$上海市电信），方便按网络选择")
+        print(f"💡 说明：1. 未分类频道已统一改为“其它频道”；2. 每个频道保留最多{top_k}个源，标记为$最优/$次优/$三优；3. txt源的运营商信息已保留（如$上海市电信），方便按网络选择；4. 网页爬取的视频链接已自动加入并参与测速筛选")
     except Exception as e:
         print(f"❌ 生成文件失败：{e}")
 
@@ -608,9 +717,18 @@ def generate_iptv_playlist(top3_channels):
 # ===============================
 if __name__ == "__main__":
     print("=" * 70)
-    print("📺 IPTV直播源爬取 + 前三最优源筛选工具（优化版）")
+    print("📺 IPTV直播源爬取 + 前三最优源筛选工具（增强版）")
     print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 增强CCTV识别 | 未分类频道自动归入“其它频道”")
+    print(f"🌐 新增支持：央视频({CONFIG['WEB_CRAWL_CONFIG']['YANGSHIPIN_DOMAIN']})、zimtv({CONFIG['WEB_CRAWL_CONFIG']['ZIMTV_DOMAIN']}) 网页爬取")
     print("=" * 70)
+
+    # 安装依赖提示（新增BeautifulSoup）
+    try:
+        from bs4 import BeautifulSoup
+    except ImportError:
+        print("⚠️  未安装BeautifulSoup4，网页爬取功能需要该依赖！")
+        print("   请运行：pip install beautifulsoup4")
+        exit(1)
 
     # 创建全局 Session（用于爬取源，测速时每个线程会创建独立 Session）
     session = get_requests_session()
