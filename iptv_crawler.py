@@ -33,26 +33,26 @@ logger = init_logger()
 # ===============================
 # 2. 全局配置优化（高性能并发+精准超时+多源类型支持）
 # ===============================
-# 核心优化：TCP连接器参数调优，禁用DNS缓存，提升连接速度
+# 核心优化：修复verify_ssl弃用问题，改为ssl=False
 TCP_CONNECTOR_CONFIG = {
-    "limit": 200,  # 全局并发连接数（从80→200，提升批量请求效率）
-    "limit_per_host": 30,  # 单域名并发（从15→30，适配CCTV等集中域名）
-    "ttl_dns_cache": 0,  # 禁用DNS缓存，避免解析延迟
-    "verify_ssl": False,  # 跳过SSL验证（非敏感请求，大幅提升速度）
+    "limit": 200,  # 全局并发连接数
+    "limit_per_host": 30,  # 单域名并发
+    "ttl_dns_cache": 0,  # 禁用DNS缓存
+    "ssl": False,  # 修复：替换verify_ssl为ssl，解决弃用警告
 }
 
-# CCTV频道专属超时配置（可独立调整）
+# CCTV频道专属超时配置
 CCTV_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=4,  # CCTV频道连接超时（比通用配置稍长，适配官方源稳定性）
-    sock_read=8,  # CCTV频道读取超时
-    total=12,     # CCTV频道总超时
+    connect=4,
+    sock_read=8,
+    total=12,
 )
 
-# 通用频道超时配置（原配置）
+# 通用频道超时配置
 COMMON_AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(
-    connect=3,  # 连接超时（从5→3，无效链接快速失败）
-    sock_read=4,  # 读取超时（从6→5，平衡速度和成功率）
-    total=6,  # 总超时（从10→8，减少整体等待时间）
+    connect=3,
+    sock_read=4,
+    total=6,
 )
 
 # 新增：多源类型支持配置
@@ -77,14 +77,14 @@ CONFIG = {
     "OUTPUT_FILE": "iptv_playlist.m3u8",
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Connection": "keep-alive",  # 优化：长连接，减少握手耗时
-        "Accept-Encoding": "gzip, deflate",  # 压缩传输，减少数据量
+        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
     },
     "TOP_K": 3,
     "IPTV_DISCLAIMER": "个人自用，请勿用于商业用途",
     "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",
     "CACHE_FILE": "iptv_speed_cache.json",
-    "CACHE_EXPIRE_SECONDS": 1800,  # 缓存有效期30分钟
+    "CACHE_EXPIRE_SECONDS": 1800,
     "BAD_KEYWORDS": ["ad", "advertising", "spam", "弹窗", "广告", "推广"],
     "CCTV_AIOHTTP_TIMEOUT": CCTV_AIOHTTP_TIMEOUT,
     "COMMON_AIOHTTP_TIMEOUT": COMMON_AIOHTTP_TIMEOUT,
@@ -95,13 +95,13 @@ CONFIG = {
     "SUPPORTED_EXTENSIONS": SUPPORTED_EXTENSIONS,
     "SOURCE_TYPE_PATTERNS": SOURCE_TYPE_PATTERNS,
     # 新增：源格式修复配置
-    "FIX_URL_ENCODING": True,  # 自动修复URL编码问题
-    "REMOVE_DUPLICATE_PARAMS": True,  # 移除重复URL参数
-    "VALIDATE_URL_STRUCTURE": True,  # 验证URL基本结构
+    "FIX_URL_ENCODING": True,
+    "REMOVE_DUPLICATE_PARAMS": True,
+    "VALIDATE_URL_STRUCTURE": True,
 }
 
 # ===============================
-# 3. 频道分类与别名映射（修复冗余正则）
+# 3. 频道分类与别名映射
 # ===============================
 CHANNEL_CATEGORIES = {
     "央视频道": [
@@ -318,7 +318,6 @@ async def test_source_speed(session, url, channel_name):
         # 不同源类型使用不同的测试策略
         if src_type in ["rtmp", "rtsp"]:
             # RTMP/RTSP协议测试（仅检查连接）
-            # 注：aiohttp不支持RTMP，此处简化为快速超时检查
             await asyncio.wait_for(asyncio.sleep(0.1), timeout=timeout.connect)
             return {
                 "url": url,
@@ -388,7 +387,7 @@ async def test_source_speed(session, url, channel_name):
         }
 
 # ===============================
-# 7. 核心爬虫逻辑（多源类型支持）
+# 7. 核心爬虫逻辑（修复：兼容纯URL格式源文件）
 # ===============================
 async def crawl_iptv_sources():
     """核心爬虫逻辑：爬取并验证多类型IPTV源"""
@@ -403,7 +402,7 @@ async def crawl_iptv_sources():
     with open(source_file, "r", encoding="utf-8", errors="ignore") as f:
         raw_lines = f.readlines()
     
-    # 解析和清洗源数据
+    # 解析和清洗源数据（修复核心：兼容纯URL格式）
     channel_sources = defaultdict(list)
     source_type_counter = Counter()
     valid_urls = 0
@@ -416,12 +415,15 @@ async def crawl_iptv_sources():
         if not line or line.startswith("#"):
             continue
         
-        # 分割频道名和URL（支持多种分隔符）
+        # 修复1：兼容纯URL格式（每行仅URL，无频道名）
         parts = re.split(r"\s*[|,，]\s*", line, maxsplit=1)
         if len(parts) < 2:
-            continue
-        
-        channel_name, url = parts[0].strip(), parts[1].strip()
+            # 纯URL格式：自动生成临时频道名
+            url = line
+            channel_name = f"未知频道_{hash(url)[:6]}"
+        else:
+            # 原有格式：频道名 | URL
+            channel_name, url = parts[0].strip(), parts[1].strip()
         
         # 修复URL格式
         fixed_url = fix_url_format(url)
@@ -456,6 +458,10 @@ async def crawl_iptv_sources():
     
     logger.info(f"源解析完成 - 有效URL: {valid_urls}, 无效URL: {invalid_urls}")
     logger.info(f"源类型统计: {dict(source_type_counter)}")
+    
+    if valid_urls == 0:
+        logger.warning("未识别到任何有效源URL，请检查iptv_sources.txt格式")
+        return
     
     # 初始化aiohttp客户端
     connector = aiohttp.TCPConnector(**CONFIG["TCP_CONNECTOR_CONFIG"])
@@ -516,6 +522,19 @@ async def crawl_iptv_sources():
             
             playlist.write("\n")
         
+        # 补充：添加未分类的有效源（纯URL格式的源）
+        playlist.write("#EXTGRP:未分类频道\n")
+        for channel_name, sources in results.items():
+            # 跳过已分类的频道
+            if any(channel_name in cats for cats in CHANNEL_CATEGORIES.values()):
+                continue
+            # 只保留有效源
+            valid_sources = [s for s in sources if s["speed"] > 0][:CONFIG["TOP_K"]]
+            if valid_sources:
+                for src in valid_sources:
+                    playlist.write(f"#EXTINF:-1 group-title=\"未分类频道\",{channel_name}\n")
+                    playlist.write(f"{src['url']}\n")
+        
         # 保存播放列表
         with open(CONFIG["OUTPUT_FILE"], "w", encoding="utf-8") as f:
             f.write(playlist.getvalue())
@@ -534,6 +553,10 @@ def main():
     logger.info("="*50)
     
     try:
+        # 解决Windows异步事件循环问题
+        if asyncio.get_event_loop_policy().__class__.__name__ == "WindowsProactorEventLoopPolicy":
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        
         # 运行异步爬虫
         asyncio.run(crawl_iptv_sources())
         
