@@ -1,5 +1,5 @@
 #EXTM3U x-tvg-url=""
-# 生成时间：2026-02-27 17:23:55 | 免责声明：个人自用，请勿用于商业用途
+# 生成时间：2026-02-27 17:30:31 | 免责声明：个人自用，请勿用于商业用途
 
 #EXTGRP:央视频道
 #EXTINF:-1 group-title="央视频道",CCTV1 (第1优)
@@ -28,5 +28,13 @@ http://69.30.245.50/live/cctv10.m3u8
 #EXTGRP:其他频道
 
 #EXTGRP:其他频道
+#EXTINF:-1 group-title="其他频道",IPTV (第1优)
+https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt
+#EXTINF:-1 group-title="其他频道",IPTV (第2优)
+https://raw.githubusercontent.com/zhi35/iptv/refs/heads/master/iptv.m3u
+#EXTINF:-1 group-title="其他频道",STV (第1优)
+https://iptv.cqshushu.com/stv.php
+#EXTINF:-1 group-title="其他频道",10 (第1优)
+http://tv.zimtv.cn/10.html
 #EXTINF:-1 group-title="其他频道",1080P (第1优)
 https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
