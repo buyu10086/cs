@@ -28,9 +28,9 @@ CONFIG = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Connection": "close"
     },
-    "TEST_TIMEOUT": 3,      # 延长超时，适配可能较慢的直播源
-    "MAX_WORKERS": 20,      # 降低并发，避免被封
-    "RETRY_TIMES": 0,       # 关闭重试，加快测试速度
+    "TEST_TIMEOUT": 3,      # 可根据网络情况调整
+    "MAX_WORKERS": 20,
+    "RETRY_TIMES": 0,
     "TOP_K": 3,
     "IPTV_DISCLAIMER": "个人自用，请勿用于商业用途",
     "ZUBO_SOURCE_MARKER": "kakaxi-1/zubo",
@@ -118,12 +118,14 @@ def test_single_url(url, timeout):
     session = get_requests_session()
     try:
         start = time.time()
-        # 直播源测试：直接获取并读取前100字节，验证是否为m3u8
+        # 只检查 HTTP 200 状态码，不再强制检查 #EXTM3U
         with session.get(url, timeout=timeout, stream=True) as res:
-            if res.status_code == 200 and "#EXTM3U" in res.raw.read(100).decode('utf-8', errors='ignore'):
+            if res.status_code == 200:
                 return (url, round(time.time() - start, 2))
         return (url, float('inf'))
-    except:
+    except Exception as e:
+        # 打印具体错误，方便排查
+        # print(f"测试 {url} 失败: {e}")
         return (url, float('inf'))
     finally:
         session.close()
@@ -245,9 +247,10 @@ def generate_iptv_playlist(top_channels):
     if other:
         content.append(f"#EXTGRP:其他频道")
         for ch in other:
-            for idx, url in enumerate(top_channels[ch]):
-                content.append(f"#EXTINF:-1 group-title=\"其他频道\",{ch} (第{idx+1}优)")
-                content.append(url)
+            if ch in top_channels:
+                for idx, url in enumerate(top_channels[ch]):
+                    content.append(f"#EXTINF:-1 group-title=\"其他频道\",{ch} (第{idx+1}优)")
+                    content.append(url)
 
     output.write_text("\n".join(content), encoding="utf-8")
     print(f"\n🎉 成功生成播放列表：{output.absolute()}")
@@ -258,7 +261,7 @@ def generate_iptv_playlist(top_channels):
 # ===============================
 if __name__ == "__main__":
     print("=" * 60)
-    print("📺 IPTV 直播源筛选工具（强制兜底版）")
+    print("📺 IPTV 直播源筛选工具（修复误判版）")
     print("=" * 60)
     
     top3 = crawl_and_select_top3()
