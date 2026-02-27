@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 try:
     from tqdm import tqdm
 except ImportError:
-    def tqdm(iterable, **kwargs):
+    def tqdm(iterable,** kwargs):
         total = kwargs.get('total', len(iterable) if hasattr(iterable, '__len__') else None)
         if total:
             print(f"进度：共 {total} 项，处理中...（安装 tqdm 可获实时进度条）")
@@ -213,6 +213,12 @@ CCTV_PATTERN = re.compile(
     re.IGNORECASE
 )
 
+# 新增：从URL中提取频道名的正则
+URL_CHANNEL_PATTERN = re.compile(
+    r"(cctv|央视|中央)[\d\+]+",
+    re.IGNORECASE
+)
+
 # 2. 缓存别名映射（仅构建一次）
 GLOBAL_ALIAS_MAP = None
 
@@ -278,6 +284,31 @@ def normalize_cctv_name(ch_name):
         return "CCTV8K"
     
     return ch_name
+
+def extract_channel_from_url(url):
+    """
+    从独立的直播m3u8 URL中提取频道名
+    示例：
+    http://69.30.245.50/live/cctv1.m3u8 → CCTV1
+    http://api.kkitv.itv888.cn:8080/hls/hcwu4ianhgw/index.m3u8 → 无法识别则返回URL本身作为临时名称
+    """
+    # 先转小写方便匹配
+    url_lower = url.lower()
+    
+    # 匹配CCTV相关
+    cctv_match = URL_CHANNEL_PATTERN.search(url_lower)
+    if cctv_match:
+        # 提取cctv后面的数字/加号部分
+        channel_part = cctv_match.group(0)
+        # 标准化
+        normalized = normalize_cctv_name(channel_part.upper())
+        if normalized and normalized.startswith("CCTV"):
+            return normalized
+    
+    # 如果无法识别，返回URL的最后部分作为临时名称
+    url_parts = url.split("/")
+    last_part = url_parts[-1].replace(".m3u8", "").replace(".ts", "")
+    return f"未知频道_{last_part}" if last_part else url
 
 def get_requests_session():
     """创建带重试机制的requests会话（线程安全，可共享）"""
@@ -420,31 +451,47 @@ def parse_zubo_source(content):
     print(f"✅ txt源解析完成：共获取 {len(zubo_channels)} 个频道\n")
     return zubo_channels
 
-def parse_standard_m3u8(content):
+def parse_standard_m3u8(content, source_url):
     """
-    解析标准 m3u8 格式
+    解析标准 m3u8 格式（增强版）
+    支持两种场景：
+    1. 包含频道列表的m3u8播放列表（带EXTINF标签）
+    2. 独立的直播m3u8文件（从URL提取频道名）
     返回字典 {标准频道名: [url列表]}
     """
     m3u8_channels = {}
     alias_map = build_alias_map()
     lines = content.splitlines()
+    
+    # 标记是否是播放列表（包含EXTM3U头和EXTINF标签）
+    is_playlist = any(line.strip().startswith("#EXTM3U") for line in lines)
     current_ch = None
-
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        if line.startswith("#EXTINF:"):
-            ch_match = re.search(r",(.*)$", line)
-            current_ch = ch_match.group(1).strip() if ch_match else None
-        elif line.startswith(("http://", "https://")) and current_ch:
-            # 新增：先标准化CCTV名称，再匹配别名
-            normalized_name = normalize_cctv_name(current_ch)
-            std_ch = alias_map.get(normalized_name, alias_map.get(current_ch, normalized_name))
-            if std_ch not in m3u8_channels:
-                m3u8_channels[std_ch] = set()
-            m3u8_channels[std_ch].add(line)
-            current_ch = None  # 重置，防止后续非URL行误关联
+    
+    if is_playlist:
+        # 场景1：标准播放列表解析
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("#EXTINF:"):
+                ch_match = re.search(r",(.*)$", line)
+                current_ch = ch_match.group(1).strip() if ch_match else None
+            elif line.startswith(("http://", "https://")) and current_ch:
+                # 标准化CCTV名称，再匹配别名
+                normalized_name = normalize_cctv_name(current_ch)
+                std_ch = alias_map.get(normalized_name, alias_map.get(current_ch, normalized_name))
+                if std_ch not in m3u8_channels:
+                    m3u8_channels[std_ch] = set()
+                m3u8_channels[std_ch].add(line)
+                current_ch = None  # 重置，防止后续非URL行误关联
+    else:
+        # 场景2：独立直播m3u8文件，从URL提取频道名
+        ch_name = extract_channel_from_url(source_url)
+        normalized_name = normalize_cctv_name(ch_name)
+        std_ch = alias_map.get(normalized_name, normalized_name)
+        if std_ch not in m3u8_channels:
+            m3u8_channels[std_ch] = set()
+        m3u8_channels[std_ch].add(source_url)
     
     # 将 set 转为 list
     for std_ch, url_set in m3u8_channels.items():
@@ -452,7 +499,6 @@ def parse_standard_m3u8(content):
     
     return m3u8_channels
 
-# 以下函数（crawl_and_merge_sources、crawl_and_select_top3、generate_iptv_playlist、主执行逻辑）保持不变
 def crawl_and_merge_sources(session):
     """
     爬取所有源并合并去重
@@ -475,7 +521,7 @@ def crawl_and_merge_sources(session):
                 source_channels = parse_zubo_source(content)
             else:
                 print(f"ℹ️  检测到标准m3u8源，使用标准解析逻辑")
-                source_channels = parse_standard_m3u8(content)
+                source_channels = parse_standard_m3u8(content, source_url)  # 传入source_url用于提取频道名
 
             # 合并到总字典（自动去重）
             for std_ch, urls in source_channels.items():
