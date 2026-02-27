@@ -22,7 +22,8 @@ except ImportError:
 # 全局配置区（核心参数可调）
 # ===============================
 CONFIG = {
-    "SOURCE_TXT_FILE": "iptv_sources.txt",          # 存储所有IPTV源链接
+    "SOURCE_TXT_FILE": "iptv_sources.txt",          # 存储所有IPTV源链接（远程源）
+    "M3U8_SOURCES_FILE": "m3u8_sources.txt",        # 新增：存储独立m3u8链接的文件
     "OUTPUT_FILE": "iptv_playlist.m3u8",            # 生成的最优播放列表
     "HEADERS": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -207,6 +208,8 @@ CHANNEL_MAPPING = {
 # 1. 提前编译正则（避免重复编译）
 ZUBO_SKIP_PATTERN = re.compile(r"^(更新时间|.*,#genre#|http://kakaxi\.indevs\.in/LOGO/)")
 ZUBO_CHANNEL_PATTERN = re.compile(r"^([^,]+),(http://.+?)(\$.*)?$")
+# 新增：从URL中提取频道名的正则（匹配cctv1、cctv2等）
+URL_CHANNEL_PATTERN = re.compile(r"/(cctv\d+|cctv\d+\+|cctv4k|cctv8k)", re.IGNORECASE)
 # 新增：CCTV模糊匹配正则（匹配各种变体，如CCTV 1、CCTV-5+、央视五套等）
 CCTV_PATTERN = re.compile(
     r"(?:CCTV|央视|中央)[\s\-]?(\d+)(?:\+|PLUS)?|央视(一套|二套|三套|四套|五套|六套|七套|八套|九套|十套|十一套|十二套|十三套|十四套|十五套|十六套|十七套)|央视(体育|电影|纪录|科教|戏曲|新闻|少儿|音乐|奥林匹克|农业农村)",
@@ -384,6 +387,55 @@ def read_iptv_sources_from_txt():
     
     return valid_urls
 
+def read_standalone_m3u8_links():
+    """新增：读取 m3u8_sources.txt 中的独立m3u8链接，解析频道名并返回 {标准频道名: [url列表]}"""
+    m3u8_path = Path(CONFIG["M3U8_SOURCES_FILE"])
+    standalone_channels = {}
+    alias_map = build_alias_map()
+
+    if not m3u8_path.exists():
+        print(f"ℹ️  未找到 {m3u8_path.name}，跳过读取独立m3u8链接")
+        return standalone_channels
+
+    try:
+        lines = m3u8_path.read_text(encoding="utf-8").splitlines()
+        valid_count = 0
+        for line_num, line in enumerate(lines, 1):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            
+            # 只处理m3u8链接
+            if not (line.startswith(("http://", "https://")) and (line.endswith(".m3u8") or "m3u8" in line)):
+                print(f"⚠️  第{line_num}行不是有效m3u8链接，已跳过：{line}")
+                continue
+            
+            # 从URL中提取频道名
+            match = URL_CHANNEL_PATTERN.search(line)
+            if match:
+                # 提取并标准化频道名
+                ch_name = match.group(1).upper()
+                normalized_name = normalize_cctv_name(ch_name)
+                std_ch = alias_map.get(normalized_name, normalized_name)
+                
+                # 添加到字典
+                if std_ch not in standalone_channels:
+                    standalone_channels[std_ch] = set()
+                standalone_channels[std_ch].add(line)
+                valid_count += 1
+            else:
+                print(f"⚠️  第{line_num}行无法解析频道名，已跳过：{line}")
+        
+        # 将set转为list
+        for std_ch, url_set in standalone_channels.items():
+            standalone_channels[std_ch] = list(url_set)
+        
+        print(f"✅ 读取独立m3u8链接完成：共 {valid_count} 个有效链接，解析出 {len(standalone_channels)} 个频道\n")
+    except Exception as e:
+        print(f"❌ 读取 {m3u8_path.name} 失败：{e}")
+    
+    return standalone_channels
+
 def parse_zubo_source(content):
     """
     解析 txt 格式源（例如 kakaxi-1/zubo 提供的格式）
@@ -452,17 +504,26 @@ def parse_standard_m3u8(content):
     
     return m3u8_channels
 
-# 以下函数（crawl_and_merge_sources、crawl_and_select_top3、generate_iptv_playlist、主执行逻辑）保持不变
 def crawl_and_merge_sources(session):
     """
-    爬取所有源并合并去重
+    爬取所有源并合并去重（新增：合并独立m3u8链接）
     返回字典 {标准频道名: [url列表]}（已去重）
     """
     all_raw_channels = {}
     source_urls = read_iptv_sources_from_txt()
-    if not source_urls:
+    
+    # 第一步：读取独立m3u8链接并加入合并
+    standalone_channels = read_standalone_m3u8_links()
+    for std_ch, urls in standalone_channels.items():
+        if std_ch not in all_raw_channels:
+            all_raw_channels[std_ch] = set()
+        all_raw_channels[std_ch].update(urls)
+    
+    if not source_urls and not standalone_channels:
+        print("❌ 未找到任何源（远程源和独立m3u8链接均为空）")
         return all_raw_channels
 
+    # 第二步：爬取远程源
     for source_url in source_urls:
         print(f"🔍 正在爬取源：{source_url}")
         try:
@@ -493,7 +554,7 @@ def crawl_and_merge_sources(session):
         all_raw_channels[std_ch] = list(url_set)
 
     if not all_raw_channels:
-        print("❌ 未爬取到任何频道数据（标准m3u8和txt源均无有效数据）")
+        print("❌ 未爬取/读取到任何频道数据")
     return all_raw_channels
 
 def crawl_and_select_top3(session):
@@ -609,7 +670,7 @@ def generate_iptv_playlist(top3_channels):
 if __name__ == "__main__":
     print("=" * 70)
     print("📺 IPTV直播源爬取 + 前三最优源筛选工具（优化版）")
-    print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 增强CCTV识别 | 未分类频道自动归入“其它频道”")
+    print(f"🎯 已支持 {CONFIG['ZUBO_SOURCE_MARKER']} 格式源解析 | 增强CCTV识别 | 独立m3u8链接直接参与测速 | 未分类频道自动归入“其它频道”")
     print("=" * 70)
 
     # 创建全局 Session（用于爬取源，测速时每个线程会创建独立 Session）
