@@ -39,7 +39,7 @@ CONFIG = {
     # CCTV 单独测速配置（可针对CCTV频道使用更宽松的超时或更低的并发）
     "CCTV_SPECIFIC_CONFIG": {
         "enabled": True,                               # 是否启用单独配置
-        "TEST_TIMEOUT": 5,                             # CCTV 频道超时时间（秒）
+        "TEST_TIMEOUT": 4,                             # CCTV 频道超时时间（秒）
         "MAX_WORKERS": 20                              # CCTV 频道并发线程数
     }
 }
