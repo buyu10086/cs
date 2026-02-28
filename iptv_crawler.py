@@ -106,7 +106,7 @@ class DNSCache:
 dns_cache = DNSCache()
 
 # ===============================
-# 频道分类与别名映射（保持不变）
+# 频道分类与别名映射
 # ===============================
 CHANNEL_CATEGORIES = {
     "央视频道": [
@@ -169,11 +169,22 @@ CHANNEL_MAPPING = {
     "CCTV5+": ["CCTV-5+", "CCTV 5+", "CCTV5+ HD", "CCTV-5+ HD", "CCTV 5+ HD", "CCTV-5+体育赛事", "CCTV5+体育赛事", "央视五+", "中央五+", "体育赛事频道"],
     "CCTV6": ["CCTV-6", "CCTV 6", "CCTV6 HD", "CCTV-6 HD", "CCTV 6 HD", "CCTV-6电影", "CCTV6电影", "央视六套", "中央六台", "央视电影"],
     "CCTV7": ["CCTV-7", "CCTV 7", "CCTV7 HD", "CCTV-7 HD", "CCTV 7 HD", "CCTV-7国防军事", "CCTV7国防军事", "央视七套", "中央七台"],
-    # 其他映射保持不变
+    "CCTV8": ["CCTV-8", "CCTV 8", "CCTV8 HD", "CCTV-8 HD", "CCTV 8 HD", "CCTV-8电视剧", "CCTV8电视剧", "央视八套", "中央八台"],
+    "CCTV9": ["CCTV-9", "CCTV 9", "CCTV9 HD", "CCTV-9 HD", "CCTV 9 HD", "CCTV-9纪录", "CCTV9纪录", "央视九套", "中央九台"],
+    "CCTV10": ["CCTV-10", "CCTV 10", "CCTV10 HD", "CCTV-10 HD", "CCTV 10 HD", "CCTV-10科教", "CCTV10科教", "央视十套", "中央十台"],
+    "CCTV11": ["CCTV-11", "CCTV 11", "CCTV11 HD", "CCTV-11 HD", "CCTV 11 HD", "CCTV-11戏曲", "CCTV11戏曲", "央视十一套", "中央十一台"],
+    "CCTV12": ["CCTV-12", "CCTV 12", "CCTV12 HD", "CCTV-12 HD", "CCTV 12 HD", "CCTV-12社会与法", "CCTV12社会与法", "央视十二套", "中央十二台"],
+    "CCTV13": ["CCTV-13", "CCTV 13", "CCTV13 HD", "CCTV-13 HD", "CCTV 13 HD", "CCTV-13新闻", "CCTV13新闻", "央视十三套", "中央十三台"],
+    "CCTV14": ["CCTV-14", "CCTV 14", "CCTV14 HD", "CCTV-14 HD", "CCTV 14 HD", "CCTV-14少儿", "CCTV14少儿", "央视十四套", "中央十四台"],
+    "CCTV15": ["CCTV-15", "CCTV 15", "CCTV15 HD", "CCTV-15 HD", "CCTV 15 HD", "CCTV-15音乐", "CCTV15音乐", "央视十五套", "中央十五台"],
+    "CCTV16": ["CCTV-16", "CCTV 16", "CCTV16 HD", "CCTV-16 HD", "CCTV 16 HD", "CCTV-16奥林匹克", "CCTV16奥林匹克", "央视十六套", "中央十六台"],
+    "CCTV17": ["CCTV-17", "CCTV 17", "CCTV17 HD", "CCTV-17 HD", "CCTV 17 HD", "CCTV-17农业农村", "CCTV17农业农村", "央视十七套", "中央十七台"],
+    "CCTV4K": ["CCTV4K", "CCTV-4K", "CCTV 4K", "CCTV4K超高清", "央视4K"],
+    "CCTV8K": ["CCTV8K", "CCTV-8K", "CCTV 8K", "CCTV8K超高清", "央视8K"],
 }
 
 # ===============================
-# 核心工具函数（优化后）
+# 核心工具函数（优化+修复后）
 # ===============================
 def test_url_speed(url, is_cctv=False):
     """
@@ -218,13 +229,18 @@ def test_url_speed(url, is_cctv=False):
 
 def process_channels(channels, is_cctv=False):
     """
-    并发处理频道（优化：动态线程池、进度条、异常捕获）
+    并发处理频道（修复：增加空列表判断，避免max_workers=0）
     """
     results = {}
+    # 先判断频道列表是否为空，为空直接返回空结果
+    if not channels:
+        print("提示：待处理频道列表为空，跳过测速")
+        return results
+    
     max_workers = CONFIG["CCTV_SPECIFIC_CONFIG"]["MAX_WORKERS"] if (is_cctv and CONFIG["CCTV_SPECIFIC_CONFIG"]["enabled"]) else CONFIG["MAX_WORKERS"]
     
-    # 动态调整线程数（避免超出系统限制）
-    max_workers = min(max_workers, len(channels), 50)  # 上限50
+    # 动态调整线程数（避免超出系统限制，且保证至少为1）
+    max_workers = max(1, min(max_workers, len(channels), 50))  # 修复：max(1, ...) 确保线程数≥1
     
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # 提交任务
@@ -237,7 +253,7 @@ def process_channels(channels, is_cctv=False):
         for future in tqdm(as_completed(future_to_channel), total=len(future_to_channel), desc="测速中"):
             channel = future_to_channel[future]
             try:
-                speed = future.result(timeout=timeout + 1)  # 任务超时保护
+                speed = future.result(timeout=CONFIG["TEST_TIMEOUT"] + 1)  # 修复：timeout变量引用错误
                 if speed is not None:
                     channel_name = channel["name"]
                     if channel_name not in results:
@@ -256,36 +272,105 @@ def process_channels(channels, is_cctv=False):
     return results
 
 # ===============================
+# 辅助解析函数（保持原有逻辑）
+# ===============================
+def parse_m3u8_content(content):
+    """解析M3U8内容，提取频道名称和URL"""
+    channels = []
+    lines = content.splitlines()
+    current_name = None
+    for line in lines:
+        line = line.strip()
+        if line.startswith("#EXTINF:"):
+            # 提取频道名称
+            name_match = re.search(r',(.+)$', line)
+            if name_match:
+                current_name = name_match.group(1).strip()
+        elif line and not line.startswith("#") and current_name:
+            # 提取有效URL
+            if line.startswith(("http://", "https://")):
+                # 统一频道名称（匹配别名）
+                normalized_name = None
+                for standard_name, aliases in CHANNEL_MAPPING.items():
+                    if current_name in aliases or standard_name in current_name:
+                        normalized_name = standard_name
+                        break
+                if not normalized_name:
+                    normalized_name = current_name
+                
+                channels.append({
+                    "name": normalized_name,
+                    "url": line
+                })
+            current_name = None
+    return channels
+
+def load_all_channels():
+    """加载所有源文件中的频道"""
+    all_channels = []
+    
+    # 读取txt源文件
+    def read_source_file(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                return [line.strip() for line in f if line.strip() and line.startswith(("http://", "https://"))]
+        except FileNotFoundError:
+            print(f"警告：{file_path} 不存在，跳过")
+            return []
+    
+    # 读取并解析M3U8源文件
+    def read_and_parse_m3u8(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+                return parse_m3u8_content(content)
+        except FileNotFoundError:
+            print(f"警告：{file_path} 不存在，跳过")
+            return []
+    
+    # 处理txt源（直接是URL列表）
+    txt_urls = read_source_file(CONFIG["SOURCE_TXT_FILE"])
+    for url in txt_urls:
+        # 简单提取名称（URL中截取）
+        name = url.split("/")[-1].split(".")[0] if "/" in url else "未知频道"
+        all_channels.append({"name": name, "url": url})
+    
+    # 处理M3U8源
+    m3u8_channels = read_and_parse_m3u8(CONFIG["M3U8_SOURCES_FILE"])
+    all_channels.extend(m3u8_channels)
+    
+    # 去重（按名称+URL）
+    seen = set()
+    unique_channels = []
+    for ch in all_channels:
+        key = (ch["name"], ch["url"])
+        if key not in seen:
+            seen.add(key)
+            unique_channels.append(ch)
+    
+    print(f"共加载到 {len(unique_channels)} 个唯一频道")
+    return unique_channels
+
+# ===============================
 # 主函数（优化：资源清理、分步执行）
 # ===============================
 def main():
     try:
-        # 1. 读取源文件（优化：批量读取、编码容错）
-        def read_source_file(file_path):
-            try:
-                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                    return [line.strip() for line in f if line.strip()]
-            except FileNotFoundError:
-                print(f"警告：{file_path} 不存在，跳过")
-                return []
-
-        iptv_sources = read_source_file(CONFIG["SOURCE_TXT_FILE"])
-        m3u8_sources = read_source_file(CONFIG["M3U8_SOURCES_FILE"])
-
-        # 2. 解析频道（原有逻辑不变，复用全局session）
-        all_channels = []
-        # ... 此处保留原有解析逻辑，替换requests.get为session.get ...
-
-        # 3. 分类处理
+        # 1. 加载所有频道
+        all_channels = load_all_channels()
+        
+        # 2. 分类处理
         cctv_channels = [c for c in all_channels if any(key in c["name"] for key in CHANNEL_CATEGORIES["央视频道"])]
         other_channels = [c for c in all_channels if c not in cctv_channels]
 
-        # 4. 测速
+        print(f"识别到CCTV频道 {len(cctv_channels)} 个，其他频道 {len(other_channels)} 个")
+        
+        # 3. 测速
         cctv_results = process_channels(cctv_channels, is_cctv=True)
         other_results = process_channels(other_channels, is_cctv=False)
         all_results = {**cctv_results, **other_results}
 
-        # 5. 生成输出文件（优化：批量写入、原子操作）
+        # 4. 生成输出文件（优化：批量写入、原子操作）
         output_path = Path(CONFIG["OUTPUT_FILE"])
         temp_path = output_path.with_suffix(".tmp")
         
@@ -306,7 +391,7 @@ def main():
         
         # 原子替换（避免文件损坏）
         temp_path.rename(output_path)
-        print(f"成功生成：{output_path}")
+        print(f"成功生成：{output_path}，共包含 {len(all_results)} 个可用频道")
 
     except Exception as e:
         print(f"运行错误：{e}")
@@ -320,4 +405,6 @@ def main():
 if __name__ == "__main__":
     # 设置全局超时（兜底）
     socket.setdefaulttimeout(CONFIG["TEST_TIMEOUT"] + 2)
+    print("=== 开始执行爬虫脚本 ===")
     main()
+    print("=== 爬虫脚本执行完成 ===")
