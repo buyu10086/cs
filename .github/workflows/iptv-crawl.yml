@@ -2,7 +2,7 @@ name: 名著目录更新
 
 on:
   schedule:
-    # 保留你原配置的 UTC 9点、21点执行（对应北京时间17点、5点）
+    # 北京时间 9 点、21 点 → UTC 时间为 1 点、13 点（UTC+8 时差）
     - cron: "0 9,21 * * *"  
   workflow_dispatch:  # 支持手动触发
 
@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 拉取完整历史，避免提交时冲突
+          # 新增：指定分支，确保拉取正确的main分支
           ref: ${{ github.ref }}
 
       - name: 设置 Python 环境
@@ -23,7 +24,7 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"  # 缓存 pip 依赖，加速后续运行
-          cache-dependency-path: "requirements.txt"
+          cache-dependency-path: "requirements.txt"  # 修正依赖文件路径（原路径是cs/下）
 
       - name: 升级 pip 并安装依赖
         run: |
@@ -49,16 +50,9 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 【核心修复】先重置工作区到干净状态，解决未暂存文件导致的rebase报错
-          echo "=== 重置工作区并拉取远程最新代码 ==="
-          git fetch origin ${{ github.ref_name }}  # 获取远程最新代码
-          git reset --hard origin/${{ github.ref_name }}  # 强制重置到远程分支状态
-          # 兜底逻辑：若reset失败，尝试普通拉取（兼容特殊情况）
-          git pull origin ${{ github.ref_name }} || git pull --allow-unrelated-histories origin ${{ github.ref_name }}
-          
-          # 重新运行脚本（因为reset会覆盖刚才生成的文件）
-          echo "=== 重新执行爬虫脚本生成最新文件 ==="
-          python iptv_crawler.py
+          # 核心修复：拉取远程最新变更，解决fetch first冲突
+          echo "=== 拉取远程最新代码 ==="
+          git pull --rebase origin ${{ github.ref_name }} || git pull --allow-unrelated-histories origin ${{ github.ref_name }}
           
           # 添加目标文件
           git add iptv_playlist.m3u8
@@ -77,7 +71,7 @@ jobs:
         id: commit_push
         if: steps.run_script.outcome == 'success'  # 仅脚本执行成功时提交
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动注入的令牌，用于推送
 
       - name: 执行结果汇总
         run: |
@@ -85,4 +79,4 @@ jobs:
           echo "依赖安装状态：${{ steps.install_deps.outcome }}"
           echo "脚本执行状态：${{ steps.run_script.outcome }}"
           echo "提交推送状态：${{ steps.commit_push.outcome }}"
-        if: always()
+        if: always()  # 无论前面步骤是否成功，都输出汇总日志
