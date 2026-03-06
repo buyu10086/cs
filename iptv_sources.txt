@@ -1,8 +1,8 @@
 https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt
 https://raw.githubusercontent.com/zhi35/iptv/refs/heads/master/iptv.m3u
 https://iptv.cqshushu.com/stv.php
-http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv10_mbd.m3u8?auth_key=1772841600-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-f0b6db384c6f0c7b29479dd9285e398d
 https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
+#
 
 
 
