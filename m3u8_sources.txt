@@ -1,4 +1,4 @@
-
+#来源sincepro
 http://69.30.245.50/live/cctv1.m3u8
 http://69.30.245.50/live/cctv2.m3u8
 http://69.30.245.50/live/cctv3.m3u8
@@ -9,3 +9,6 @@ http://69.30.245.50/live/cctv7.m3u8
 http://69.30.245.50/live/cctv8.m3u8
 http://69.30.245.50/live/cctv9.m3u8
 http://69.30.245.50/live/cctv10.m3u8
+#来源
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv10_mbd.m3u8?auth_key=1772841600-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-f0b6db384c6f0c7b29479dd9285e398d
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv1_mbd.m3u8?auth_key=1772841600-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-45dacbb40ff1763abf372b5b49769839
