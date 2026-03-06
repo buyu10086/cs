@@ -12,3 +12,9 @@ http://69.30.245.50/live/cctv10.m3u8
 #来源http://tv.zimtv.cn/tv/
 http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv10_mbd.m3u8?auth_key=1772841600-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-f0b6db384c6f0c7b29479dd9285e398d
 http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv1_mbd.m3u8?auth_key=1772841600-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-45dacbb40ff1763abf372b5b49769839
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv2_mbd.m3u8?auth_key=1772841600-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-561fb81f73b0855a58d95a3e4af8c4e4
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv4_mbd.m3u8?auth_key=1772841600-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-f14273946743f533df76c25a5a30491d
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv7_mbd.m3u8?auth_key=1772842500-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-c1ea5be916fd140b257afbba8e8a9e14
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv9_mbd.m3u8?auth_key=1772842500-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-e04d2c721d0ad3f150ad11e2eeda30ce
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv10_mbd.m3u8?auth_key=1772842500-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-2072a52f4b119d7ceae2fecb9456c4fc
+http://live-play-hls.cctvnews.cctv.com/CCTVChannel/channel_cctv12_mbd.m3u8?auth_key=1772842500-1-d0cf62177f590266d33d18434827d85dd79eff7c7754a6ca8013143f4ecbd3f7-32df623e88e1b119346d05a008492119
