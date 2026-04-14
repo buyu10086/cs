@@ -9,4 +9,5 @@ http://69.30.245.50/live/cctv7.m3u8
 http://69.30.245.50/live/cctv8.m3u8
 http://69.30.245.50/live/cctv9.m3u8
 http://69.30.245.50/live/cctv10.m3u8
+https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
 #来源http://tv.zimtv.cn/tv/
