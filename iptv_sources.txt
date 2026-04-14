@@ -1,5 +1,8 @@
 https://raw.githubusercontent.com/kakaxi-1/zubo/refs/heads/main/IPTV.txt
 https://raw.githubusercontent.com/zhi35/iptv/refs/heads/master/iptv.m3u
+http://wangziduoqing.com/yuan/zb.txt
+https://fastly.jsdelivr.net/gh/ls125781003/dmtg@master/zy.json
+https://mpimg.cn/down.php/8f4d44220555d8090879cb45224b861e.txt
 https://iptv.cqshushu.com/stv.php
 https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
 http://iptv.cqshushu.com/jiekou.php?jk=m3u&token=6a55c75cc1d30c30817d2362d634af5d
