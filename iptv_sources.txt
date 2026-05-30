@@ -4,7 +4,6 @@ http://wangziduoqing.com/yuan/zb.txt
 https://fastly.jsdelivr.net/gh/ls125781003/dmtg@master/zy.json
 https://mpimg.cn/down.php/8f4d44220555d8090879cb45224b861e.txt
 https://iptv.cqshushu.com/stv.php
-http://iptv.cqshushu.com/jiekou.php?jk=m3u&token=6a55c75cc1d30c30817d2362d634af5d
 #
 
 
