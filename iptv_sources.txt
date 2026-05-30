@@ -3,6 +3,7 @@ http://zo.gt.tc/o/i/yusan4.txt
 https://zo.gt.tc/o/i/yusan2.txt
 https://iptv.cqshushu.com/stv.php
 https://github.com/vbskycn/iptv/blob/master/tv/iptv4.txt
+https://github.com/buyu10086/cs/edit/main/iptv_sources.txt
 #
 
 
