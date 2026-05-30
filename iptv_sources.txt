@@ -1,8 +1,5 @@
 https://kakaxi.indevs.in/ipv4.txt
-https://raw.github.com/zhi35/iptv/refs/heads/master/iptv.m3u
-http://wangziduoqing.com/yuan/zb.txt
-https://fastly.jsdelivr.net/gh/ls125781003/dmtg@master/zy.json
-https://mpimg.cn/down.php/8f4d44220555d8090879cb45224b861e.txt
+
 https://iptv.cqshushu.com/stv.php
 #
 
