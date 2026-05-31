@@ -1,7 +1,7 @@
 https://kakaxi.indevs.in/ipv4.txt
 http://zo.gt.tc/o/i/yusan4.txt
 https://zo.gt.tc/o/i/yusan2.txt
-https://iptv.cqshushu.com/stv.php
+http://iptv.cqshushu.com/jiekou.php?jk=txt&token=944b4e7be5659095e3fe9efa9b9fe28c
 https://github.com/vbskycn/iptv/blob/master/tv/iptv4.txt
 https://github.com/buyu10086/cs/edit/main/iptv_sources.txt
 #
