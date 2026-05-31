@@ -2,49 +2,59 @@ name: 名著目录更新
 
 on:
   schedule:
-    # 北京时间 9、21 点 → UTC 1、13 点（已正确设置）
+    # 北京时间 9:00、21:00 → UTC 时间 1:00、13:00
     - cron: "0 1,13 * * *"
-  workflow_dispatch:
+  workflow_dispatch:  # 支持手动触发
 
 jobs:
   run-itvlist:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write  # 授予提交代码的权限
     steps:
-      - name: 检出代码
+      - name: 检出代码仓库
         uses: actions/checkout@v4
 
-      - name: 设置 Python
+      - name: 设置 Python 环境
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
 
-      - name: 安装依赖
+      - name: 升级 pip 并安装依赖
         run: |
           python -m pip install --upgrade pip
           pip install requests tqdm
 
-      - name: 进入 cs 目录并运行脚本
+      - name: 运行爬虫脚本 iptv_crawler.py
         run: |
-          cd cs
+          echo "=== 开始执行爬虫脚本 ==="
           python iptv_crawler.py
+          echo "=== 爬虫脚本执行完成 ==="
 
-      - name: 提交并推送更新
+      - name: 检查文件变更并提交
         run: |
+          # 配置 git 身份
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-
-          cd cs
+          
+          # 添加根目录下的目标文件
           git add iptv_playlist.m3u8
-
+          
+          # 检查是否有变更
           if git diff --cached --quiet; then
-            echo "无变更，跳过提交"
+            echo "=== 无文件变更，跳过提交 ==="
             exit 0
           fi
-
-          git commit -m "自动更新 iptv_playlist $(date +'%Y-%m-%d %H:%M')"
+          
+          # 提交并推送
+          echo "=== 提交变更到仓库 ==="
+          git commit -m "自动更新：iptv_playlist.m3u8 $(date +'%Y-%m-%d %H:%M:%S')"
+          echo "=== 推送变更到远程分支 ==="
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: success()  # 仅脚本执行成功时提交
+
+      - name: 执行结果汇总
+        run: |
+          echo "=== 流程执行完成 ==="
+        if: always()  # 无论前面步骤是否成功，都输出汇总日志
