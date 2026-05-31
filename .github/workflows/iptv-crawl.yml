@@ -2,81 +2,49 @@ name: 名著目录更新
 
 on:
   schedule:
-    # 北京时间 9 点、21 点 → UTC 时间为 1 点、13 点（UTC+8 时差）
-    - cron: "0 9,21 * * *"  
-  workflow_dispatch:  # 支持手动触发
+    # 北京时间 9、21 点 → UTC 1、13 点（已正确设置）
+    - cron: "0 1,13 * * *"
+  workflow_dispatch:
 
 jobs:
   run-itvlist:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 授予提交代码的权限
+      contents: write
     steps:
-      - name: 检出代码仓库
+      - name: 检出代码
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 拉取完整历史，避免提交时冲突
-          # 新增：指定分支，确保拉取正确的main分支
-          ref: ${{ github.ref }}
 
-      - name: 设置 Python 环境
+      - name: 设置 Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"  # 缓存 pip 依赖，加速后续运行
-          cache-dependency-path: "requirements.txt"  # 修正依赖文件路径（原路径是cs/下）
+          cache: "pip"
 
-      - name: 升级 pip 并安装依赖
+      - name: 安装依赖
         run: |
-          echo "=== 升级 pip 版本 ==="
           python -m pip install --upgrade pip
-          echo "=== 安装 requirements.txt 中的依赖 ==="
-          pip install -r requirements.txt || echo "requirements.txt不存在，跳过该步骤"
-          echo "=== 安装额外依赖（tqdm/aiohttp） ==="
-          pip install tqdm aiohttp
-        id: install_deps
+          pip install requests tqdm
 
-      - name: 运行爬虫脚本 iptv_crawler.py
+      - name: 进入 cs 目录并运行脚本
         run: |
-          echo "=== 开始执行爬虫脚本 ==="
+          cd cs
           python iptv_crawler.py
-          echo "=== 爬虫脚本执行完成 ==="
-        id: run_script
-        continue-on-error: false  # 脚本执行失败则终止流程
 
-      - name: 检查文件变更并提交
+      - name: 提交并推送更新
         run: |
-          # 配置 git 身份
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
-          # 核心修复：拉取远程最新变更，解决fetch first冲突
-          echo "=== 拉取远程最新代码 ==="
-          git pull --rebase origin ${{ github.ref_name }} || git pull --allow-unrelated-histories origin ${{ github.ref_name }}
-          
-          # 添加目标文件
+
+          cd cs
           git add iptv_playlist.m3u8
-          
-          # 检查是否有变更
+
           if git diff --cached --quiet; then
-            echo "=== 无文件变更，跳过提交 ==="
+            echo "无变更，跳过提交"
             exit 0
           fi
-          
-          # 提交并推送
-          echo "=== 提交变更到仓库 ==="
-          git commit -m "自动更新：iptv_playlist.m3u8 $(date +'%Y-%m-%d %H:%M:%S')"
-          echo "=== 推送变更到远程分支 ==="
-          git push origin HEAD:${{ github.ref }}
-        id: commit_push
-        if: steps.run_script.outcome == 'success'  # 仅脚本执行成功时提交
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动注入的令牌，用于推送
 
-      - name: 执行结果汇总
-        run: |
-          echo "=== 流程执行完成 ==="
-          echo "依赖安装状态：${{ steps.install_deps.outcome }}"
-          echo "脚本执行状态：${{ steps.run_script.outcome }}"
-          echo "提交推送状态：${{ steps.commit_push.outcome }}"
-        if: always()  # 无论前面步骤是否成功，都输出汇总日志
+          git commit -m "自动更新 iptv_playlist $(date +'%Y-%m-%d %H:%M')"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
