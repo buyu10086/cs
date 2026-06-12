@@ -4,138 +4,133 @@ from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-# 定义文件路径
+# ========== 配置区 - 可自行修改 ==========
 M3U8_SOURCES_FILE = "m3u8_sources.txt"
 IPTV_SOURCES_FILE = "iptv_sources.txt"
 OUTPUT_PLAYLIST_FILE = "iptv_playlist.m3u8"
-
-# 匹配CCTV等频道名的正则（可根据实际情况扩展）
-CHANNEL_PATTERN = re.compile(r'(cctv\d+|CCTV\d+|卫视|高清)', re.IGNORECASE)
-# 匹配有效的播放链接的正则
+# 黑名单：过滤失效域名、违规协议、无效链接
+BLACK_DOMAIN = {"vip.lzcdn2.com", "vip1.lz-cdn1.com"}  # 报错CDN域名
+BLACK_PROTOCOL = {"p2p", "rtmp", "udp"}               # 不支持的协议
+# 正则规则
+CHANNEL_PATTERN = re.compile(r'(cctv\d+|CCTV\d+|卫视|电台|新闻)', re.IGNORECASE)
 URL_PATTERN = re.compile(r'https?://[^\s]+', re.IGNORECASE)
 
-# 配置请求重试策略
-def requests_retry_session(
-    retries=3,
-    backoff_factor=0.3,
-    status_forcelist=(500, 502, 504),
-    session=None,
-):
-    session = session or requests.Session()
-    retry = Retry(
-        total=retries,
-        read=retries,
-        connect=retries,
-        backoff_factor=backoff_factor,
-        status_forcelist=status_forcelist,
-    )
+# 请求重试配置
+def requests_retry_session(retries=3, backoff_factor=0.3):
+    session = requests.Session()
+    retry = Retry(total=retries, read=retries, connect=retries, status_forcelist=(500, 502, 504))
     adapter = HTTPAdapter(max_retries=retry)
     session.mount("http://", adapter)
-    session.mount("https://", adapter)
+    session.mount("https", adapter)
     return session
 
-def read_m3u8_sources(file_path):
-    """读取m3u8_sources.txt，提取频道和m3u8链接"""
-    sources = []
+def is_valid_url(link):
+    """校验链接：过滤黑名单协议、域名"""
+    link_lower = link.lower()
+    # 过滤协议
+    for proto in BLACK_PROTOCOL:
+        if link_lower.startswith(f"{proto}://") or link_lower.startswith(f"{proto}/"):
+            return False
+    # 过滤黑名单域名
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print(f"警告：文件 {file_path} 不存在，跳过读取")
-        return sources
-    
-    for line in lines:
-        line = line.strip()
-        # 跳过注释和空行
-        if not line or line.startswith('#'):
-            continue
-        # 提取频道名（从URL中解析）
-        if 'cctv' in line.lower() or '卫视' in line:
+        domain = urlparse(link).netloc
+        if domain in BLACK_DOMAIN:
+            return False
+    except:
+        return False
+    return True
+
+def read_m3u8_sources(file_path):
+    sources = []
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            line = line.strip()
+            if not line or line.startswith('#') or not is_valid_url(line):
+                continue
             channel_match = CHANNEL_PATTERN.search(line)
-            if channel_match:
-                channel_name = channel_match.group(1).upper()
-                sources.append((channel_name, line))
+            channel_name = channel_match.group(1).upper() if channel_match else "未知频道"
+            sources.append((channel_name, line))
     return sources
 
 def fetch_remote_iptv(url):
-    """获取远程IPTV源文件内容（带重试机制）"""
     try:
         session = requests_retry_session()
         response = session.get(url, timeout=15)
         response.encoding = 'utf-8'
         return response.text
     except Exception as e:
-        print(f"获取远程IPTV失败 {url}: {e}")
+        print(f"远程源获取失败 {url}: {e}")
         return ""
 
 def read_iptv_sources(file_path):
-    """读取iptv_sources.txt，解析本地/远程IPTV源"""
     sources = []
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print(f"警告：文件 {file_path} 不存在，跳过读取")
-        return sources
-    
-    for line in lines:
-        line = line.strip()
-        # 跳过注释和空行
-        if not line or line.startswith('#'):
-            continue
-        
-        # 如果是远程URL，先下载内容再解析
-        if line.startswith('http'):
-            remote_content = fetch_remote_iptv(line)
-            if remote_content:
-                # 解析远程内容中的频道和链接（支持 频道名,链接 格式）
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            # 远程文本源（如zo.gt.tc）
+            if line.startswith(("http://", "https://")):
+                remote_content = fetch_remote_iptv(line)
+                if not remote_content:
+                    continue
                 for remote_line in remote_content.split('\n'):
                     remote_line = remote_line.strip()
-                    if not remote_line or ',' not in remote_line:
+                    if ',' not in remote_line or not remote_line:
                         continue
-                    # 分割频道名和链接
                     channel_name, link = remote_line.split(',', 1)
                     channel_name = channel_name.strip()
                     link = link.strip()
-                    if channel_name and link:
+                    # 二次校验链接有效性
+                    if channel_name and link and is_valid_url(link):
                         sources.append((channel_name, link))
-        else:
-            # 本地文件（本示例暂不处理，可根据需求扩展）
-            pass
     return sources
 
-def generate_m3u8_playlist(sources, output_file):
-    """生成标准的m3u8播放列表"""
-    m3u8_header = """#EXTM3U x-tvg-url="https://epg.112114.xyz/pp.xml"
+def generate_m3u8_playlist(sources):
+    # 标准M3U8头部 + EPG
+    header = """#EXTM3U x-tvg-url="https://epg.112114.xyz/pp.xml"
+# 分组说明：IPTV直播 | 广播电台 | 影视点播
 """
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(m3u8_header)
-        # 去重（按频道名去重）
-        unique_sources = {}
-        for channel, link in sources:
-            if channel not in unique_sources:
-                unique_sources[channel] = link
-        
-        # 写入每个节目源
-        for channel_name, link in unique_sources.items():
-            # 标准m3u8格式
-            f.write(f"#EXTINF:-1 group-title=\"IPTV直播\" tvg-name=\"{channel_name}\",{channel_name}\n")
-            f.write(f"{link}\n\n")
-    return unique_sources
+    unique_sources = {}
+    for name, link in sources:
+        if name not in unique_sources:
+            unique_sources[name] = link
+
+    # 分类写入：直播 / 电台 / 点播
+    live_list = []
+    radio_list = []
+    video_list = []
+    for name, link in unique_sources.items():
+        if "电台" in name or "调频" in name:
+            radio_list.append((name, link))
+        elif ".mp4" in link.lower() or "影视" in name or "电影" in name:
+            video_list.append((name, link))
+        else:
+            live_list.append((name, link))
+
+    with open(OUTPUT_PLAYLIST_FILE, 'w', encoding='utf-8') as f:
+        f.write(header)
+        # 1. 直播频道
+        f.write("#EXTINF:-1 group-title=\"IPTV直播\",=== 央视/卫视直播 ===\n")
+        for name, link in live_list:
+            f.write(f"#EXTINF:-1 group-title=\"IPTV直播\" tvg-name=\"{name}\",{name}\n{link}\n\n")
+        # 2. 广播电台
+        f.write("#EXTINF:-1 group-title=\"广播电台\",=== 音频电台 ===\n")
+        for name, link in radio_list:
+            f.write(f"#EXTINF:-1 group-title=\"广播电台\" tvg-name=\"{name}\",{name}\n{link}\n\n")
+        # 3. 影视点播
+        f.write("#EXTINF:-1 group-title=\"影视点播\",=== 影视点播 ===\n")
+        for name, link in video_list:
+            f.write(f"#EXTINF:-1 group-title=\"影视点播\" tvg-name=\"{name}\",{name}\n{link}\n\n")
 
 def main():
-    """主函数：整合所有源并生成m3u8播放列表"""
-    # 读取两个源文件
-    m3u8_sources = read_m3u8_sources(M3U8_SOURCES_FILE)
-    iptv_sources = read_iptv_sources(IPTV_SOURCES_FILE)
-    
-    # 合并所有源
-    all_sources = m3u8_sources + iptv_sources
-    
-    # 生成m3u8播放列表
-    unique_sources = generate_m3u8_playlist(all_sources, OUTPUT_PLAYLIST_FILE)
-    print(f"成功生成播放列表：{OUTPUT_PLAYLIST_FILE}")
-    print(f"共读取 {len(all_sources)} 个节目源（去重后 {len(unique_sources)} 个）")
+    print("开始读取源文件并过滤无效链接...")
+    m3u8_src = read_m3u8_sources(M3U8_SOURCES_FILE)
+    iptv_src = read_iptv_sources(IPTV_SOURCES_FILE)
+    all_src = m3u8_src + iptv_src
+    generate_m3u8_playlist(all_src)
+    print(f"生成完成！总链接数：{len(all_src)}，去重后有效链接：{len(dict(all_src))}")
+    print(f"输出文件：{OUTPUT_PLAYLIST_FILE}")
 
 if __name__ == "__main__":
     main()
