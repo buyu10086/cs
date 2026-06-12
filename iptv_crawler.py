@@ -301,8 +301,8 @@ def generate_m3u8_playlist(channels, output_file):
             for official_name in official_names:
                 if official_name in channels:
                     for link in channels[official_name]:
-                        # M3U8标准格式：#EXTINF:-1 表示无限时长，兼容所有链接类型
-                        f.write(f"#EXTINF:-1 group-title="{category}",{official_name}\n")
+                        # ✅ 修复：将内部双引号改为单引号，避免f-string语法冲突
+                        f.write(f"#EXTINF:-1 group-title='{category}',{official_name}\n")
                         f.write(f"{link}\n")
             
             # 写入未匹配到官方分类但属于该类的频道（兜底）
@@ -311,7 +311,7 @@ def generate_m3u8_playlist(channels, output_file):
                     continue
                 if any(keyword in channel_name for keyword in official_names):
                     for link in links:
-                        f.write(f"#EXTINF:-1 group-title="{category}",{channel_name}\n")
+                        f.write(f"#EXTINF:-1 group-title='{category}',{channel_name}\n")
                         f.write(f"{link}\n")
         
         # 写入未分类的频道
@@ -329,7 +329,7 @@ def generate_m3u8_playlist(channels, output_file):
             f.write(f"\n# 其他频道\n")
             for channel_name, links in uncategorized:
                 for link in links:
-                    f.write(f"#EXTINF:-1 group-title="其他频道",{channel_name}\n")
+                    f.write(f"#EXTINF:-1 group-title='其他频道',{channel_name}\n")
                     f.write(f"{link}\n")
     
     print(f"播放列表已生成：{output_file}（共 {len(channels)} 个频道）")
