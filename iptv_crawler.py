@@ -3,8 +3,8 @@ import re
 from pathlib import Path
 
 # 配置文件路径
-IPTV_SOURCES_PATH = Path("/iptv_sources.txt")
-M3U8_SOURCES_PATH = Path("/m3u8_sources.txt")
+IPTV_SOURCES_PATH = Path("iptv_sources.txt")
+M3U8_SOURCES_PATH = Path("m3u8_sources.txt")
 
 # 正则表达式匹配 频道名,播放链接 格式（非m3u8）
 CHANNEL_LINK_PATTERN = re.compile(r'^([^,]+),([^,]+)$', re.MULTILINE)
