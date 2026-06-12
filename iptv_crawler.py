@@ -1,6 +1,8 @@
 import re
 import requests
 from urllib.parse import urlparse
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # 定义文件路径
 M3U8_SOURCES_FILE = "m3u8_sources.txt"
@@ -8,9 +10,29 @@ IPTV_SOURCES_FILE = "iptv_sources.txt"
 OUTPUT_PLAYLIST_FILE = "iptv_playlist.m3u8"
 
 # 匹配CCTV等频道名的正则（可根据实际情况扩展）
-CHANNEL_PATTERN = re.compile(r'(cctv\d+|CCTV\d+)', re.IGNORECASE)
+CHANNEL_PATTERN = re.compile(r'(cctv\d+|CCTV\d+|卫视|高清)', re.IGNORECASE)
 # 匹配有效的播放链接的正则
 URL_PATTERN = re.compile(r'https?://[^\s]+', re.IGNORECASE)
+
+# 配置请求重试策略
+def requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return session
 
 def read_m3u8_sources(file_path):
     """读取m3u8_sources.txt，提取频道和m3u8链接"""
@@ -24,7 +46,7 @@ def read_m3u8_sources(file_path):
         if not line or line.startswith('#'):
             continue
         # 提取频道名（从URL中解析）
-        if 'cctv' in line.lower():
+        if 'cctv' in line.lower() or '卫视' in line:
             channel_match = CHANNEL_PATTERN.search(line)
             if channel_match:
                 channel_name = channel_match.group(1).upper()
@@ -32,9 +54,10 @@ def read_m3u8_sources(file_path):
     return sources
 
 def fetch_remote_iptv(url):
-    """获取远程IPTV源文件内容"""
+    """获取远程IPTV源文件内容（带重试机制）"""
     try:
-        response = requests.get(url, timeout=10)
+        session = requests_retry_session()
+        response = session.get(url, timeout=15)
         response.encoding = 'utf-8'
         return response.text
     except Exception as e:
@@ -88,7 +111,7 @@ def generate_m3u8_playlist(sources, output_file):
         # 写入每个节目源
         for channel_name, link in unique_sources.items():
             # 标准m3u8格式
-            f.write(f"#EXTINF:-1 group-title=\"IPTV\" tvg-name=\"{channel_name}\",{channel_name}\n")
+            f.write(f"#EXTINF:-1 group-title=\"IPTV直播\" tvg-name=\"{channel_name}\",{channel_name}\n")
             f.write(f"{link}\n\n")
 
 def main():
@@ -103,7 +126,7 @@ def main():
     # 生成m3u8播放列表
     generate_m3u8_playlist(all_sources, OUTPUT_PLAYLIST_FILE)
     print(f"成功生成播放列表：{OUTPUT_PLAYLIST_FILE}")
-    print(f"共生成 {len(all_sources)} 个节目源（去重后 {len({k:v for k,v in all_sources})} 个）")
+    print(f"共生成 {len(all_sources)} 个节目源（去重后 {len({k:v for k,v in all_sources.items()})} 个）")
 
 if __name__ == "__main__":
     main()
