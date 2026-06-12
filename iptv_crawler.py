@@ -3,9 +3,9 @@ import requests
 from urllib.parse import urlparse
 
 # 定义文件路径
-M3U8_SOURCES_FILE = "/m3u8_sources.txt"
-IPTV_SOURCES_FILE = "/iptv_sources.txt"
-OUTPUT_PLAYLIST_FILE = "cs/iptv_playlist.m3u8"
+M3U8_SOURCES_FILE = "m3u8_sources.txt"
+IPTV_SOURCES_FILE = "iptv_sources.txt"
+OUTPUT_PLAYLIST_FILE = "iptv_playlist.m3u8"
 
 # 匹配CCTV等频道名的正则（可根据实际情况扩展）
 CHANNEL_PATTERN = re.compile(r'(cctv\d+|CCTV\d+)', re.IGNORECASE)
