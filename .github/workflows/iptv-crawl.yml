@@ -1,16 +1,20 @@
 name: 名著目录更新
 on:
   schedule:
-    # 保留你原配置的 UTC 9点、21点执行（对应北京时间17点、5点）
+    # 保留原配置的 UTC 9点、21点执行（对应北京时间17点、5点）
     # 北京时间 9 点、21 点 → UTC 时间为 1 点、13 点（UTC+8 时差）
     - cron: "0 9,21 * * *"  
   workflow_dispatch:  # 支持手动触发
 
-@@ -16,14 +16,15 @@ jobs:
+jobs:
+  crawl_and_update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 拉取完整历史，避免提交时冲突
-          # 新增：指定分支，确保拉取正确的main分支
+          # 确保拉取正确的main分支
           ref: ${{ github.ref }}
 
       - name: 设置 Python 环境
@@ -19,35 +23,46 @@ on:
           python-version: "3.11"
           cache: "pip"  # 缓存 pip 依赖，加速后续运行
           cache-dependency-path: "requirements.txt"
-          cache-dependency-path: "requirements.txt"  # 修正依赖文件路径（原路径是cs/下）
 
       - name: 升级 pip 并安装依赖
         run: |
-@@ -49,16 +50,9 @@ jobs:
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 运行爬虫脚本生成文件
+        id: run_script
+        run: |
+          echo "=== 开始执行爬虫脚本 ==="
+          python iptv_crawler.py
+          echo "=== 脚本执行完成 ==="
+          ls -la iptv_playlist.m3u8  # 验证文件是否生成
+
+      - name: 提交并推送更新
+        id: commit_push
+        if: steps.run_script.outcome == 'success'  # 仅脚本执行成功时提交
+        run: |
+          echo "=== 配置 Git 用户信息 ==="
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # 【核心修复】先重置工作区到干净状态，解决未暂存文件导致的rebase报错
-          echo "=== 重置工作区并拉取远程最新代码 ==="
-          git fetch origin ${{ github.ref_name }}  # 获取远程最新代码
-          git reset --hard origin/${{ github.ref_name }}  # 强制重置到远程分支状态
-          # 兜底逻辑：若reset失败，尝试普通拉取（兼容特殊情况）
-          git pull origin ${{ github.ref_name }} || git pull --allow-unrelated-histories origin ${{ github.ref_name }}
-          
-          # 重新运行脚本（因为reset会覆盖刚才生成的文件）
-          echo "=== 重新执行爬虫脚本生成最新文件 ==="
-          python iptv_crawler.py
           # 核心修复：拉取远程最新变更，解决fetch first冲突
           echo "=== 拉取远程最新代码 ==="
           git pull --rebase origin ${{ github.ref_name }} || git pull --allow-unrelated-histories origin ${{ github.ref_name }}
           
           # 添加目标文件
           git add iptv_playlist.m3u8
-@@ -77,12 +71,12 @@ jobs:
-        id: commit_push
-        if: steps.run_script.outcome == 'success'  # 仅脚本执行成功时提交
+          
+          # 检查是否有变更需要提交
+          if git diff --cached --quiet; then
+            echo "=== 没有新的变更，无需提交 ==="
+            exit 0
+          fi
+          
+          # 提交并推送
+          echo "=== 提交并推送更新 ==="
+          git commit -m "自动更新IPTV播放列表 $(date +'%Y-%m-%d %H:%M:%S')"
+          git push origin ${{ github.ref_name }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 自动注入的令牌，用于推送
 
       - name: 执行结果汇总
@@ -56,5 +71,4 @@ on:
           echo "依赖安装状态：${{ steps.install_deps.outcome }}"
           echo "脚本执行状态：${{ steps.run_script.outcome }}"
           echo "提交推送状态：${{ steps.commit_push.outcome }}"
-        if: always()
         if: always()  # 无论前面步骤是否成功，都输出汇总日志
