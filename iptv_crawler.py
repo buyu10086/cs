@@ -37,8 +37,12 @@ def requests_retry_session(
 def read_m3u8_sources(file_path):
     """读取m3u8_sources.txt，提取频道和m3u8链接"""
     sources = []
-    with open(file_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        print(f"警告：文件 {file_path} 不存在，跳过读取")
+        return sources
     
     for line in lines:
         line = line.strip()
@@ -67,8 +71,12 @@ def fetch_remote_iptv(url):
 def read_iptv_sources(file_path):
     """读取iptv_sources.txt，解析本地/远程IPTV源"""
     sources = []
-    with open(file_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        print(f"警告：文件 {file_path} 不存在，跳过读取")
+        return sources
     
     for line in lines:
         line = line.strip()
@@ -113,6 +121,7 @@ def generate_m3u8_playlist(sources, output_file):
             # 标准m3u8格式
             f.write(f"#EXTINF:-1 group-title=\"IPTV直播\" tvg-name=\"{channel_name}\",{channel_name}\n")
             f.write(f"{link}\n\n")
+    return unique_sources
 
 def main():
     """主函数：整合所有源并生成m3u8播放列表"""
@@ -124,9 +133,9 @@ def main():
     all_sources = m3u8_sources + iptv_sources
     
     # 生成m3u8播放列表
-    generate_m3u8_playlist(all_sources, OUTPUT_PLAYLIST_FILE)
+    unique_sources = generate_m3u8_playlist(all_sources, OUTPUT_PLAYLIST_FILE)
     print(f"成功生成播放列表：{OUTPUT_PLAYLIST_FILE}")
-    print(f"共生成 {len(all_sources)} 个节目源（去重后 {len({k:v for k,v in all_sources.items()})} 个）")
+    print(f"共读取 {len(all_sources)} 个节目源（去重后 {len(unique_sources)} 个）")
 
 if __name__ == "__main__":
     main()
